@@ -1,0 +1,185 @@
+/* ================================
+   REVIEWS / COMMENTS WRAPPER
+================================ */
+
+.comments-wrapper {
+    width: 100%;
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 40px 0 60px;
+    box-sizing: border-box;
+}
+
+/* Header */
+
+.comments-wrapper h2 {
+    margin: 0;
+    text-align: center;
+    font-size: clamp(38px, 4vw, 62px);
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -1.5px;
+    color: #000;
+}
+
+.comments-rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+    margin-bottom: 55px;
+    font-size: 22px;
+    color: #000;
+}
+
+.comments-rating-stars {
+    letter-spacing: 2px;
+    font-size: 28px;
+}
+
+/* ================================
+   LIST WRAPPER (holds arrows + list)
+================================ */
+
+.comments-list-wrapper {
+    position: relative;
+    width: 100%;
+    padding: 0 55px;
+    box-sizing: border-box;
+}
+
+/* ================================
+   CARDS CONTAINER
+================================ */
+
+.comments-list {
+    display: flex;
+    align-items: stretch;
+    gap: 30px;
+    width: 100%;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.comments-list::-webkit-scrollbar {
+    display: none;
+}
+
+/* ================================
+   ARROW BUTTONS
+================================ */
+
+.comments-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 5;
+
+    width: 48px;
+    height: 48px;
+
+    border: none;
+    background: transparent;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    font-size: 50px;
+    font-weight: 300;
+    color: #000;
+
+    transform: translateY(-50%);
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.comments-arrow:hover {
+    transform: translateY(-50%) scale(1.15);
+}
+
+.comments-arrow-left {
+    left: 0;
+}
+
+.comments-arrow-right {
+    right: 0;
+}
+
+/* ================================
+   TABLET
+================================ */
+
+@media (max-width: 1200px) {
+    .comments-list-wrapper {
+        padding: 0 35px;
+    }
+
+    .comments-list {
+        gap: 20px;
+    }
+}
+
+/* ================================
+   SMALL TABLET
+================================ */
+
+@media (max-width: 900px) {
+    .comments-list-wrapper {
+        padding: 0 25px;
+    }
+
+    .comments-list {
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+    }
+
+    .comments-list::-webkit-scrollbar {
+        display: none;
+    }
+
+    .comments-arrow {
+        display: none;
+    }
+}
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 600px) {
+    .comments-list-wrapper {
+        padding: 0 16px;
+    }
+
+    .comments-wrapper h2 {
+        font-size: 34px;
+        letter-spacing: -0.8px;
+    }
+
+    .comments-rating {
+        margin-top: 14px;
+        margin-bottom: 35px;
+        font-size: 17px;
+        gap: 7px;
+    }
+
+    .comments-rating-stars {
+        font-size: 22px;
+    }
+
+    .comments-list {
+        gap: 15px;
+    }
+}
