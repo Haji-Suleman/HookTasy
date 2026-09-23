@@ -76,7 +76,7 @@ export const Comments = [
 
     {
         id: 6,
-        images: ["/reviews/review-6.jpg"],
+        images: [review12],
         rating: 5,
         name: "Lisa H.",
         verified: false,

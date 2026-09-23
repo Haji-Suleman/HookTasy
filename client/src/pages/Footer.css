@@ -1,0 +1,197 @@
+/* --- Main Footer Container --- */
+.footer-section {
+    background-color: #f4f4f4;
+    /* Light gray background matching screenshot */
+    padding: 60px 40px 30px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #333333;
+    box-sizing: border-box;
+}
+
+.footer-section * {
+    box-sizing: border-box;
+}
+
+.footer-container {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* --- Top Section: Columns --- */
+.footer-top {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    margin-bottom: 60px;
+}
+
+.footer-column h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #111111;
+}
+
+.footer-column p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #555555;
+    margin-bottom: 12px;
+}
+
+.address-text {
+    white-space: pre-line;
+    /* Allows line breaks in address */
+}
+
+.footer-column a {
+    color: #555555;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+}
+
+.footer-column a:hover {
+    color: #111111;
+    text-decoration: underline;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 12px;
+}
+
+/* --- Social Icons --- */
+.social-icons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+    /* Animation setup */
+}
+
+.social-link img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+.social-link:hover {
+    transform: translateY(-4px);
+    /* Lift up animation on hover */
+}
+
+/* --- Bottom Section --- */
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-top: 30px;
+    border-top: 1px solid #e0e0e0;
+    /* Optional: adds a subtle separation line */
+}
+
+.footer-bottom-left {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.copyright-text {
+    font-size: 0.85rem;
+    color: #555555;
+    margin: 0;
+}
+
+/* --- Follow on Shop Button --- */
+.follow-shop-btn {
+    background-color: #5c3cf5;
+    /* Purple color matching screenshot */
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.follow-shop-btn:hover {
+    background-color: #4a2bd6;
+    /* Darker purple on hover */
+    transform: scale(1.05);
+    /* Slight grow animation */
+}
+
+.heart-icon {
+    font-size: 1.1rem;
+}
+
+/* --- Payment Icons --- */
+.footer-bottom-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.payment-icon {
+    height: 24px;
+    /* Adjust based on your image sizes */
+    width: auto;
+    object-fit: contain;
+    opacity: 0.7;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    /* Animation setup */
+}
+
+.payment-icon:hover {
+    opacity: 1;
+    transform: scale(1.15);
+    /* Pop animation on hover */
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 1024px) {
+    .footer-top {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 50px;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-section {
+        padding: 40px 20px;
+    }
+
+    .footer-top {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 30px;
+    }
+
+    .footer-bottom-right {
+        justify-content: flex-start;
+    }
+}
