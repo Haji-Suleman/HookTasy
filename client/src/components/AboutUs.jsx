@@ -64,7 +64,7 @@ const AboutUs = () => {
                         just like you. We create designs that inspire joy in every stitch, made with love for
                         those who love to crochet.
                     </p>
-                    <a href="#" className="about-us-link">Read more</a>
+                    <a href="#" className="about-us-link reviews-top-link">Read more</a>
                 </div>
             </section>
 

@@ -49,7 +49,7 @@ const Footer = () => {
     const serviceLinks = ["Privacy policy", "Shipping Policy", "Refund policy", "Terms of service"];
 
     // Array for the bottom payment icons
-    const paymentIcons = [payment1, payment2, payment3, payment4, payment5, payment6, payment7, payment8, payment8, payment9, payment10, payment11, payment12];
+    const paymentIcons = [payment1, payment2, payment3, payment4, payment5, payment6, payment7, payment8, payment9, payment10, payment11, payment12];
 
     return (
         <footer className="footer-section">
@@ -82,7 +82,7 @@ const Footer = () => {
                         <h3>Information</h3>
                         <ul>
                             {informationLinks.map((link, index) => (
-                                <li key={index}><a href="#">{link}</a></li>
+                                <li key={index}><a href="#" className="reviews-top-link">{link}</a></li>
                             ))}
                         </ul>
                     </div>
@@ -92,7 +92,7 @@ const Footer = () => {
                         <h3>Main Menu</h3>
                         <ul>
                             {mainMenuLinks.map((link, index) => (
-                                <li key={index}><a href="#">{link}</a></li>
+                                <li key={index}><a href="#" className="reviews-top-link">{link}</a></li>
                             ))}
                         </ul>
                     </div>
@@ -102,7 +102,7 @@ const Footer = () => {
                         <h3>Service</h3>
                         <ul>
                             {serviceLinks.map((link, index) => (
-                                <li key={index}><a href="#">{link}</a></li>
+                                <li key={index}><a href="#" className="reviews-top-link">{link}</a></li>
                             ))}
                         </ul>
                     </div>

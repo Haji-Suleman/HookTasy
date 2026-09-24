@@ -51,10 +51,6 @@
     transition: color 0.2s ease;
 }
 
-.footer-column a:hover {
-    color: #111111;
-    text-decoration: underline;
-}
 
 .footer-column ul {
     list-style: none;
