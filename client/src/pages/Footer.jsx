@@ -82,7 +82,7 @@ const Footer = () => {
                         <h3>Information</h3>
                         <ul>
                             {informationLinks.map((link, index) => (
-                                <li key={index}><a href="#" className="reviews-top-link">{link}</a></li>
+                                <li key={index} id="underlined-top" ><a href="#" >{link}</a></li>
                             ))}
                         </ul>
                     </div>
@@ -92,7 +92,7 @@ const Footer = () => {
                         <h3>Main Menu</h3>
                         <ul>
                             {mainMenuLinks.map((link, index) => (
-                                <li key={index}><a href="#" className="reviews-top-link">{link}</a></li>
+                                <li key={index} id="underlined-top"><a href="#" >{link}</a></li>
                             ))}
                         </ul>
                     </div>
@@ -102,7 +102,7 @@ const Footer = () => {
                         <h3>Service</h3>
                         <ul>
                             {serviceLinks.map((link, index) => (
-                                <li key={index}><a href="#" className="reviews-top-link">{link}</a></li>
+                                <li key={index} id="underlined-top"><a href="#" >{link}</a></li>
                             ))}
                         </ul>
                     </div>

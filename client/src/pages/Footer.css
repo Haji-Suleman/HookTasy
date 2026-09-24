@@ -127,6 +127,33 @@
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
+#underlined-top a {
+    position: relative;
+    color: rgb(97, 97, 97);
+    /* anchor for the pseudo-element */
+}
+
+#underlined-top a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 2px;
+    background: hsl(0, 0%, 0%);
+    transform: scale(0);
+    transform-origin: left;
+    transition: transform 0.5s;
+}
+
+#underlined-top:hover a::after {
+    transform: scale(1);
+}
+
+#underlined-top a:hover {
+    color: black;
+}
+
 .follow-shop-btn:hover {
     background-color: #4a2bd6;
     /* Darker purple on hover */

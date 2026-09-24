@@ -23,10 +23,8 @@
     font-weight: 500;
     color: #000;
     text-decoration: none;
-    /* Removed default underline */
     cursor: pointer;
     padding-bottom: 6px;
-    /* Space for the animated line */
     transition: opacity 0.2s ease;
 }
 
@@ -34,7 +32,7 @@
     opacity: 0.6;
 }
 
-/* Animated line */
+/* The line itself */
 .reviews-top-link::after {
     content: "";
     position: absolute;
@@ -43,15 +41,39 @@
     width: 100%;
     height: 2px;
     background: #000;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease-out;
-    /* Smooth single animation */
+    transform: scaleX(1);
+    transform-origin: right;
+    /* starts full, will retract toward the right */
 }
 
-/* Hover animation (draws once and stays) */
+/* Retract-then-redraw cycle */
 .reviews-top-link:hover::after {
-    transform: scaleX(1);
+    animation: underline-cycle 1s ease-in-out;
+}
+
+@keyframes underline-cycle {
+    0% {
+        transform: scaleX(1);
+        transform-origin: right;
+    }
+
+    45% {
+        transform: scaleX(0);
+        transform-origin: right;
+        /* fully retracted */
+    }
+
+    55% {
+        transform: scaleX(0);
+        transform-origin: left;
+        /* flip origin while invisible */
+    }
+
+    100% {
+        transform: scaleX(1);
+        transform-origin: left;
+        /* redrawn left → right */
+    }
 }
 
 /* Header */
