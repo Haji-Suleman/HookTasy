@@ -23,56 +23,71 @@ const CommentData = () => {
             behavior: "smooth",
         });
     };
-
     return (
-        <div className="comments-wrapper">
-            <div className="comments-list-wrapper">
-                <button
-                    className="comments-arrow comments-arrow-left"
-                    onClick={() => scrollComments("left")}
-                    aria-label="Previous reviews"
-                >
-                    ‹
-                </button>
-
-                <div className="comments-list" ref={commentsListRef}>
-                    {Comments.map((item) => (
-                        // 2. Wrap in a clickable div or pass onClick to Comment
-                        <div
-                            key={item.id}
-                            onClick={() => setSelectedComment(item)}
-                            style={{ cursor: "pointer" }}
-                        >
-                            <Comment
-                                id={item.id}
-                                images={item.images}
-                                rating={item.rating}
-                                name={item.name}
-                                verified={item.verified}
-                                date={item.date}
-                                comment={item.comment}
-                                product={item.product}
-                            />
-                        </div>
-                    ))}
-                </div>
-
-                <button
-                    className="comments-arrow comments-arrow-right"
-                    onClick={() => scrollComments("right")}
-                    aria-label="Next reviews"
-                >
-                    ›
-                </button>
+        <>
+            <div className="reviews-top-link-wrapper">
+                <a href="/shop" className="reviews-top-link">
+                    Shop All Patterns
+                </a>
             </div>
 
-            {/* 3. Render the Modal */}
-            <CommentModal
-                isOpen={selectedComment !== null}
-                onClose={() => setSelectedComment(null)}
-                commentData={selectedComment}
-            />
-        </div>
+            {/* Header Section */}
+            <div className="reviews-header">
+                <h1>Our happy customers are saying</h1>
+                <div className="reviews-rating-summary">
+                    <span className="reviews-stars">★★★★★</span>
+                    <span className="reviews-score">4.86 ★ (1,593)</span>
+                </div>
+            </div>
+            <div className="comments-wrapper">
+                <div className="comments-list-wrapper">
+                    <button
+                        className="comments-arrow comments-arrow-left"
+                        onClick={() => scrollComments("left")}
+                        aria-label="Previous reviews"
+                    >
+                        ‹
+                    </button>
+
+                    <div className="comments-list" ref={commentsListRef}>
+                        {Comments.map((item) => (
+                            // 2. Wrap in a clickable div or pass onClick to Comment
+                            <div
+                                key={item.id}
+                                onClick={() => setSelectedComment(item)}
+                                style={{ cursor: "pointer" }}
+                            >
+                                <Comment
+                                    id={item.id}
+                                    images={item.images}
+                                    rating={item.rating}
+                                    name={item.name}
+                                    verified={item.verified}
+                                    date={item.date}
+                                    comment={item.comment}
+                                    product={item.product}
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    <button
+                        className="comments-arrow comments-arrow-right"
+                        onClick={() => scrollComments("right")}
+                        aria-label="Next reviews"
+                    >
+                        ›
+                    </button>
+                </div>
+
+                {/* 3. Render the Modal */}
+                <CommentModal
+                    isOpen={selectedComment !== null}
+                    onClose={() => setSelectedComment(null)}
+                    commentData={selectedComment}
+                />
+            </div>
+        </>
     );
 };
 

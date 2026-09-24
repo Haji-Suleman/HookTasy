@@ -1,36 +1,31 @@
 import { useState, useRef, useEffect, useCallback, useId } from 'react';
 import logo from '../assets/001_HOOKTASY_Logo_a04e109e-6770-4265-bae0-f313fb1d6ed3 (1).png';
 import './Navbar.css';
-import bestseller from "../assets/bestseller.jpeg";
-import Bundle from "../assets/Bundle-main-image.jpg";
-import children from "../assets/children.jpg";
-import chrismis from "../assets/chrismis.jpeg";
-import Easter_Day from "../assets/Easter_Day.jpg";
-import halloween from "../assets/halloween.jpeg";
-import nurse from "../assets/nurse.png";
-import Valentine from "../assets/Valentine.jpeg";
+import bestseller from '../assets/bestseller.jpeg';
+import Bundle from '../assets/Bundle-main-image.jpg';
+import children from '../assets/children.jpg';
+import chrismis from '../assets/chrismis.jpeg';
+import Easter_Day from '../assets/Easter_Day.jpg';
+import halloween from '../assets/halloween.jpeg';
+import nurse from '../assets/nurse.png';
+import Valentine from '../assets/Valentine.jpeg';
 
 /* =====================================================================
    NAV DATA
    ===================================================================== */
-const ANNOUNCEMENTS = [
-  'Pick 3 & Get 1 Small',
-  'Pick 5 & Get 2 Large',
-];
+const ANNOUNCEMENTS = ['Pick 3 & Get 1 Small', 'Pick 5 & Get 2 Large'];
 
 const NAV_ITEMS = [
   { id: 'new', label: 'NEW', href: '/collections/new' },
   {
-    id: 'explore',
-    label: 'EXPLORE ALL',
+    id: 'explore', label: 'EXPLORE ALL',
     children: [
       { img: bestseller, label: 'Best Sellers', href: '/collections/best-sellers' },
       { img: Bundle, label: 'Bundle', href: '/collections/bundle' },
     ],
   },
   {
-    id: 'collections',
-    label: 'COLLECTIONS',
+    id: 'collections', label: 'COLLECTIONS',
     children: [
       { img: Valentine, label: 'Valentine', href: '/collections/seasonal' },
       { img: Easter_Day, label: 'Easter Day', href: '/collections/holiday' },
@@ -41,8 +36,7 @@ const NAV_ITEMS = [
     ],
   },
   {
-    id: 'animals',
-    label: 'ANIMALS',
+    id: 'animals', label: 'ANIMALS',
     children: [
       { img: chrismis, label: 'Farm', href: '/collections/animals/farm' },
       { img: chrismis, label: 'Ocean', href: '/collections/animals/ocean' },
@@ -51,8 +45,7 @@ const NAV_ITEMS = [
     ],
   },
   {
-    id: 'gifts',
-    label: 'GIFTS',
+    id: 'gifts', label: 'GIFTS',
     children: [
       { img: chrismis, label: 'Gifts for Kids', href: '/collections/gifts/kids' },
       { img: chrismis, label: 'Gifts for Adults', href: '/collections/gifts/adults' },
@@ -60,8 +53,7 @@ const NAV_ITEMS = [
     ],
   },
   {
-    id: 'family',
-    label: 'FAMILY SUBSCRIPTION',
+    id: 'family', label: 'FAMILY SUBSCRIPTION',
     children: [
       { img: chrismis, label: 'How It Works', href: '/subscription/how-it-works' },
       { img: chrismis, label: 'Plans & Pricing', href: '/subscription/plans' },
@@ -91,33 +83,40 @@ const Svg = ({ className = 'icon-md', children }) => (
   </svg>
 );
 
-const ChevronLeft = ({ className }) => (
-  <Svg className={className}><path d="M15 5l-7 7 7 7" /></Svg>
-);
-const ChevronRight = ({ className }) => (
-  <Svg className={className}><path d="M9 5l7 7-7 7" /></Svg>
-);
-const ChevronDown = ({ className = 'icon-sm' }) => (
-  <Svg className={className}><path d="M6 9l6 6 6-6" /></Svg>
-);
-const CloseIcon = ({ className }) => (
-  <Svg className={className}><path d="M5 5l14 14M19 5L5 19" /></Svg>
-);
-const SearchIcon = ({ className = 'icon-lg' }) => (
-  <Svg className={className}><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></Svg>
-);
-const UserIcon = ({ className = 'icon-lg' }) => (
-  <Svg className={className}><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a5 5 0 015-5h6a5 5 0 015 5v1" /></Svg>
-);
-const BagIcon = ({ className = 'icon-lg' }) => (
-  <Svg className={className}><path d="M5 8h14l-1 12H6L5 8z" /><path d="M9 8V6a3 3 0 016 0v2" /></Svg>
-);
-const MenuIcon = ({ className = 'icon-lg' }) => (
-  <Svg className={className}><path d="M4 7h16M4 12h16M4 17h16" /></Svg>
-);
+const ChevronLeft = ({ className }) => <Svg className={className}><path d="M15 5l-7 7 7 7" /></Svg>;
+const ChevronRight = ({ className }) => <Svg className={className}><path d="M9 5l7 7-7 7" /></Svg>;
+const ChevronDown = ({ className = 'icon-sm' }) => <Svg className={className}><path d="M6 9l6 6 6-6" /></Svg>;
+const CloseIcon = ({ className }) => <Svg className={className}><path d="M5 5l14 14M19 5L5 19" /></Svg>;
+const SearchIcon = ({ className = 'icon-lg' }) => <Svg className={className}><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></Svg>;
+const UserIcon = ({ className = 'icon-lg' }) => <Svg className={className}><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a5 5 0 015-5h6a5 5 0 015 5v1" /></Svg>;
+const BagIcon = ({ className = 'icon-lg' }) => <Svg className={className}><path d="M5 8h14l-1 12H6L5 8z" /><path d="M9 8V6a3 3 0 016 0v2" /></Svg>;
+const MenuIcon = ({ className = 'icon-lg' }) => <Svg className={className}><path d="M4 7h16M4 12h16M4 17h16" /></Svg>;
+
+/* Reusable promo arrow — renders as <button> or a static <span> */
+function PromoArrow({ direction, onClick }) {
+  const Icon = direction === 'left' ? ChevronLeft : ChevronRight;
+  const base = 'promo-bar__nav-btn';
+  if (!onClick) {
+    return (
+      <span aria-hidden="true" className={`${base} ${base}--static`}>
+        <Icon className="icon-promo" />
+      </span>
+    );
+  }
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={direction === 'left' ? 'Previous announcement' : 'Next announcement'}
+      className={base}
+    >
+      <Icon className="icon-promo" />
+    </button>
+  );
+}
 
 /* =====================================================================
-   NAVBAR COMPONENT
+   NAVBAR
    ===================================================================== */
 export default function Navbar({
   cartCount = 3,
@@ -129,17 +128,18 @@ export default function Navbar({
 }) {
   const [promoVisible, setPromoVisible] = useState(true);
   const [promoIndex, setPromoIndex] = useState(0);
-  const [promoFading, setPromoFading] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mobileOpenId, setMobileOpenId] = useState(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [navHidden, setNavHidden] = useState(false);
 
   const navRef = useRef(null);
   const searchInputRef = useRef(null);
   const searchBtnRef = useRef(null);
   const hamburgerRef = useRef(null);
+  const lastScrollY = useRef(0);
   const uid = useId();
 
   /* Link helper */
@@ -181,9 +181,9 @@ export default function Navbar({
     return () => { document.body.style.overflow = prev; };
   }, [drawerOpen]);
 
-  /* Close drawer at desktop breakpoint */
+  /* Close drawer at the same breakpoint the CSS switches to desktop nav (1200px) */
   useEffect(() => {
-    const mq = window.matchMedia('(min-width: 1100px)');
+    const mq = window.matchMedia('(min-width: 1200px)');
     const handler = (e) => e.matches && setDrawerOpen(false);
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);
@@ -194,29 +194,48 @@ export default function Navbar({
     if (searchOpen) searchInputRef.current?.focus();
   }, [searchOpen]);
 
-  /* Promo bar — fade out → swap index → fade in */
+  /* Hide navbar on scroll-down, reveal on scroll-up */
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      const delta = y - lastScrollY.current;
+
+      if (searchOpen || drawerOpen || openMenu !== null) {
+        setNavHidden(false);
+        lastScrollY.current = y;
+        return;
+      }
+
+      if (y < 100) {
+        setNavHidden(false);
+      } else if (delta > 6) {
+        setNavHidden(true);
+      } else if (delta < -6) {
+        setNavHidden(false);
+      }
+      lastScrollY.current = y;
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [searchOpen, drawerOpen, openMenu]);
+
+  /* ─────────────────────────────────────────────────────────────────
+     PROMO BAR — swipe animation (index-based translateX)
+     ───────────────────────────────────────────────────────────────── */
   const total = ANNOUNCEMENTS.length;
+  const canCycle = total > 1;
   const intervalRef = useRef(null);
 
-  const advancePromo = useCallback((getNext) => {
-    setPromoFading(true);
-    setTimeout(() => {
-      setPromoIndex((i) => getNext(i, total));
-      setPromoFading(false);
-    }, 350);
-  }, [total]);
+  const goPrev = () => setPromoIndex((i) => (i - 1 + total) % total);
+  const goNext = () => setPromoIndex((i) => (i + 1) % total);
 
-  const prevPromo = () => advancePromo((i, n) => (i - 1 + n) % n);
-  const nextPromo = () => advancePromo((i, n) => (i + 1) % n);
-
-  /* Auto-cycle every 3 seconds */
+  /* Auto-swipe every 4 seconds */
   useEffect(() => {
-    if (total <= 1 || !promoVisible) return undefined;
-    intervalRef.current = setInterval(() => {
-      advancePromo((i, n) => (i + 1) % n);
-    }, 3000);
+    if (!canCycle || !promoVisible) return undefined;
+    intervalRef.current = setInterval(goNext, 4000);
     return () => clearInterval(intervalRef.current);
-  }, [total, promoVisible, advancePromo]);
+  }, [canCycle, promoVisible, total]);
 
   /* Desktop dropdown keyboard handling */
   const focusMenuItem = (menuEl, index) => {
@@ -267,48 +286,33 @@ export default function Navbar({
   const closeDrawer = () => { setDrawerOpen(false); hamburgerRef.current?.focus(); };
 
   return (
-    <header className="navbar-header">
-
+    <header className={`navbar-header${navHidden ? ' navbar-header--hidden' : ''}`}>
       {/* ── TOP PROMO BAR ── */}
       {promoVisible && (
         <div role="region" aria-label="Promotions" className="promo-bar">
           <div className="promo-bar__inner">
-            {total > 1 ? (
-              <button
-                type="button"
-                onClick={prevPromo}
-                aria-label="Previous announcement"
-                className="promo-bar__nav-btn"
-              >
-                <ChevronLeft className="icon-promo" />
-              </button>
-            ) : (
-              <span aria-hidden="true" className="promo-bar__nav-btn promo-bar__nav-btn--static">
-                <ChevronLeft className="icon-promo" />
-              </span>
-            )}
+            <PromoArrow direction="left" onClick={canCycle ? goPrev : undefined} />
 
-            <p
-              aria-live="polite"
-              className={`promo-text${promoFading ? ' promo-text--fading' : ''}`}
-            >
-              {ANNOUNCEMENTS[promoIndex]}
-            </p>
-
-            {total > 1 ? (
-              <button
-                type="button"
-                onClick={nextPromo}
-                aria-label="Next announcement"
-                className="promo-bar__nav-btn"
+            {/* Sliding track — each announcement is one slide */}
+            <div className="promo-viewport">
+              <div
+                className="promo-track"
+                style={{ transform: `translateX(-${promoIndex * 100}%)` }}
               >
-                <ChevronRight className="icon-promo" />
-              </button>
-            ) : (
-              <span aria-hidden="true" className="promo-bar__nav-btn promo-bar__nav-btn--static">
-                <ChevronRight className="icon-promo" />
-              </span>
-            )}
+                {ANNOUNCEMENTS.map((text, i) => (
+                  <p
+                    key={text}
+                    className="promo-text"
+                    aria-live={i === promoIndex ? 'polite' : 'off'}
+                    aria-hidden={i !== promoIndex}
+                  >
+                    {text}
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            <PromoArrow direction="right" onClick={canCycle ? goNext : undefined} />
           </div>
 
           <button
@@ -325,7 +329,6 @@ export default function Navbar({
       {/* ── MAIN NAV ── */}
       <div ref={navRef} className="navbar-main">
         <div className="navbar-main__inner">
-
           {/* LEFT — Hamburger (mobile) + Logo */}
           <div className="navbar-left">
             <button
@@ -345,17 +348,12 @@ export default function Navbar({
             </L>
           </div>
 
-          {/* CENTER — Desktop nav links */}
-          <nav
-            aria-label="Main"
-            className="navbar-desktop-nav"
-            onMouseLeave={() => setOpenMenu(null)}
-          >
+          {/* CENTER — Desktop nav */}
+          <nav aria-label="Main" className="navbar-desktop-nav" onMouseLeave={() => setOpenMenu(null)}>
             <ul className="navbar-desktop-nav__list">
               {NAV_ITEMS.map((item) => {
                 const hasChildren = !!item.children;
                 const isOpen = openMenu === item.id;
-
                 return (
                   <li
                     key={item.id}
@@ -388,11 +386,7 @@ export default function Navbar({
                         >
                           {item.children.map((child) => (
                             <li key={child.label} className="dropdown-panel__item">
-                              <L
-                                to={child.href}
-                                onClick={() => setOpenMenu(null)}
-                                className="dropdown-panel__link"
-                              >
+                              <L to={child.href} onClick={() => setOpenMenu(null)} className="dropdown-panel__link">
                                 <img src={child.img} alt="" className="dropdown-panel__img" />
                                 {child.label}
                               </L>
@@ -401,9 +395,7 @@ export default function Navbar({
                         </ul>
                       </>
                     ) : (
-                      <L to={item.href} className="navbar-link">
-                        {item.label}
-                      </L>
+                      <L to={item.href} className="navbar-link">{item.label}</L>
                     )}
                   </li>
                 );
@@ -472,7 +464,7 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* ── MOBILE DRAWER (slides in from LEFT) ── */}
+      {/* ── MOBILE DRAWER ── */}
       <div className={`drawer-root${drawerOpen ? ' drawer-root--open' : ''}`}>
         <div onClick={closeDrawer} className="drawer-overlay" />
 
@@ -536,12 +528,7 @@ export default function Navbar({
                       </div>
                     </>
                   ) : (
-                    <L
-                      to={item.href}
-                      tabIndex={tab}
-                      onClick={closeDrawer}
-                      className="drawer-row"
-                    >
+                    <L to={item.href} tabIndex={tab} onClick={closeDrawer} className="drawer-row">
                       {item.label}
                     </L>
                   )}

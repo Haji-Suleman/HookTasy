@@ -3,22 +3,12 @@
 ========================================= */
 
 .comment-card {
-    flex: 0 0 calc((100vw - 110px - 120px) / 5);
-    width: calc((100vw - 110px - 120px) / 5);
-    min-width: 0;
-
-    background: #f8f8f8;
-    border-radius: 12px;
-    overflow: hidden;
-
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-
+    flex: 0 0 320px;
+    /* change 320px to your desired constant width */
+    width: 320px;
+    min-width: 320px;
+    max-width: 320px;
     box-sizing: border-box;
-    flex-shrink: 0;
-
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .comment-card:hover {
