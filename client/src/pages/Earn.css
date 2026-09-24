@@ -1,0 +1,384 @@
+/* =====================================================================
+   AFFILIATE PAGE
+   ===================================================================== */
+.affiliate-page {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    color: #333;
+    background-color: #ffffff;
+    min-height: 100vh;
+}
+
+/* Top Background (Header + Hero) */
+.affiliate-top-bg {
+    background-color: #f5f6f8;
+    /* Very light grey matching the screenshot */
+    padding-bottom: 80px;
+}
+
+/* Header */
+.aff-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 60px;
+}
+
+.aff-logo {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #111;
+}
+
+.aff-login-btn {
+    background-color: #2e7d32;
+    color: #fff;
+    border: none;
+    padding: 8px 24px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Hero Section */
+.aff-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.aff-hero-content {
+    max-width: 550px;
+}
+
+.aff-subtitle {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 12px;
+}
+
+.aff-title {
+    font-size: 42px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #222;
+    margin-bottom: 30px;
+}
+
+.aff-join-btn {
+    background-color: #2e7d32;
+    color: #fff;
+    border: none;
+    padding: 12px 32px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.aff-join-btn:hover {
+    background-color: #1b5e20;
+}
+
+/* Placeholder for hero image */
+.aff-hero-image-placeholder {
+    width: 450px;
+    height: 350px;
+    /* Remove background when you add your actual image */
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Uncomment this if you want to see where the image will go initially */
+/*
+.aff-hero-image-placeholder {
+  background-color: #e0e0e0;
+  border-radius: 8px;
+}
+*/
+
+/* Divider */
+.aff-divider {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 0;
+}
+
+/* How It Works Section */
+.aff-how-it-works {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px 100px;
+    text-align: center;
+}
+
+.aff-section-title {
+    font-size: 32px;
+    font-weight: 400;
+    color: #333;
+    margin-bottom: 50px;
+}
+
+/* Cards Grid */
+.aff-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid #e0e0e0;
+    background-color: #fff;
+}
+
+.aff-card {
+    padding: 40px 30px;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.aff-card:last-child {
+    border-right: none;
+}
+
+/* Placeholder for icons */
+.aff-icon-placeholder {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 20px;
+    /* Remove background when you add your actual SVG */
+    background-color: #f0f0f0;
+    border-radius: 4px;
+}
+
+.aff-card h3 {
+    font-size: 24px;
+    font-weight: 400;
+    color: #333;
+    margin: 0 0 16px 0;
+}
+
+.aff-card p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #555;
+    margin: 0 0 16px 0;
+}
+
+.aff-card-link {
+    margin-top: auto;
+    /* Pushes the link to the bottom of the card */
+    color: #3b5998;
+    /* Standard link blue, adjust if you prefer another shade */
+    text-decoration: none;
+    font-size: 15px;
+    padding-top: 20px;
+}
+
+.aff-card-link:hover {
+    text-decoration: underline;
+}
+
+/* Bottom CTA */
+.aff-bottom-cta {
+    margin-top: 50px;
+}
+
+/* =====================================================================
+   RESPONSIVE
+   ===================================================================== */
+@media (max-width: 992px) {
+    .aff-hero {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .aff-hero-content {
+        max-width: 100%;
+        margin-bottom: 40px;
+    }
+
+    .aff-hero-image-placeholder {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .aff-cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .aff-card {
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .aff-card:last-child {
+        border-bottom: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .aff-header {
+        padding: 20px 24px;
+    }
+
+    .aff-title {
+        font-size: 32px;
+    }
+}
+
+/* =====================================================================
+   AFFILIATE FOOTER
+   ===================================================================== */
+.aff-footer {
+    width: 100%;
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+    padding: 60px 20px 40px;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.aff-footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Columns Layout */
+.aff-footer-columns {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 60px;
+    gap: 40px;
+}
+
+.aff-footer-col {
+    flex: 1;
+    min-width: 140px;
+}
+
+.aff-footer-col-right {
+    text-align: right;
+    /* Aligns copyright and language to the right */
+    flex: 0 0 auto;
+    /* Prevents it from stretching too much */
+}
+
+/* Headings */
+.aff-footer-col h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 20px 0;
+}
+
+/* Links */
+.aff-footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.aff-footer-col ul li {
+    margin-bottom: 12px;
+}
+
+.aff-footer-col ul li a,
+.aff-footer-lang {
+    color: #3b5998;
+    /* Standard link blue */
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.aff-footer-col ul li a:hover,
+.aff-footer-lang:hover {
+    text-decoration: underline;
+}
+
+/* Copyright Text */
+.aff-footer-copyright {
+    font-size: 14px;
+    color: #333;
+    margin: 0 0 12px 0;
+}
+
+/* Language Switcher */
+.aff-footer-lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.lang-arrow {
+    font-size: 12px;
+    line-height: 1;
+}
+
+/* App Store Badges */
+.aff-footer-badges {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.aff-footer-badges a {
+    display: block;
+}
+
+.aff-footer-badges img {
+    height: 44px;
+    width: auto;
+    display: block;
+}
+
+/* Bottom Attribution */
+.aff-footer-credit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #555;
+}
+
+.bolt-icon {
+    display: inline-flex;
+    align-items: center;
+    color: #f4b400;
+    /* Yellow/Orange color matching the lightning bolt */
+}
+
+/* =====================================================================
+   RESPONSIVE
+   ===================================================================== */
+@media (max-width: 768px) {
+    .aff-footer {
+        padding: 40px 16px 30px;
+    }
+
+    .aff-footer-columns {
+        flex-direction: column;
+        gap: 32px;
+        margin-bottom: 48px;
+    }
+
+    .aff-footer-col-right {
+        text-align: left;
+    }
+
+    .aff-footer-badges {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .aff-footer-badges img {
+        height: 40px;
+    }
+}
