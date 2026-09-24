@@ -9,7 +9,15 @@ import Easter_Day from '../assets/Easter_Day.jpg';
 import halloween from '../assets/halloween.jpeg';
 import nurse from '../assets/nurse.png';
 import Valentine from '../assets/Valentine.jpeg';
-
+import dogs from "../assets/Navbar/dogs.jpg"
+import cats from "../assets/Navbar/cats.jpg"
+import goose from "../assets/Navbar/Goose.png"
+import bird from "../assets/Navbar/bird.jpg"
+import baphomet from "../assets/Navbar/baphomet.png"
+import bunny from "../assets/Navbar/bunny.png"
+import animals from "../assets/Navbar/wild_animal.jpeg"
+import sea_animals from "../assets/Navbar/sea_animal.jpeg"
+import dragon from "../assets/Navbar/dragons.jpg"
 /* =====================================================================
    NAV DATA
    ===================================================================== */
@@ -38,10 +46,15 @@ const NAV_ITEMS = [
   {
     id: 'animals', label: 'ANIMALS',
     children: [
-      { img: chrismis, label: 'Farm', href: '/collections/animals/farm' },
-      { img: chrismis, label: 'Ocean', href: '/collections/animals/ocean' },
-      { img: chrismis, label: 'Forest', href: '/collections/animals/forest' },
-      { img: chrismis, label: 'Pets', href: '/collections/animals/pets' },
+      { img: dogs, label: 'Farm', href: '/collections/animals/farm' },
+      { img: cats, label: 'Ocean', href: '/collections/animals/ocean' },
+      { img: goose, label: 'Forest', href: '/collections/animals/forest' },
+      { img: bird, label: 'Pets', href: '/collections/animals/pets' },
+      { img: baphomet, label: 'Pets', href: '/collections/animals/pets' },
+      { img: animals, label: 'Pets', href: '/collections/animals/pets' },
+      { img: sea_animals, label: 'Pets', href: '/collections/animals/pets' },
+      { img: dragon, label: 'Pets', href: '/collections/animals/pets' },
+
     ],
   },
   {

@@ -1,6 +1,6 @@
 import React from "react";
 import "./ReviewPage.css";
-import CommentData from "./CommentData";
+import CommentData from "../pages/CommentData";
 const ReviewsPage = () => {
     return (
         <div className="reviews-page">

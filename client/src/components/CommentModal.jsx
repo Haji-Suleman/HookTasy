@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "./CommentModal.css";
-
 const CommentModal = ({ isOpen, onClose, commentData }) => {
     const [activeImageIndex, setActiveImageIndex] = useState(0);
 
@@ -40,10 +39,10 @@ const CommentModal = ({ isOpen, onClose, commentData }) => {
                             className="modal-main-image"
                         />
 
-                        <button className="modal-arrow modal-arrow-left" onClick={handlePrevImage}>
+                        <button className="modal-arrow modal-arrow-left" onClick={handlePrevImage} aria-label="Previous image">
                             ‹
                         </button>
-                        <button className="modal-arrow modal-arrow-right" onClick={handleNextImage}>
+                        <button className="modal-arrow modal-arrow-right" onClick={handleNextImage} aria-label="Next image">
                             ›
                         </button>
                     </div>
@@ -75,7 +74,6 @@ const CommentModal = ({ isOpen, onClose, commentData }) => {
                         <div className="modal-user-text">
                             <div className="modal-user-header">
                                 <h3 className="modal-user-name">{commentData.name || "Diane W."}</h3>
-                                {/* Verified Badge Added Here */}
                                 {commentData.verified && (
                                     <span className="modal-verified-badge">Verified</span>
                                 )}

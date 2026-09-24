@@ -91,6 +91,13 @@
     color: #000;
 }
 
+.reviews-header p {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    text-align: center;
+    color: rgb(57, 56, 56);
+}
+
 .reviews-rating-summary {
     display: flex;
     align-items: center;
@@ -132,6 +139,12 @@
 
     .reviews-top-link-wrapper {
         margin-bottom: 40px;
+    }
+
+    .reviews-header p {
+        margin-top: 30px;
+        margin-bottom: 30px;
+        font-size: 14px;
     }
 }
 
