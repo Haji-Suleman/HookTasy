@@ -480,6 +480,7 @@
   transition: visibility 250ms;
   visibility: hidden;
   pointer-events: none;
+  height: 100vh;
 }
 
 .drawer-root--open {
