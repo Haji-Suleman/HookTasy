@@ -1,3 +1,4 @@
+import AboutUs from './pages/AboutUsPG';
 import HomePage from './pages/HomePage';
 import ReviewsPage from './pages/ReviewPage'
 import { Routes, Route, BrowserRouter } from "react-router-dom";
@@ -8,6 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/reviews" element={<ReviewsPage />} />
+        <Route path='/about' element={<AboutUs />} />
       </Routes>
     </BrowserRouter>
 
