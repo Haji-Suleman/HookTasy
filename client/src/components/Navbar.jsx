@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useId } from 'react';
 import logo from '../assets/001_HOOKTASY_Logo_a04e109e-6770-4265-bae0-f313fb1d6ed3 (1).png';
 import './Navbar.css';
+import PromoBar from './PromoBar';
 import bestseller from '../assets/bestseller.jpeg';
 import Bundle from '../assets/Bundle-main-image.jpg';
 import children from '../assets/children.jpg';
@@ -18,11 +19,10 @@ import bunny from "../assets/Navbar/bunny.png"
 import animals from "../assets/Navbar/wild_animal.jpeg"
 import sea_animals from "../assets/Navbar/sea_animal.jpeg"
 import dragon from "../assets/Navbar/dragons.jpg"
+import new_logo from "../assets/zootsy-logo-nobg.png"
 /* =====================================================================
    NAV DATA
    ===================================================================== */
-const ANNOUNCEMENTS = ['Pick 3 & Get 1 Small', 'Pick 5 & Get 2 Large'];
-
 const NAV_ITEMS = [
   { id: 'new', label: 'NEW', href: '/collections/new' },
   {
@@ -96,37 +96,12 @@ const Svg = ({ className = 'icon-md', children }) => (
   </svg>
 );
 
-const ChevronLeft = ({ className }) => <Svg className={className}><path d="M15 5l-7 7 7 7" /></Svg>;
-const ChevronRight = ({ className }) => <Svg className={className}><path d="M9 5l7 7-7 7" /></Svg>;
 const ChevronDown = ({ className = 'icon-sm' }) => <Svg className={className}><path d="M6 9l6 6 6-6" /></Svg>;
 const CloseIcon = ({ className }) => <Svg className={className}><path d="M5 5l14 14M19 5L5 19" /></Svg>;
 const SearchIcon = ({ className = 'icon-lg' }) => <Svg className={className}><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></Svg>;
 const UserIcon = ({ className = 'icon-lg' }) => <Svg className={className}><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a5 5 0 015-5h6a5 5 0 015 5v1" /></Svg>;
 const BagIcon = ({ className = 'icon-lg' }) => <Svg className={className}><path d="M5 8h14l-1 12H6L5 8z" /><path d="M9 8V6a3 3 0 016 0v2" /></Svg>;
 const MenuIcon = ({ className = 'icon-lg' }) => <Svg className={className}><path d="M4 7h16M4 12h16M4 17h16" /></Svg>;
-
-/* Reusable promo arrow — renders as <button> or a static <span> */
-function PromoArrow({ direction, onClick }) {
-  const Icon = direction === 'left' ? ChevronLeft : ChevronRight;
-  const base = 'promo-bar__nav-btn';
-  if (!onClick) {
-    return (
-      <span aria-hidden="true" className={`${base} ${base}--static`}>
-        <Icon className="icon-promo" />
-      </span>
-    );
-  }
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={direction === 'left' ? 'Previous announcement' : 'Next announcement'}
-      className={base}
-    >
-      <Icon className="icon-promo" />
-    </button>
-  );
-}
 
 /* =====================================================================
    NAVBAR
@@ -139,8 +114,6 @@ export default function Navbar({
   linkComponent: LinkComp = 'a',
   linkProp = 'href',
 }) {
-  const [promoVisible, setPromoVisible] = useState(true);
-  const [promoIndex, setPromoIndex] = useState(0);
   const [openMenu, setOpenMenu] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mobileOpenId, setMobileOpenId] = useState(null);
@@ -233,23 +206,6 @@ export default function Navbar({
     return () => window.removeEventListener('scroll', onScroll);
   }, [searchOpen, drawerOpen, openMenu]);
 
-  /* ─────────────────────────────────────────────────────────────────
-     PROMO BAR — swipe animation (index-based translateX)
-     ───────────────────────────────────────────────────────────────── */
-  const total = ANNOUNCEMENTS.length;
-  const canCycle = total > 1;
-  const intervalRef = useRef(null);
-
-  const goPrev = () => setPromoIndex((i) => (i - 1 + total) % total);
-  const goNext = () => setPromoIndex((i) => (i + 1) % total);
-
-  /* Auto-swipe every 4 seconds */
-  useEffect(() => {
-    if (!canCycle || !promoVisible) return undefined;
-    intervalRef.current = setInterval(goNext, 4000);
-    return () => clearInterval(intervalRef.current);
-  }, [canCycle, promoVisible, total]);
-
   /* Desktop dropdown keyboard handling */
   const focusMenuItem = (menuEl, index) => {
     const items = menuEl?.querySelectorAll('a');
@@ -301,43 +257,7 @@ export default function Navbar({
   return (
     <header className={`navbar-header${navHidden ? ' navbar-header--hidden' : ''}`}>
       {/* ── TOP PROMO BAR ── */}
-      {promoVisible && (
-        <div role="region" aria-label="Promotions" className="promo-bar">
-          <div className="promo-bar__inner">
-            <PromoArrow direction="left" onClick={canCycle ? goPrev : undefined} />
-
-            {/* Sliding track — each announcement is one slide */}
-            <div className="promo-viewport">
-              <div
-                className="promo-track"
-                style={{ transform: `translateX(-${promoIndex * 100}%)` }}
-              >
-                {ANNOUNCEMENTS.map((text, i) => (
-                  <p
-                    key={text}
-                    className="promo-text"
-                    aria-live={i === promoIndex ? 'polite' : 'off'}
-                    aria-hidden={i !== promoIndex}
-                  >
-                    {text}
-                  </p>
-                ))}
-              </div>
-            </div>
-
-            <PromoArrow direction="right" onClick={canCycle ? goNext : undefined} />
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setPromoVisible(false)}
-            aria-label="Close announcement bar"
-            className="promo-bar__close-btn"
-          >
-            <CloseIcon className="icon-close-promo" />
-          </button>
-        </div>
-      )}
+      <PromoBar />
 
       {/* ── MAIN NAV ── */}
       <div ref={navRef} className="navbar-main">
@@ -357,7 +277,7 @@ export default function Navbar({
             </button>
 
             <L to="/" aria-label="Home" className="navbar-logo-link">
-              <img src={logo} alt="Hooktasy logo" className="navbar-logo-img" />
+              <img src={new_logo} alt="Hooktasy logo" className="navbar-logo-img" />
             </L>
           </div>
 
