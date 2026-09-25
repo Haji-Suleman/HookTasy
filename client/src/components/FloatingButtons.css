@@ -1,0 +1,92 @@
+.floating-actions {
+    --c-green: #3b8733;
+
+    position: fixed;
+    right: clamp(14px, 3vw, 24px);
+    bottom: clamp(14px, 3vw, 24px);
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.floating-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+/* Grow on hover / keyboard focus */
+.floating-btn:hover,
+.floating-btn:focus-visible {
+    transform: scale(1.12);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+}
+
+.floating-btn:active {
+    transform: scale(1.04);
+}
+
+.floating-btn--chat {
+    width: 56px;
+    height: 56px;
+    background-color: #fff;
+    color: #111;
+    border: 2px solid #111;
+}
+
+.floating-btn--cart {
+    width: 64px;
+    height: 64px;
+    background-color: var(--c-green);
+    color: #fff;
+}
+
+.floating-btn__badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background-color: #e0342a;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    border: 2px solid #fff;
+}
+
+@media (max-width: 480px) {
+    .floating-btn--chat {
+        width: 48px;
+        height: 48px;
+    }
+
+    .floating-btn--chat img {
+        width: 22px;
+        height: 22px;
+    }
+
+    .floating-btn--cart {
+        width: 56px;
+        height: 56px;
+    }
+
+    .floating-btn--cart img {
+        width: 22px;
+        height: 22px;
+    }
+}

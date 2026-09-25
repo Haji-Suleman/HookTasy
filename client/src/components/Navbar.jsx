@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback, useId } from 'react';
 import logo from '../assets/001_HOOKTASY_Logo_a04e109e-6770-4265-bae0-f313fb1d6ed3 (1).png';
 import './Navbar.css';
+import CartDrawer from './Cartdrawer';
+import FloatingButtons from './FloatingButtons';
 import bestseller from '../assets/bestseller.jpeg';
 import Bundle from '../assets/Bundle-main-image.jpg';
 import children from '../assets/children.jpg';
@@ -14,10 +16,10 @@ import cats from "../assets/Navbar/cats.jpg"
 import goose from "../assets/Navbar/Goose.png"
 import bird from "../assets/Navbar/bird.jpg"
 import baphomet from "../assets/Navbar/baphomet.png"
+import bunny from "../assets/Navbar/bunny.png"
 import animals from "../assets/Navbar/wild_animal.jpeg"
 import sea_animals from "../assets/Navbar/sea_animal.jpeg"
 import dragon from "../assets/Navbar/dragons.jpg"
-import new_logo from "../assets/zootsy-logo-nobg.png"
 /* =====================================================================
    NAV DATA
    ===================================================================== */
@@ -105,10 +107,16 @@ const MenuIcon = ({ className = 'icon-lg' }) => <Svg className={className}><path
    NAVBAR
    ===================================================================== */
 export default function Navbar({
-  cartCount = 3,
-  cartHref = '/cart',
+  cartItems = [],
   accountHref = '/account',
   onSearch,
+  onCartRemove,
+  onCartQtyChange,
+  onCheckout,
+  onChatClick,
+  continueShoppingHref = '/',
+  checkoutHref = '/checkout',
+  currency = 'Rs.',
   linkComponent: LinkComp = 'a',
   linkProp = 'href',
 }) {
@@ -118,6 +126,9 @@ export default function Navbar({
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [navHidden, setNavHidden] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+
+  const cartCount = cartItems.reduce((sum, item) => sum + item.qty, 0);
 
   const navRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -145,6 +156,7 @@ export default function Navbar({
         setOpenMenu(null);
         setDrawerOpen(false);
         setSearchOpen(false);
+        setCartOpen(false);
       }
     };
     document.addEventListener('mousedown', onPointerDown);
@@ -184,7 +196,7 @@ export default function Navbar({
       const y = window.scrollY;
       const delta = y - lastScrollY.current;
 
-      if (searchOpen || drawerOpen || openMenu !== null) {
+      if (searchOpen || drawerOpen || cartOpen || openMenu !== null) {
         setNavHidden(false);
         lastScrollY.current = y;
         return;
@@ -202,7 +214,7 @@ export default function Navbar({
 
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [searchOpen, drawerOpen, openMenu]);
+  }, [searchOpen, drawerOpen, cartOpen, openMenu]);
 
   /* Desktop dropdown keyboard handling */
   const focusMenuItem = (menuEl, index) => {
@@ -274,7 +286,7 @@ export default function Navbar({
             </button>
 
             <L to="/" aria-label="Home" className="navbar-logo-link">
-              <img src={new_logo} alt="Hooktasy logo" className="navbar-logo-img" />
+              <img src={logo} alt="Hooktasy logo" className="navbar-logo-img" />
             </L>
           </div>
 
@@ -350,14 +362,21 @@ export default function Navbar({
               <UserIcon />
             </L>
 
-            <L to={cartHref} aria-label={`Cart, ${cartCount} items`} className="icon-btn">
+            <button
+              type="button"
+              onClick={() => setCartOpen(true)}
+              aria-label={`Cart, ${cartCount} items`}
+              aria-haspopup="true"
+              aria-expanded={cartOpen}
+              className="icon-btn"
+            >
               <BagIcon />
               {cartCount > 0 && (
                 <span aria-hidden="true" className="cart-badge">
                   {cartCount > 99 ? '99+' : cartCount}
                 </span>
               )}
-            </L>
+            </button>
           </div>
         </div>
 
@@ -479,6 +498,28 @@ export default function Navbar({
           </div>
         </aside>
       </div>
+
+      {/* ── CART DRAWER ── */}
+      <CartDrawer
+        isOpen={cartOpen}
+        onClose={() => setCartOpen(false)}
+        items={cartItems}
+        currency={currency}
+        onRemove={onCartRemove}
+        onQtyChange={onCartQtyChange}
+        onCheckout={onCheckout}
+        continueShoppingHref={continueShoppingHref}
+        checkoutHref={checkoutHref}
+        linkComponent={LinkComp}
+        linkProp={linkProp}
+      />
+
+      {/* ── FLOATING CHAT + CART BUTTONS ── */}
+      <FloatingButtons
+        cartCount={cartCount}
+        onCartClick={() => setCartOpen(true)}
+        onChatClick={onChatClick}
+      />
     </header>
   );
 }
