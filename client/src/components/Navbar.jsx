@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useId } from 'react';
 import logo from '../assets/001_HOOKTASY_Logo_a04e109e-6770-4265-bae0-f313fb1d6ed3 (1).png';
 import './Navbar.css';
-import PromoBar from './PromoBar';
 import bestseller from '../assets/bestseller.jpeg';
 import Bundle from '../assets/Bundle-main-image.jpg';
 import children from '../assets/children.jpg';
@@ -15,7 +14,6 @@ import cats from "../assets/Navbar/cats.jpg"
 import goose from "../assets/Navbar/Goose.png"
 import bird from "../assets/Navbar/bird.jpg"
 import baphomet from "../assets/Navbar/baphomet.png"
-import bunny from "../assets/Navbar/bunny.png"
 import animals from "../assets/Navbar/wild_animal.jpeg"
 import sea_animals from "../assets/Navbar/sea_animal.jpeg"
 import dragon from "../assets/Navbar/dragons.jpg"
@@ -257,7 +255,6 @@ export default function Navbar({
   return (
     <header className={`navbar-header${navHidden ? ' navbar-header--hidden' : ''}`}>
       {/* ── TOP PROMO BAR ── */}
-      <PromoBar />
 
       {/* ── MAIN NAV ── */}
       <div ref={navRef} className="navbar-main">
