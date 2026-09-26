@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useId } from 'react';
 import logo from '../assets/zootsy-logo-nobg.png';
 import './Navbar.css';
-import CartDrawer from './Cartdrawer';
+import CartDrawer from "./Cartdrawer";
 import FloatingButtons from './FloatingButtons';
 import bestseller from '../assets/bestseller.jpeg';
 import Bundle from '../assets/Bundle-main-image.jpg';
