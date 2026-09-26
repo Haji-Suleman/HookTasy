@@ -18,7 +18,7 @@ const uploads = multer({ storage: storage });
 const foodRouter = express.Router();
 
 // POST route to handle adding food
-foodRouter.post("/add", uploads.single("image"), addFood);
+foodRouter.post("/add", uploads.array("images", 10), addFood);
 foodRouter.get("/list", listFood);
 foodRouter.post("/remove", removeFood);
 export default foodRouter;

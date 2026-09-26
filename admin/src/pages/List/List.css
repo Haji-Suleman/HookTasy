@@ -1,27 +1,335 @@
+.list.add {
+  animation: fadeInUp 400ms ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.list-table {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
 .list-table-format {
   display: grid;
-  grid-template-columns: 0.5fr 2fr 1fr 1fr 0.5fr;
+  grid-template-columns: 0.5fr 2fr 0.5fr 1fr 0.5fr 0.6fr;
   align-items: center;
   gap: 10px;
-  padding: 12px 15px;
-  border: 1px solid #cacaca;
+  padding: 14px 18px;
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
   font-size: 13px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  animation: rowIn 350ms ease backwards;
 }
+
+/* stagger the row entrance a little */
+.list-table-format:nth-child(1) {
+  animation-delay: 40ms;
+}
+
+.list-table-format:nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.list-table-format:nth-child(3) {
+  animation-delay: 120ms;
+}
+
+.list-table-format:nth-child(4) {
+  animation-delay: 160ms;
+}
+
+.list-table-format:nth-child(5) {
+  animation-delay: 200ms;
+}
+
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.list-table-format:not(.title):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  border-color: #d8d8d8;
+}
+
 .list-table-format.title {
-  background-color: #f9f9f9;
+  background-color: #fafafa;
+  border: none;
+  box-shadow: none;
+  color: #8a8a8a;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-size: 11px;
+  padding: 10px 18px;
+  animation: none;
 }
+
 .list-table-format img {
-  width: 50px;
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  transition: transform 200ms ease;
 }
+
+.list-table-format:hover img {
+  transform: scale(1.06);
+}
+
+.list-table-format p {
+  margin: 0;
+  color: #444;
+}
+
+/* category badge */
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  background-color: #eef6ec;
+  color: #3b8733;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+/* price */
+.price-tag {
+  font-weight: 600;
+  color: #222;
+}
+
+/* PDF badge/button */
+.pdf-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 5px 12px;
+  background-color: #f5f5f5;
+  color: #444;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid #e0e0e0;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, transform 150ms ease;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.pdf-badge:hover {
+  background-color: #e0342a;
+  color: #fff;
+  border-color: #e0342a;
+  transform: translateY(-1px);
+}
+
+.pdf-badge--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* delete action */
+.remove-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: #b0b0b0;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+.cursor:hover {
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  background-color: #fdecea;
+  color: #e0342a;
+  transform: scale(1.1);
+}
+
 @media (max-width: 600px) {
   .list-table-format {
-    grid-template-columns: 1fr 3fr 1fr;
-    gap: 15px;
+    grid-template-columns: 0.6fr 1.6fr 0.8fr 0.8fr 0.6fr 0.4fr;
+    gap: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    border-radius: 8px;
   }
+
   .list-table-format.title {
     display: none;
   }
+
+  .list-table-format img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .pdf-badge,
+  .category-badge {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
 }
-.cursor {
+
+/* ---------- Delete confirmation modal ---------- */
+
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: overlayFadeIn 180ms ease;
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.confirm-modal {
+  background-color: #fff;
+  border-radius: 14px;
+  padding: 28px 28px 22px;
+  width: min(360px, 90vw);
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  animation: modalPopIn 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.confirm-icon {
+  width: 46px;
+  height: 46px;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #fdecea;
+  color: #e0342a;
+  font-size: 22px;
+  font-weight: 800;
+  animation: iconPulse 900ms ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.confirm-modal h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  color: #222;
+}
+
+.confirm-modal p {
+  margin: 0 0 20px;
+  font-size: 13px;
+  color: #777;
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.confirm-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
+  transition: transform 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.confirm-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.confirm-btn--cancel {
+  background-color: #f1f1f1;
+  color: #444;
+}
+
+.confirm-btn--cancel:hover:not(:disabled) {
+  background-color: #e6e6e6;
+}
+
+.confirm-btn--delete {
+  background-color: #e0342a;
+  color: #fff;
+}
+
+.confirm-btn--delete:hover:not(:disabled) {
+  background-color: #c62b22;
+  box-shadow: 0 6px 14px rgba(224, 52, 42, 0.35);
+  transform: translateY(-1px);
 }

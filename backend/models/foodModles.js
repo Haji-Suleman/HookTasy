@@ -1,3 +1,4 @@
+// models/foodModles.js
 import mongoose from "mongoose";
 
 const foodSchema = new mongoose.Schema({
@@ -5,10 +6,10 @@ const foodSchema = new mongoose.Schema({
   description: { type: String, required: true },
   price: { type: Number, required: true },
   category: { type: String, required: true },
-  image: { type: String, required: true },
+  pdfLink: { type: String },
+  images: { type: [String], required: true }, // array instead of single string
 });
-const foodModel =
-  mongoose.model.products || mongoose.model("products", foodSchema);
-console.log(foodModel);
+
+const foodModel = mongoose.models.food || mongoose.model("food", foodSchema);
 
 export default foodModel;

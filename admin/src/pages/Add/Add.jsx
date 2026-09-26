@@ -39,7 +39,7 @@ const Add = ({ url }) => {
 
     const formData = new FormData();
     formData.append("name", data.name);
-    formData.append("pdf", data.pdfLink)
+    formData.append("pdfLink", data.pdfLink)
     formData.append("description", data.description);
     formData.append("price", Number(data.price));
     formData.append("category", data.category);
