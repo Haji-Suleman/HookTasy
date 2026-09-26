@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import './CartDrawer.css';
+import './Cartdrawer.css';
 
 /* =====================================================================
    ICONS
