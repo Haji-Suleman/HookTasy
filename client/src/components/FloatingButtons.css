@@ -24,6 +24,13 @@
     transition: transform 200ms ease, box-shadow 200ms ease;
 }
 
+.floating-btn img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    display: block;
+}
+
 /* Grow on hover / keyboard focus */
 .floating-btn:hover,
 .floating-btn:focus-visible {
@@ -48,6 +55,11 @@
     height: 64px;
     background-color: var(--c-green);
     color: #fff;
+}
+
+.floating-btn--cart img {
+    width: 28px;
+    height: 28px;
 }
 
 .floating-btn__badge {
@@ -75,18 +87,16 @@
         height: 48px;
     }
 
-    .floating-btn--chat img {
-        width: 22px;
-        height: 22px;
-    }
-
     .floating-btn--cart {
         width: 56px;
         height: 56px;
     }
 
+    .floating-btn--chat img,
     .floating-btn--cart img {
         width: 22px;
         height: 22px;
     }
 }
+
+/*https: //drive.google.com/file/d/1b8rusy8pu_xLyFhdYpEO-1QBPFRppaGS/view*/

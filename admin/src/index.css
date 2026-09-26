@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Outfit", Arial, Helvetica, sans-serif;
+}
+body {
+  min-height: 100vh;
+  background-color: #fcfcfc;
+}
+a {
+  text-decoration: none;
+  color: initial;
+}
+hr {
+  border: none;
+  height: 1px;
+  background-color: #a9a9a9;
+}
+.app-content {
+  display: flex;
+}
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.add-img-upload img {
+  width: 120px;
+}
+.add-product-name,
+.add-product-description {
+  width: max(40%, 280px);
+}
+.add-product-name input,
+.add-product-description textarea {
+  padding: 10px;
+}
+.add-category-price {
+  display: flex;
+  gap: 30px;
+}
+.add-category-price select,
+.add-category-price input {
+  max-width: 120px;
+  padding: 10px;
+}
+.add-btn {
+  max-width: 120px;
+  border: none;
+  padding: 10px;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+}

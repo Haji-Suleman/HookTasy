@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useId } from 'react';
-import logo from '../assets/zootsy-logo-nobg.png';
+import logo from '../assets/001_HOOKTASY_Logo_a04e109e-6770-4265-bae0-f313fb1d6ed3 (1).png';
 import './Navbar.css';
-import CartDrawer from "./Cartdrawer";
+import CartDrawer from './Cartdrawer';
 import FloatingButtons from './FloatingButtons';
 import bestseller from '../assets/bestseller.jpeg';
 import Bundle from '../assets/Bundle-main-image.jpg';
@@ -514,7 +514,12 @@ export default function Navbar({
         linkProp={linkProp}
       />
 
-
+      {/* ── FLOATING CHAT + CART BUTTONS ── */}
+      <FloatingButtons
+        cartCount={cartCount}
+        onCartClick={() => setCartOpen(true)}
+        onChatClick={onChatClick}
+      />
     </header>
   );
 }
