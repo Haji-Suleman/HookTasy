@@ -17,21 +17,34 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 
-// ✅ API Routes
-app.use("/api/food", foodRouter);
-app.use("/api/user", userRouter);
-app.use("/api/cart", cartRouter);
-app.use("/api/order", orderRouter);
-
-// ✅ DB Connection
-connectDB();
+// ✅ Ensure DB is connected before any route handles the request
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 // ✅ Test route
 app.get("/", (req, res) => {
   res.send("API working");
 });
 
-// ✅ Start server
+// ✅ API Routes
+app.use("/api/food", foodRouter);
+app.use("/api/user", userRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/order", orderRouter);
+
+// ✅ Error handler — must be LAST, after all routes
+app.use((err, req, res, next) => {
+  console.error("Server error:", err);
+  res.status(500).json({ success: false, message: "Something went wrong" });
+});
+
+// ✅ Start server (used for local dev; Vercel ignores this and calls the exported app directly)
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
