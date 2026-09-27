@@ -8,12 +8,11 @@ import {
 
 // Image Storage Engine
 const storage = multer.diskStorage({
-  destination: "uploads/",
+  destination: "/tmp",
   filename: (req, file, cb) => {
     return cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
-
 const uploads = multer({ storage: storage });
 const foodRouter = express.Router();
 
