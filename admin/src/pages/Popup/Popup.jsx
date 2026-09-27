@@ -46,7 +46,7 @@ const Popup = ({ item, url, onClose }) => {
                         <div className="popup-main-image">
                             {images.length > 0 ? (
                                 <img
-                                    src={`${url}/images/${images[activeIndex]}`}
+                                    src={images[activeIndex]}
                                     alt={item.name}
                                     key={activeIndex}
                                     className="popup-main-image-el"
@@ -69,10 +69,10 @@ const Popup = ({ item, url, onClose }) => {
 
                         {images.length > 1 && (
                             <div className="popup-thumbnails">
-                                {images.map((img, index) => (
+                                {images.map((imgUrl, index) => (
                                     <img
                                         key={index}
-                                        src={`${url}/images/${img}`}
+                                        src={imgUrl}
                                         alt={`thumb-${index}`}
                                         className={`popup-thumbnail ${index === activeIndex ? "popup-thumbnail--active" : ""}`}
                                         onClick={() => setActiveIndex(index)}
@@ -96,7 +96,7 @@ const Popup = ({ item, url, onClose }) => {
                     </div>
                 </div>
             </div>
-        </div >
+        </div>
     );
 };
 

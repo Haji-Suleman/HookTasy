@@ -67,7 +67,7 @@ const List = ({ url }) => {
           return (
             <div key={item._id ?? index} className='list-table-format'>
               <img
-                src={item.images && item.images.length > 0 ? `${url}/images/${item.images[0]}` : ""}
+                src={item.images && item.images.length > 0 ? item.images[0] : ""}
                 alt=""
                 loading='lazy'
                 onClick={() => setSelectedItem(item)}
