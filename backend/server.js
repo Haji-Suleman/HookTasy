@@ -5,25 +5,17 @@ import foodRouter from "./routes/foodRoute.js";
 import compression from "compression";
 import userRouter from "./routes/userRoute.js";
 import "dotenv/config";
-import path from "path";
 import cartRouter from "./routes/cartRoute.js";
 import orderRouter from "./routes/orderRoute.js";
-import { fileURLToPath } from "url";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // ✅ Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(compression()); // compress response bodies
-
-// ✅ Static folder for uploaded images
-app.use("/images", express.static(path.join(__dirname, "uploads")));
+app.use(compression());
 
 // ✅ API Routes
 app.use("/api/food", foodRouter);
@@ -43,3 +35,5 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
+
+export default app;

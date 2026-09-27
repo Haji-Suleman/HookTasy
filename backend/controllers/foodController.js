@@ -1,5 +1,7 @@
 import foodModel from "../models/foodModles.js";
-import fs from "fs";
+
+import { v2 as cloudinary } from "cloudinary";
+
 
 const addFood = async (req, res) => {
   // req.files comes from multer's upload.array("images", n)
@@ -7,7 +9,7 @@ const addFood = async (req, res) => {
     return res.status(400).send("At least one image is required");
   }
 
-  const image_filenames = req.files.map((file) => file.filename);
+  const image_filenames = req.files.map((file) => file.path);
 
   const { name, description, price, category, pdfLink } = req.body;
   if (!name || !description || !price || !category || !pdfLink) {
@@ -56,14 +58,18 @@ const removeFood = async (req, res) => {
 
     await foodModel.findByIdAndDelete(req.body.id);
 
-    // remove every image associated with this food item
     if (Array.isArray(food.images)) {
-      food.images.forEach((imgName) => {
-        fs.unlink(`uploads/${imgName}`, (err) => {
-          if (err) console.log("Error removing image:", imgName, err);
-          else console.log("Image removed:", imgName);
+      for (const imgUrl of food.images) {
+        // Extract Cloudinary public_id from the URL
+        const parts = imgUrl.split("/");
+        const fileWithExt = parts[parts.length - 1];
+        const publicId = `zootsy-food/${fileWithExt.split(".")[0]}`;
+
+        cloudinary.uploader.destroy(publicId, (err, result) => {
+          if (err) console.log("Error removing image:", publicId, err);
+          else console.log("Image removed:", publicId, result);
         });
-      });
+      }
     }
 
     res.json({ success: true, message: "Food removed" });
@@ -71,6 +77,6 @@ const removeFood = async (req, res) => {
     console.error(error);
     res.json({ success: false, message: "Error" });
   }
-};
+}
 
 export { addFood, listFood, removeFood };
