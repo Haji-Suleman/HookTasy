@@ -4,7 +4,8 @@ import { assets } from '../../assets/assets'
 import { toast } from 'react-toastify'
 
 const Add = ({ url }) => {
-  const [images, setImages] = useState([]); // array of File objects
+  const [images, setImages] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [data, setData] = useState({
     name: "",
     pdfLink: "",
@@ -21,7 +22,6 @@ const Add = ({ url }) => {
   const onImageChangeHandler = (event) => {
     const files = Array.from(event.target.files);
     setImages((prev) => [...prev, ...files]);
-    // allow re-selecting the same file(s) again later
     event.target.value = "";
   };
 
@@ -32,19 +32,22 @@ const Add = ({ url }) => {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
 
+    if (isSubmitting) return; // guard against double-clicks
+
     if (images.length === 0) {
       toast.error("Please upload at least one image");
       return;
     }
 
+    setIsSubmitting(true);
+
     const formData = new FormData();
     formData.append("name", data.name);
-    formData.append("pdfLink", data.pdfLink)
+    formData.append("pdfLink", data.pdfLink);
     formData.append("description", data.description);
     formData.append("price", Number(data.price));
     formData.append("category", data.category);
 
-    // append each image; backend should read multiple files under "images"
     images.forEach((img) => {
       formData.append("images", img);
     });
@@ -70,6 +73,8 @@ const Add = ({ url }) => {
       }
     } catch (error) {
       toast.error("Network Error");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -105,25 +110,26 @@ const Add = ({ url }) => {
             accept="image/*"
             multiple
             hidden
+            disabled={isSubmitting}
           />
         </div>
 
         <div className="add-product-name flex-col">
           <p>Product name</p>
-          <input onChange={onChangeHandler} value={data.name} type="text" name='name' placeholder='Type here' required />
+          <input onChange={onChangeHandler} value={data.name} type="text" name='name' placeholder='Type here' required disabled={isSubmitting} />
         </div>
         <div className="add-product-name flex-col">
           <p>PDF link</p>
-          <input onChange={onChangeHandler} value={data.pdfLink} type="text" name='pdfLink' placeholder='Type here' required />
+          <input onChange={onChangeHandler} value={data.pdfLink} type="text" name='pdfLink' placeholder='Type here' required disabled={isSubmitting} />
         </div>
         <div className="add-product-description flex-col">
           <p>Product Description</p>
-          <textarea onChange={onChangeHandler} value={data.description} name="description" rows="6" placeholder='Write content here' required></textarea>
+          <textarea onChange={onChangeHandler} value={data.description} name="description" rows="6" placeholder='Write content here' required disabled={isSubmitting}></textarea>
         </div>
         <div className="add-category-price">
           <div className="add-category flex-col">
             <p>Product category</p>
-            <select onChange={onChangeHandler} name="category" value={data.category}>
+            <select onChange={onChangeHandler} name="category" value={data.category} disabled={isSubmitting}>
               <option value="Salad">Salad</option>
               <option value="Rolls">Rolls</option>
               <option value="Deserts">Deserts</option>
@@ -136,11 +142,20 @@ const Add = ({ url }) => {
           </div>
           <div className="add-price flex-col">
             <p>Product price</p>
-            <input onChange={onChangeHandler} value={data.price} type="Number" name='price' placeholder='$20' required />
+            <input onChange={onChangeHandler} value={data.price} type="Number" name='price' placeholder='$20' required disabled={isSubmitting} />
           </div>
         </div>
 
-        <button type='submit' className='add-btn'>ADD</button>
+        <button type='submit' className='add-btn' disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <span className="spinner"></span>
+              Adding...
+            </>
+          ) : (
+            "ADD"
+          )}
+        </button>
       </form>
     </div>
   );
