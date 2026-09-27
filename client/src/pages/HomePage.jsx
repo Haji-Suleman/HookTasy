@@ -5,11 +5,13 @@ import Footer from './Footer'
 import Navbar from '../components/Navbar'
 import ReviewsPage from '../components/ReviewPage'
 import PromoBar from '../components/PromoBar'
+import NewestCollection from "../components/NewestCollection"
 const HomePage = () => {
     return (
         <>
             <PromoBar />
             <Navbar />
+            <NewestCollection />
             <ReviewsPage />
             <AboutUs />
             <Footer />
