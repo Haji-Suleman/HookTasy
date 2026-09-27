@@ -90,7 +90,7 @@ const List = ({ url }) => {
                 <p onClick={() => setSelectedItem(item)} style={{ cursor: 'pointer' }}>
                   {item.name}
                 </p>
-                <a href={item.pdfLink} target="_blank" rel="noopener noreferrer">pdf</a>
+                <a href={item.pdfLink} target="_blank" rel="noopener noreferrer">PDF link</a>
                 <p>{item.category}</p>
                 <p>{item.price}</p>
                 <p className='cursor' onClick={() => confirmRemove(item)}>X</p>
