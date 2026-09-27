@@ -6,17 +6,24 @@ import Popup from "../Popup/Popup"
 
 const List = ({ url }) => {
   const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [confirmTarget, setConfirmTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
   const fetchList = async () => {
-    const response = await axios.get(`${url}/api/food/list`)
-    if (response.data.success) {
-      setList(response.data.data)
-    }
-    else {
-      toast.error("Error Ocurred")
+    setLoading(true);
+    try {
+      const response = await axios.get(`${url}/api/food/list`)
+      if (response.data.success) {
+        setList(response.data.data)
+      } else {
+        toast.error("Error Ocurred")
+      }
+    } catch (error) {
+      toast.error("Network Error")
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,36 +61,44 @@ const List = ({ url }) => {
   return (
     <div className='list add flex-col'>
       <p>All Foods List</p>
-      <div className="list-table">
-        <div className="list-table-format title">
-          <b>Image</b>
-          <b>Name</b>
-          <b>PDF</b>
-          <b>Category</b>
-          <b>Price</b>
-          <b>Action</b>
+
+      {loading ? (
+        <div className="list-loader">
+          <span className="spinner-large"></span>
+          <p>Loading items...</p>
         </div>
-        {list.map((item, index) => {
-          return (
-            <div key={item._id ?? index} className='list-table-format'>
-              <img
-                src={item.images && item.images.length > 0 ? item.images[0] : ""}
-                alt=""
-                loading='lazy'
-                onClick={() => setSelectedItem(item)}
-                style={{ cursor: 'pointer' }}
-              />
-              <p onClick={() => setSelectedItem(item)} style={{ cursor: 'pointer' }}>
-                {item.name}
-              </p>
-              <a href={item.pdfLink} target="_blank" rel="noopener noreferrer">pdf</a>
-              <p>{item.category}</p>
-              <p>{item.price}</p>
-              <p className='cursor' onClick={() => confirmRemove(item)}>X</p>
-            </div>
-          )
-        })}
-      </div>
+      ) : (
+        <div className="list-table">
+          <div className="list-table-format title">
+            <b>Image</b>
+            <b>Name</b>
+            <b>PDF</b>
+            <b>Category</b>
+            <b>Price</b>
+            <b>Action</b>
+          </div>
+          {list.map((item, index) => {
+            return (
+              <div key={item._id ?? index} className='list-table-format'>
+                <img
+                  src={item.images && item.images.length > 0 ? item.images[0] : ""}
+                  alt=""
+                  loading='lazy'
+                  onClick={() => setSelectedItem(item)}
+                  style={{ cursor: 'pointer' }}
+                />
+                <p onClick={() => setSelectedItem(item)} style={{ cursor: 'pointer' }}>
+                  {item.name}
+                </p>
+                <a href={item.pdfLink} target="_blank" rel="noopener noreferrer">pdf</a>
+                <p>{item.category}</p>
+                <p>{item.price}</p>
+                <p className='cursor' onClick={() => confirmRemove(item)}>X</p>
+              </div>
+            )
+          })}
+        </div>
+      )}
 
       {confirmTarget && (
         <div className="confirm-overlay" onClick={cancelRemove}>
