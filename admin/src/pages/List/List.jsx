@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { toast } from "react-toastify";
 import "./List.css";
 import axios from 'axios';
-import Popup from '../Popup/popup';
+import Popup from "../Popup/Popup"
 
 const List = ({ url }) => {
   const [list, setList] = useState([]);
