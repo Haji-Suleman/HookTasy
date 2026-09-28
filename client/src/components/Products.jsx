@@ -8,7 +8,7 @@ const PLACEHOLDER =
 
 const onImgError = (e) => { e.currentTarget.src = PLACEHOLDER; };
 
-function Price({ p }) {
+export function Price({ p }) {
     return (
         <p className="price">
             {money(p.price)}
@@ -18,7 +18,7 @@ function Price({ p }) {
 }
 
 /* ---------- product popup ---------- */
-function Detail({ p, onClose }) {
+export function Detail({ p, onClose }) {
     const { addToCart } = useStore();
     const [idx, setIdx] = useState(0);
     const [added, setAdded] = useState(false);

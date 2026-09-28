@@ -7,6 +7,7 @@ import ReviewsPage from '../components/ReviewPage'
 import PromoBar from '../components/PromoBar'
 import NewestCollection from "../components/NewestCollection"
 import Products from '../components/Products'
+import HotPatterns from '../components/HotPatterns'
 const HomePage = () => {
     return (
         <>
@@ -15,6 +16,7 @@ const HomePage = () => {
             <NewestCollection />
             <Products />
             <ReviewsPage />
+            <HotPatterns />
             <AboutUs />
             <Footer />
         </>

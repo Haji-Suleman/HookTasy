@@ -1,0 +1,82 @@
+/* HotPatterns: section wrapper, the two headings and the category tabs.
+   Cards, grid, price, buttons and the product popup come from products.css (scoped under .zp). */
+
+.hp-section {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 64px clamp(16px, 4.5vw, 64px) 96px;
+}
+
+/* ---------- the two headings ---------- */
+.hp-head {
+    margin: 0 0 clamp(28px, 4vw, 56px);
+    text-align: center;
+    font-weight: 400;
+}
+
+.hp-title,
+.hp-sub {
+    display: block;
+    font-weight: 400;
+    font-size: clamp(1.9rem, 4.4vw, 3.75rem);
+    line-height: 1.15;
+}
+
+.hp-title {
+    margin-bottom: clamp(12px, 2vw, 28px);
+}
+
+.hp-sub {
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+}
+
+/* ---------- tabs ---------- */
+.hp-tabs {
+    display: flex;
+    gap: clamp(24px, 4.5vw, 64px);
+    margin: 0 0 clamp(32px, 4vw, 64px);
+    padding: 0 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.hp-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+/* auto-margin pseudo elements centre the tabs, and let them scroll from the left when they overflow */
+.hp-tabs::before,
+.hp-tabs::after {
+    content: "";
+    margin: auto;
+}
+
+.hp-tab {
+    flex: none;
+    font: inherit;
+    font-size: clamp(1.1rem, 1.75vw, 1.9rem);
+    color: var(--zp-muted);
+    background: none;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    padding: 6px 0 10px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.hp-tab:hover {
+    color: var(--zp-ink);
+}
+
+.hp-tab[aria-selected="true"] {
+    color: var(--zp-ink);
+    border-bottom-color: var(--zp-ink);
+}
+
+@media (max-width: 480px) {
+    .hp-section {
+        padding-top: 40px;
+        padding-bottom: 64px;
+    }
+}
