@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 // Vite reads VITE_API_URL from .env; falls back to the live backend
 export const API_URL = (import.meta.env.VITE_API_URL || "https://zootsy-backend.vercel.app").replace(/\/$/, "");
 export const LIST_PATH = "/api/food/list"; // mounted as app.use("/api/food", foodRouter)
-export const CURRENCY = "Rs.";
+export const CURRENCY = "$";
 
 /* ---------- helpers ---------- */
 export const money = (n) =>

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { money, useStore } from "../StoreContext";
-import "./products.css";
+import "./Products.css";
 
 const PLACEHOLDER =
     "data:image/svg+xml;utf8," +
