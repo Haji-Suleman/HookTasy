@@ -1,9 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 /* ---------- CONFIG ---------- */
-// Vite reads VITE_API_URL from .env; falls back to the live backend
 export const API_URL = (import.meta.env.VITE_API_URL || "https://zootsy-backend.vercel.app").replace(/\/$/, "");
-export const LIST_PATH = "/api/food/list"; // mounted as app.use("/api/food", foodRouter)
+export const LIST_PATH = "/api/food/list";
 export const CURRENCY = "$";
 
 /* ---------- helpers ---------- */
@@ -14,7 +13,6 @@ const pick = (o, keys) => {
     for (const k of keys) if (o[k] !== undefined && o[k] !== null && o[k] !== "") return o[k];
 };
 
-// The backend may return [..] or { data: [..] } / { products: [..] } etc.
 function extractList(data) {
     if (Array.isArray(data)) return data;
     if (data && typeof data === "object") {
@@ -62,10 +60,13 @@ export function StoreProvider({ children }) {
     const [status, setStatus] = useState("loading"); // "loading" | "ready" | "error"
     const [error, setError] = useState("");
     const [cart, setCart] = useState(() => {
-        try { return JSON.parse(localStorage.getItem("cart") || "[]"); } catch { return []; }
+        try {
+            const raw = JSON.parse(localStorage.getItem("cart") || "[]");
+            return Array.isArray(raw) ? raw : [];
+        } catch { return []; }
     });
 
-    /* fetch the list from `${API_URL}/list` */
+    /* fetch the list */
     const loadProducts = useCallback(async (signal) => {
         setStatus("loading");
         setError("");
@@ -89,18 +90,36 @@ export function StoreProvider({ children }) {
         return () => controller.abort();
     }, [loadProducts]);
 
-    /* keep the cart between visits */
+    /* persist cart */
     useEffect(() => {
         try { localStorage.setItem("cart", JSON.stringify(cart)); } catch { }
     }, [cart]);
 
-    /* cart actions */
-    const addToCart = useCallback((id) => {
-        setCart((c) =>
-            c.some((i) => String(i.id) === String(id))
-                ? c.map((i) => (String(i.id) === String(id) ? { ...i, qty: i.qty + 1 } : i))
-                : [...c, { id, qty: 1 }]
-        );
+    /* cart actions — addToCart now takes the FULL product */
+    const addToCart = useCallback((product) => {
+        if (!product || product.id == null) return;
+        setCart((c) => {
+            const idx = c.findIndex((i) => String(i.id) === String(product.id));
+            if (idx >= 0) {
+                const next = c.slice();
+                next[idx] = { ...next[idx], qty: next[idx].qty + 1 };
+                return next;
+            }
+            return [
+                ...c,
+                {
+                    id: product.id,
+                    qty: 1,
+                    snapshot: {
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        compare: product.compare,
+                        images: product.images,
+                    },
+                },
+            ];
+        });
     }, []);
 
     const decreaseItem = useCallback((id) => {
@@ -118,11 +137,16 @@ export function StoreProvider({ children }) {
     /* derived values */
     const categories = useMemo(() => [...new Set(products.map((p) => p.category).filter(Boolean))], [products]);
 
+    /* Live lookup first, snapshot fallback second → never silently drops an item */
     const cartItems = useMemo(
         () =>
             cart
-                .map((i) => ({ ...i, product: products.find((p) => String(p.id) === String(i.id)) }))
-                .filter((i) => i.product),
+                .map((i) => {
+                    const live = products.find((p) => String(p.id) === String(i.id));
+                    const product = live || i.snapshot;
+                    return product ? { id: i.id, qty: i.qty, product } : null;
+                })
+                .filter(Boolean),
         [cart, products]
     );
     const cartCount = cartItems.reduce((s, i) => s + i.qty, 0);

@@ -2,20 +2,9 @@ import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import './Cartdrawer.css';
 
-/* =====================================================================
-   ICONS
-   ===================================================================== */
 const CloseIcon = ({ className = 'icon-md' }) => (
-    <svg
-        viewBox="0 0 24 24"
-        className={className}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-    >
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor"
+        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M5 5l14 14M19 5L5 19" />
     </svg>
 );
@@ -32,9 +21,6 @@ const PlusIcon = () => (
     </svg>
 );
 
-/* =====================================================================
-   CART DRAWER
-   ===================================================================== */
 export default function CartDrawer({
     isOpen,
     onClose,
@@ -55,16 +41,13 @@ export default function CartDrawer({
     const subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
     const format = (n) => `${currency}${n.toLocaleString()}`;
 
-    /* Lock body scroll + close on Escape while open */
     useEffect(() => {
         if (!isOpen) return undefined;
         const prevOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
         closeBtnRef.current?.focus();
 
-        const onKey = (e) => {
-            if (e.key === 'Escape') onClose?.();
-        };
+        const onKey = (e) => { if (e.key === 'Escape') onClose?.(); };
         document.addEventListener('keydown', onKey);
         return () => {
             document.body.style.overflow = prevOverflow;
@@ -106,12 +89,7 @@ export default function CartDrawer({
                     {items.length === 0 ? (
                         <div className="cart-drawer-empty">
                             <p className="cart-drawer-empty__text">Your Cart is Empty</p>
-                            <L
-                                to={continueShoppingHref}
-                                tabIndex={isOpen ? 0 : -1}
-                                onClick={onClose}
-                                className="cart-drawer-continue"
-                            >
+                            <L to={continueShoppingHref} tabIndex={isOpen ? 0 : -1} onClick={onClose} className="cart-drawer-continue">
                                 Continue Shopping
                             </L>
                         </div>
@@ -132,35 +110,24 @@ export default function CartDrawer({
                                         </div>
 
                                         <div className="cart-drawer-item__qty" role="group" aria-label={`Quantity for ${item.name}`}>
-                                            <button
-                                                type="button"
-                                                tabIndex={isOpen ? 0 : -1}
+                                            <button type="button" tabIndex={isOpen ? 0 : -1}
                                                 onClick={() => onQtyChange?.(item.id, Math.max(1, item.qty - 1))}
-                                                aria-label="Decrease quantity"
-                                                className="cart-drawer-item__qty-btn"
-                                            >
+                                                aria-label="Decrease quantity" className="cart-drawer-item__qty-btn">
                                                 <MinusIcon />
                                             </button>
                                             <span className="cart-drawer-item__qty-value">{item.qty}</span>
-                                            <button
-                                                type="button"
-                                                tabIndex={isOpen ? 0 : -1}
+                                            <button type="button" tabIndex={isOpen ? 0 : -1}
                                                 onClick={() => onQtyChange?.(item.id, item.qty + 1)}
-                                                aria-label="Increase quantity"
-                                                className="cart-drawer-item__qty-btn"
-                                            >
+                                                aria-label="Increase quantity" className="cart-drawer-item__qty-btn">
                                                 <PlusIcon />
                                             </button>
                                         </div>
                                     </div>
 
-                                    <button
-                                        type="button"
-                                        tabIndex={isOpen ? 0 : -1}
+                                    <button type="button" tabIndex={isOpen ? 0 : -1}
                                         onClick={() => onRemove?.(item.id)}
                                         aria-label={`Remove ${item.name} from cart`}
-                                        className="cart-drawer-item__remove"
-                                    >
+                                        className="cart-drawer-item__remove">
                                         <CloseIcon className="icon-sm" />
                                     </button>
                                 </li>
@@ -175,12 +142,7 @@ export default function CartDrawer({
                             <span>Subtotal</span>
                             <span className="cart-drawer-subtotal__value">{format(subtotal)}</span>
                         </div>
-                        <L
-                            to={checkoutHref}
-                            tabIndex={isOpen ? 0 : -1}
-                            onClick={onCheckout}
-                            className="cart-drawer-checkout"
-                        >
+                        <L to={checkoutHref} tabIndex={isOpen ? 0 : -1} onClick={onCheckout} className="cart-drawer-checkout">
                             Checkout
                         </L>
                     </div>

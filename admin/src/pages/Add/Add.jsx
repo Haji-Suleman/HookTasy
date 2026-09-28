@@ -11,7 +11,7 @@ const Add = ({ url }) => {
     pdfLink: "",
     description: "",
     price: "",
-    category: "Salad"
+    category: "Halloween"
   });
 
   const onChangeHandler = (event) => {

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { money, useStore } from "../StoreContext";
+import CartDrawer from "./Cartdrawer";
 import "./Products.css";
 
 const PLACEHOLDER =
@@ -52,7 +53,8 @@ export function Detail({ p, onClose }) {
                         <h2>{p.name}</h2>
                         <Price p={p} />
                         {p.description && <p className="d-desc">{p.description}</p>}
-                        <button className="add" onClick={() => { addToCart(p.id); setAdded(true); }}>
+                        {/* pass the whole product so the cart can snapshot it */}
+                        <button className="add" onClick={() => { addToCart(p); setAdded(true); }}>
                             {added ? "ADDED" : "ADD TO CART"}
                         </button>
                     </div>
@@ -62,42 +64,12 @@ export function Detail({ p, onClose }) {
     );
 }
 
-/* ---------- cart drawer ---------- */
-function CartDrawer({ onClose }) {
-    const { cartItems, cartTotal, addToCart, decreaseItem, removeFromCart, clearCart } = useStore();
-    return (
-        <div className="overlay side" onClick={onClose}>
-            <aside className="drawer" role="dialog" aria-modal="true" aria-label="Cart" onClick={(e) => e.stopPropagation()}>
-                <h2>Your cart</h2>
-                <ul className="c-list">
-                    {cartItems.length === 0 && <li className="c-empty">Your cart is empty.</li>}
-                    {cartItems.map(({ product: p, qty }) => (
-                        <li key={p.id}>
-                            <img src={p.images[0] || PLACEHOLDER} alt="" onError={onImgError} />
-                            <div>
-                                {p.name}
-                                <small>{money(p.price)}</small>
-                                <div className="qty">
-                                    <button onClick={() => decreaseItem(p.id)} aria-label={`Remove one ${p.name}`}>&minus;</button>
-                                    <span>{qty}</span>
-                                    <button onClick={() => addToCart(p.id)} aria-label={`Add one ${p.name}`}>+</button>
-                                </div>
-                            </div>
-                            <button className="rm" onClick={() => removeFromCart(p.id)}>Remove</button>
-                        </li>
-                    ))}
-                </ul>
-                <div className="total"><span>Total</span><span>{money(cartTotal)}</span></div>
-                {cartItems.length > 0 && <button className="link" onClick={clearCart}>Clear cart</button>}
-                <button className="add" onClick={onClose}>Close</button>
-            </aside>
-        </div>
-    );
-}
-
 /* ---------- main component ---------- */
 export default function Products() {
-    const { products, categories, status, error, refresh, cartCount, addToCart } = useStore();
+    const {
+        products, categories, status, error, refresh,
+        cartCount, cartItems, addToCart, decreaseItem, removeFromCart,
+    } = useStore();
     const [filter, setFilter] = useState("All");
     const [query, setQuery] = useState("");
     const [selectedId, setSelectedId] = useState(null);
@@ -112,6 +84,26 @@ export default function Products() {
 
     const current = selectedId !== null ? products.find((p) => String(p.id) === String(selectedId)) : null;
     const overlayOpen = Boolean(current) || cartOpen;
+
+    /* Map context cart shape → CartDrawer's expected shape */
+    const drawerItems = useMemo(
+        () =>
+            cartItems.map(({ product: p, qty }) => ({
+                id: p.id,
+                name: p.name,
+                price: p.price,
+                originalPrice: p.compare,
+                qty,
+                image: (p.images && p.images[0]) || PLACEHOLDER,
+            })),
+        [cartItems]
+    );
+
+    const handleQtyChange = (id, nextQty) => {
+        const cur = cartItems.find((i) => String(i.product.id) === String(id))?.qty ?? 0;
+        if (nextQty > cur) addToCart(cartItems.find((i) => String(i.product.id) === String(id)).product);
+        else if (nextQty < cur) decreaseItem(id);
+    };
 
     /* Escape closes popups; page does not scroll behind them */
     useEffect(() => {
@@ -181,7 +173,8 @@ export default function Products() {
                                 </button>
                                 <button className="name" onClick={() => setSelectedId(p.id)}>{p.name}</button>
                                 <Price p={p} />
-                                <button className="add" onClick={() => addToCart(p.id)}>ADD TO CART</button>
+                                {/* pass the whole product so the cart can snapshot it */}
+                                <button className="add" onClick={() => addToCart(p)}>ADD TO CART</button>
                             </article>
                         ))}
                 </section>
@@ -196,7 +189,18 @@ export default function Products() {
             </button>
 
             {current && <Detail key={current.id} p={current} onClose={() => setSelectedId(null)} />}
-            {cartOpen && <CartDrawer onClose={() => setCartOpen(false)} />}
+
+            <CartDrawer
+                isOpen={cartOpen}
+                onClose={() => setCartOpen(false)}
+                items={drawerItems}
+                currency="$"
+                onRemove={removeFromCart}
+                onQtyChange={handleQtyChange}
+                onCheckout={() => setCartOpen(false)}
+                continueShoppingHref="/"
+                checkoutHref="/checkout"
+            />
         </div>
     );
 }
