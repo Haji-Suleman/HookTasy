@@ -12,7 +12,12 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 // ✅ Middlewares
-app.use(cors({ origin: "https://admin-iota-gray-50.vercel.app" }));
+const allowedOrigins = [
+  "https://admin-iota-gray-50.vercel.app",   // admin panel
+  "https://hook-tasy.vercel.app",           // the storefront (replace with the real address)
+  "http://localhost:5173",                   // local dev
+  "http://localhost:5174",                   // add any other local port you use
+];
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());

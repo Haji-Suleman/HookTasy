@@ -1,0 +1,504 @@
+@import url("https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap");
+
+:root {
+    --ink: #1b1b1b;
+    --muted: #8a8a8a;
+    --green: #2f7d2f;
+    --green-d: #256425;
+    --red: #d61f1f;
+    --line: #e6e6e6;
+    --bg: #fff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Jost", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+.wrap {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 56px clamp(16px, 4.5vw, 64px) 120px;
+}
+
+h1 {
+    font-weight: 400;
+    font-size: clamp(2rem, 4.6vw, 4rem);
+    text-align: center;
+    margin: 0 0 48px;
+    letter-spacing: 0.005em;
+}
+
+/* category filters */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: -16px 0 40px;
+}
+
+.filters button {
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 8px 18px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+.filters button[aria-pressed="true"] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+}
+
+/* grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(20px, 2.2vw, 48px);
+}
+
+@media (max-width: 1100px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 800px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 420px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.thumb {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #f1f1f1;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.name {
+    font-family: inherit;
+    font-size: clamp(1.05rem, 1.5vw, 1.5rem);
+    font-weight: 400;
+    line-height: 1.35;
+    margin: 24px 0 8px;
+    padding: 0 4px;
+    background: none;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+}
+
+.price {
+    font-size: clamp(1.05rem, 1.5vw, 1.5rem);
+    font-weight: 400;
+    margin: 0 0 24px;
+}
+
+.price s {
+    color: var(--muted);
+    font-size: 0.85em;
+    margin-left: 6px;
+}
+
+.cat {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin: -4px 0 8px;
+}
+
+.add {
+    margin-top: auto;
+    width: 100%;
+    height: 56px;
+    font: inherit;
+    font-weight: 500;
+    font-size: 1.25rem;
+    letter-spacing: 0.01em;
+    border: 0;
+    border-radius: 4px;
+    background: var(--green);
+    color: #fff;
+    cursor: pointer;
+}
+
+.add:hover {
+    background: var(--green-d);
+}
+
+button:focus-visible {
+    outline: 3px solid #111;
+    outline-offset: 2px;
+}
+
+/* loading + messages */
+.skel .thumb {
+    animation: pulse 1.2s ease-in-out infinite alternate;
+}
+
+.skel .bar {
+    height: 18px;
+    background: #f1f1f1;
+    margin: 24px auto 0;
+    width: 70%;
+}
+
+.skel .bar.short {
+    width: 40%;
+}
+
+@keyframes pulse {
+    to {
+        background: #e4e4e4;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skel .thumb {
+        animation: none;
+    }
+}
+
+.msg {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px 16px;
+    color: #444;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.msg code {
+    background: #f3f3f3;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.95em;
+}
+
+/* floating cart button */
+.fab {
+    position: fixed;
+    right: 20px;
+    bottom: 24px;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--green);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.fab svg {
+    width: 32px;
+    height: 32px;
+}
+
+.badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 6px;
+    border-radius: 13px;
+    background: var(--red);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: grid;
+    place-items: center;
+}
+
+/* overlays */
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
+    position: relative;
+    width: min(960px, 94vw);
+    max-height: 92vh;
+    overflow: auto;
+    background: #fff;
+    border-radius: 6px;
+}
+
+.d-body {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 32px;
+    padding: 28px;
+}
+
+@media (max-width: 720px) {
+    .d-body {
+        grid-template-columns: 1fr;
+        padding: 16px;
+    }
+}
+
+.d-main {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    background: #f1f1f1;
+    display: block;
+}
+
+.d-thumbs {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.d-thumbs button {
+    flex: 0 0 68px;
+    height: 68px;
+    padding: 0;
+    border: 2px solid transparent;
+    background: #f1f1f1;
+    cursor: pointer;
+}
+
+.d-thumbs button[aria-current="true"] {
+    border-color: var(--ink);
+}
+
+.d-thumbs img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.d-info h2 {
+    font-weight: 500;
+    font-size: 1.8rem;
+    line-height: 1.25;
+    margin: 0 0 8px;
+}
+
+.d-info .price {
+    margin: 0 0 20px;
+    font-size: 1.5rem;
+}
+
+.d-desc {
+    white-space: pre-line;
+    line-height: 1.65;
+    color: #333;
+    margin: 0 0 24px;
+}
+
+.x {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    z-index: 1;
+    font-size: 1.8rem;
+    line-height: 1;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    color: var(--ink);
+}
+
+/* cart drawer */
+.overlay:has(.drawer) {
+    justify-content: flex-end;
+    align-items: stretch;
+}
+
+.drawer {
+    width: min(420px, 100vw);
+    height: 100%;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+}
+
+.drawer h2 {
+    margin: 0 0 16px;
+    font-weight: 500;
+}
+
+.c-list {
+    flex: 1;
+    overflow: auto;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.c-list li {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.c-list li.c-empty {
+    display: block;
+    color: #777;
+    border: 0;
+}
+
+.c-list img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    background: #f1f1f1;
+}
+
+.c-list small {
+    display: block;
+    color: var(--muted);
+}
+
+.c-list .rm {
+    font: inherit;
+    background: none;
+    border: 0;
+    color: var(--red);
+    cursor: pointer;
+}
+
+.total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding: 16px 0;
+}
+
+/* toolbar: search + filters */
+.toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin: -16px 0 40px;
+}
+
+.toolbar .filters {
+    margin: 0;
+}
+
+.search {
+    width: min(420px, 100%);
+    font: inherit;
+    font-size: 1rem;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--ink);
+}
+
+.search:focus-visible {
+    outline: 3px solid #111;
+    outline-offset: 2px;
+}
+
+/* retry + cart extras */
+.retry {
+    margin-top: 8px;
+    font: inherit;
+    font-weight: 500;
+    padding: 12px 28px;
+    border: 0;
+    border-radius: 4px;
+    background: var(--green);
+    color: #fff;
+    cursor: pointer;
+}
+
+.retry:hover {
+    background: var(--green-d);
+}
+
+.msg p {
+    margin: 0 0 8px;
+}
+
+.qty {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.qty button {
+    width: 28px;
+    height: 28px;
+    font: inherit;
+    font-size: 1.1rem;
+    line-height: 1;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    color: var(--ink);
+}
+
+.link {
+    align-self: flex-start;
+    font: inherit;
+    background: none;
+    border: 0;
+    padding: 0 0 12px;
+    color: var(--muted);
+    text-decoration: underline;
+    cursor: pointer;
+}

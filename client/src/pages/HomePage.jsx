@@ -6,12 +6,17 @@ import Navbar from '../components/Navbar'
 import ReviewsPage from '../components/ReviewPage'
 import PromoBar from '../components/PromoBar'
 import NewestCollection from "../components/NewestCollection"
+import Products from '../components/Products'
+import { StoreProvider } from '../StoreContext'
 const HomePage = () => {
     return (
         <>
             <PromoBar />
             <Navbar />
             <NewestCollection />
+            <StoreProvider>
+                <Products />
+            </StoreProvider>
             <ReviewsPage />
             <AboutUs />
             <Footer />
