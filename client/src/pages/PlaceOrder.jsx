@@ -5,33 +5,28 @@ import "./PlaceOrder.css";
 
 const DELIVERY_FEE = 2; // must match the backend's delivery charge (in the same currency as item.price)
 
-const EMPTY_ADDRESS = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    street: "",
-    city: "",
-    state: "",
-    zipcode: "",
-    country: "",
-};
+const EMPTY_ADDRESS = { email: "" };
 
 /* A guest gets a stable random id saved in this browser, used as userId until real login exists.
-   NOTE: if orderModel/userModel expect a Mongo ObjectId for userId, this string will not save —
-   see the note above this file. */
+   Must be a valid Mongo ObjectId (24 hex characters, no dashes) or the backend's
+   `orderModel.save()` / `userModel.findByIdAndUpdate()` will throw a CastError. */
 function getGuestId() {
     try {
         let id = localStorage.getItem("guestUserId");
-        if (!id) {
-            id = typeof crypto !== "undefined" && crypto.randomUUID
-                ? crypto.randomUUID()
-                : `guest-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        if (!id || !/^[0-9a-f]{24}$/i.test(id)) {
+            const bytes = new Uint8Array(12);
+            if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+                crypto.getRandomValues(bytes);
+            } else {
+                for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+            }
+            id = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
             localStorage.setItem("guestUserId", id);
         }
         return id;
     } catch {
-        return `guest-${Date.now()}`;
+        // last-resort fallback, still 24 hex chars
+        return Array.from({ length: 24 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
     }
 }
 
@@ -110,23 +105,9 @@ export default function PlaceOrder() {
     return (
         <div className="po">
             <form className="po-form" onSubmit={onSubmit}>
-                <h2 className="po-heading">Delivery Information</h2>
+                <h2 className="po-heading">Contact Information</h2>
 
-                <div className="po-row">
-                    <input required name="firstName" placeholder="First name" value={address.firstName} onChange={onChange} />
-                    <input required name="lastName" placeholder="Last name" value={address.lastName} onChange={onChange} />
-                </div>
                 <input required type="email" name="email" placeholder="Email address" value={address.email} onChange={onChange} />
-                <input required type="tel" name="phone" placeholder="Phone" value={address.phone} onChange={onChange} />
-                <input required name="street" placeholder="Street address" value={address.street} onChange={onChange} />
-                <div className="po-row">
-                    <input required name="city" placeholder="City" value={address.city} onChange={onChange} />
-                    <input required name="state" placeholder="State / Province" value={address.state} onChange={onChange} />
-                </div>
-                <div className="po-row">
-                    <input required name="zipcode" placeholder="Zip code" value={address.zipcode} onChange={onChange} />
-                    <input required name="country" placeholder="Country" value={address.country} onChange={onChange} />
-                </div>
 
                 {error && <p className="po-error">{error}</p>}
 

@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 /* ---------- CONFIG ---------- */
-export const API_URL = (import.meta.env.VITE_API_URL || "https://zootsy-backend.vercel.app").replace(/\/$/, "");
+export const API_URL = ("https://zootsy-backend.vercel.app").replace(/\/$/, "");
 export const LIST_PATH = "/api/food/list";
 export const CURRENCY = "$";
 const CART_KEY = "cart";
