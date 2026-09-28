@@ -10,7 +10,7 @@ import {
 } from "../controllers/orderController.js";
 import Mail from "../Mail/Nodemail.js";
 const orderRouter = express.Router();
-orderRouter.post("/place", authMiddleware, placeOrder);
+orderRouter.post("/place", placeOrder);
 orderRouter.post("/verify", verifyOrder);
 orderRouter.post("/userorders", authMiddleware, userOrders);
 orderRouter.get("/list", listOrders);

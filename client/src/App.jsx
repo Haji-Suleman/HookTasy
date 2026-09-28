@@ -5,6 +5,7 @@ import ReviewsWholePage from './pages/ReviewWholePage';
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { Authen } from './Auth';
 import { StoreProvider } from './StoreContext';
+import PlaceOrder from './pages/PlaceOrder';
 function App() {
   return (
     <StoreProvider>
@@ -15,6 +16,7 @@ function App() {
           <Route path='/about' element={<AboutUs />} />
           <Route path='/earn' element={<Earn />} />
           <Route path='/account' element={<Authen />} />
+          <Route path="/checkout" element={<PlaceOrder />} />
         </Routes>
       </BrowserRouter>
     </StoreProvider>
