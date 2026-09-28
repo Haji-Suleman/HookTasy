@@ -18,6 +18,7 @@ const allowedOrigins = [
   "http://localhost:5173",                   // local dev
   "http://localhost:5174",                   // add any other local port you use
 ];
+app.use(cors.allowedOrigins(allowedOrigins))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
