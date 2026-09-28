@@ -2,7 +2,7 @@
    PROMO BAR — design tokens (self-contained)
    ===================================================================== */
 .promo-bar {
-    --c-green: black;
+    --c-green: rgba(172, 114, 172, 0.817);
 
     position: relative;
     display: flex;

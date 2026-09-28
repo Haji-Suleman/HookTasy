@@ -54,6 +54,7 @@ export function Detail({ p, onClose }) {
                         <Price p={p} />
                         {p.description && <p className="d-desc">{p.description}</p>}
                         {/* pass the whole product so the cart can snapshot it */}
+
                         <button className="add" onClick={() => { addToCart(p); setAdded(true); }}>
                             {added ? "ADDED" : "ADD TO CART"}
                         </button>
@@ -74,7 +75,6 @@ export default function Products() {
     const [query, setQuery] = useState("");
     const [selectedId, setSelectedId] = useState(null);
     const [cartOpen, setCartOpen] = useState(false);
-
     const visible = useMemo(() => {
         const q = query.trim().toLowerCase();
         return products.filter(
@@ -117,6 +117,8 @@ export default function Products() {
         return () => { document.body.style.overflow = ""; };
     }, [overlayOpen]);
 
+    console.log("cartItems from context:", cartItems);
+    console.log("drawerItems passed to drawer:", drawerItems);
     return (
         <div className="zp">
             <main className="wrap">

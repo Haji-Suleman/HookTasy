@@ -7,7 +7,9 @@ import "./HotPatterns.css";  // the two headings + tabs
 const PLACEHOLDER =
     "data:image/svg+xml;utf8," +
     encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect width="100%" height="100%" fill="#f1f1f1"/></svg>');
-const onImgError = (e) => { e.currentTarget.src = PLACEHOLDER; };
+const onImgError = (e) => {
+    if (e.currentTarget.src !== PLACEHOLDER) e.currentTarget.src = PLACEHOLDER;
+};
 
 const NEW_TAB = "New Arrivals";
 const DEFAULT_TABS = ["Bundle", NEW_TAB, "Valentine", "Car Hanging"];
@@ -30,10 +32,12 @@ export default function HotPatterns({
     tabs = DEFAULT_TABS,  // "New Arrivals" shows random products, every other tab matches the product category
     newCount = 20,        // how many random products "New Arrivals" shows
 }) {
-    const { products, status, error, refresh, addToCart } = useStore();
+    console.log("HotPatterns file loaded");
+
+
+    const { products, categories, status, error, refresh, addToCart } = useStore();
     const [tab, setTab] = useState(tabs[0]);
     const [selectedId, setSelectedId] = useState(null);
-
     /* picked once per product load, so switching tabs does not reshuffle it */
     const randomPicks = useMemo(() => shuffle(products).slice(0, newCount), [products, newCount]);
 
@@ -41,15 +45,21 @@ export default function HotPatterns({
         () => (tab === NEW_TAB ? randomPicks : products.filter((p) => key(p.category) === key(tab))),
         [tab, products, randomPicks]
     );
+    console.log({ status, count: products.length, categories, tab, first: products[0] });
 
     const current = selectedId !== null ? products.find((p) => String(p.id) === String(selectedId)) : null;
 
     useEffect(() => {
+        console.log({ status, count: products.length, categories, tab, first: products[0] });
         if (!current) return undefined;
         const onKey = (e) => { if (e.key === "Escape") setSelectedId(null); };
+        const prev = document.body.style.overflow;
         window.addEventListener("keydown", onKey);
         document.body.style.overflow = "hidden";
-        return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+        return () => {
+            window.removeEventListener("keydown", onKey);
+            document.body.style.overflow = prev;
+        };
     }, [current]);
 
     const onTabKey = (e, i) => {
@@ -103,7 +113,14 @@ export default function HotPatterns({
                         </div>
                     )}
 
-                    {status === "ready" && list.length === 0 && <p className="msg">No patterns in {tab} yet.</p>}
+                    {status === "ready" && list.length === 0 && (
+                        <div className="msg">
+                            <p>No patterns in {tab} yet.</p>
+                            {products.length > 0 && categories.length > 0 && (
+                                <p>Categories in your store: {categories.join(", ")}</p>
+                            )}
+                        </div>
+                    )}
 
                     {status === "ready" &&
                         list.map((p) => (
@@ -113,7 +130,8 @@ export default function HotPatterns({
                                 </button>
                                 <button className="name" onClick={() => setSelectedId(p.id)}>{p.name}</button>
                                 <Price p={p} />
-                                <button className="add" onClick={() => addToCart(p.id)}>ADD TO CART</button>
+                                {/* addToCart needs the whole product, not just the id */}
+                                <button className="add" onClick={() => addToCart(p)}>ADD TO CART</button>
                             </article>
                         ))}
                 </div>

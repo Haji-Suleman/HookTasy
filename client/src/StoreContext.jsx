@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 export const API_URL = (import.meta.env.VITE_API_URL || "https://zootsy-backend.vercel.app").replace(/\/$/, "");
 export const LIST_PATH = "/api/food/list";
 export const CURRENCY = "$";
+const CART_KEY = "cart";
 
 /* ---------- helpers ---------- */
 export const money = (n) =>
@@ -52,6 +53,19 @@ export function normalizeProduct(p, i) {
     };
 }
 
+/* Read the saved cart and drop anything malformed */
+function loadCart() {
+    try {
+        const raw = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+        if (!Array.isArray(raw)) return [];
+        return raw.filter(
+            (i) => i && i.id != null && Number.isFinite(i.qty) && i.qty > 0 && i.snapshot
+        );
+    } catch {
+        return [];
+    }
+}
+
 /* ---------- context ---------- */
 export const StoreContext = createContext(null);
 
@@ -59,12 +73,7 @@ export function StoreProvider({ children }) {
     const [products, setProducts] = useState([]);
     const [status, setStatus] = useState("loading"); // "loading" | "ready" | "error"
     const [error, setError] = useState("");
-    const [cart, setCart] = useState(() => {
-        try {
-            const raw = JSON.parse(localStorage.getItem("cart") || "[]");
-            return Array.isArray(raw) ? raw : [];
-        } catch { return []; }
-    });
+    const [cart, setCart] = useState(loadCart);
 
     /* fetch the list */
     const loadProducts = useCallback(async (signal) => {
@@ -92,10 +101,21 @@ export function StoreProvider({ children }) {
 
     /* persist cart */
     useEffect(() => {
-        try { localStorage.setItem("cart", JSON.stringify(cart)); } catch { }
+        try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch { /* storage full or blocked */ }
     }, [cart]);
 
-    /* cart actions — addToCart now takes the FULL product */
+    /* Once the store has loaded, drop cart items whose product no longer exists.
+       Skipped when the list is empty so a bad/empty response can't wipe the cart. */
+    useEffect(() => {
+        if (status !== "ready" || products.length === 0) return;
+        const ids = new Set(products.map((p) => String(p.id)));
+        setCart((c) => {
+            const next = c.filter((i) => ids.has(String(i.id)));
+            return next.length === c.length ? c : next;
+        });
+    }, [status, products]);
+
+    /* cart actions — addToCart takes the FULL product */
     const addToCart = useCallback((product) => {
         if (!product || product.id == null) return;
         setCart((c) => {
@@ -134,10 +154,12 @@ export function StoreProvider({ children }) {
 
     const clearCart = useCallback(() => setCart([]), []);
 
+    const refresh = useCallback(() => loadProducts(), [loadProducts]);
+
     /* derived values */
     const categories = useMemo(() => [...new Set(products.map((p) => p.category).filter(Boolean))], [products]);
 
-    /* Live lookup first, snapshot fallback second → never silently drops an item */
+    /* Live lookup first, snapshot fallback second (used while loading or if the fetch fails) */
     const cartItems = useMemo(
         () =>
             cart
@@ -154,10 +176,10 @@ export function StoreProvider({ children }) {
 
     const value = useMemo(
         () => ({
-            products, categories, status, error, refresh: () => loadProducts(),
+            products, categories, status, error, refresh,
             cartItems, cartCount, cartTotal, addToCart, decreaseItem, removeFromCart, clearCart,
         }),
-        [products, categories, status, error, loadProducts, cartItems, cartCount, cartTotal,
+        [products, categories, status, error, refresh, cartItems, cartCount, cartTotal,
             addToCart, decreaseItem, removeFromCart, clearCart]
     );
 

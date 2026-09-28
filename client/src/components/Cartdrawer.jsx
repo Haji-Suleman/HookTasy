@@ -34,19 +34,18 @@ export default function CartDrawer({
     linkComponent: LinkComp = 'a',
     linkProp = 'href',
 }) {
-    const panelRef = useRef(null);
     const closeBtnRef = useRef(null);
 
     const count = items.reduce((sum, item) => sum + item.qty, 0);
     const subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
-    const format = (n) => `${currency}${n.toLocaleString()}`;
+    const format = (n) =>
+        `${currency}${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
     useEffect(() => {
         if (!isOpen) return undefined;
         const prevOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
         closeBtnRef.current?.focus();
-
         const onKey = (e) => { if (e.key === 'Escape') onClose?.(); };
         document.addEventListener('keydown', onKey);
         return () => {
@@ -55,17 +54,16 @@ export default function CartDrawer({
         };
     }, [isOpen, onClose]);
 
-    const L = ({ to, children, ...rest }) => {
-        const props = { ...rest, [linkProp]: to };
-        return <LinkComp {...props}>{children}</LinkComp>;
-    };
+    /* Plain render helper (not a component) so links aren't remounted on every render */
+    const renderLink = (to, children, props) => (
+        <LinkComp {...props} {...{ [linkProp]: to }}>{children}</LinkComp>
+    );
 
     return createPortal(
         <div className={`cart-drawer-root${isOpen ? ' cart-drawer-root--open' : ''}`}>
             <div className="cart-drawer-overlay" onClick={onClose} />
 
             <aside
-                ref={panelRef}
                 aria-label="Shopping cart"
                 aria-hidden={!isOpen}
                 className="cart-drawer-panel"
@@ -89,9 +87,11 @@ export default function CartDrawer({
                     {items.length === 0 ? (
                         <div className="cart-drawer-empty">
                             <p className="cart-drawer-empty__text">Your Cart is Empty</p>
-                            <L to={continueShoppingHref} tabIndex={isOpen ? 0 : -1} onClick={onClose} className="cart-drawer-continue">
-                                Continue Shopping
-                            </L>
+                            {renderLink(continueShoppingHref, 'Continue Shopping', {
+                                tabIndex: isOpen ? 0 : -1,
+                                onClick: onClose,
+                                className: 'cart-drawer-continue',
+                            })}
                         </div>
                     ) : (
                         <ul className="cart-drawer-list">
@@ -142,9 +142,11 @@ export default function CartDrawer({
                             <span>Subtotal</span>
                             <span className="cart-drawer-subtotal__value">{format(subtotal)}</span>
                         </div>
-                        <L to={checkoutHref} tabIndex={isOpen ? 0 : -1} onClick={onCheckout} className="cart-drawer-checkout">
-                            Checkout
-                        </L>
+                        {renderLink(checkoutHref, 'Checkout', {
+                            tabIndex: isOpen ? 0 : -1,
+                            onClick: onCheckout,
+                            className: 'cart-drawer-checkout',
+                        })}
                     </div>
                 )}
             </aside>
