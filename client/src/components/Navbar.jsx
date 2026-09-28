@@ -46,14 +46,14 @@ const NAV_ITEMS = [
   {
     id: 'animals', label: 'ANIMALS',
     children: [
-      { img: dogs, label: 'Farm', href: '/collections/animals/farm' },
-      { img: cats, label: 'Ocean', href: '/collections/animals/ocean' },
-      { img: goose, label: 'Forest', href: '/collections/animals/forest' },
-      { img: bird, label: 'Pets', href: '/collections/animals/pets' },
-      { img: baphomet, label: 'Pets', href: '/collections/animals/pets' },
-      { img: animals, label: 'Pets', href: '/collections/animals/pets' },
-      { img: sea_animals, label: 'Pets', href: '/collections/animals/pets' },
-      { img: dragon, label: 'Pets', href: '/collections/animals/pets' },
+      { img: dogs, label: 'Dogs', href: '/collections/animals/dogs' },
+      { img: cats, label: 'Cats', href: '/collections/animals/cats' },
+      { img: goose, label: 'Farm', href: '/collections/animals/farm' },
+      { img: bird, label: 'Birds', href: '/collections/animals/birds' },
+      { img: baphomet, label: 'Fantasy', href: '/collections/animals/fantasy' },
+      { img: animals, label: 'Wild Animals', href: '/collections/animals/wild' },
+      { img: sea_animals, label: 'Sea Animals', href: '/collections/animals/ocean' },
+      { img: dragon, label: 'Dragons', href: '/collections/animals/dragons' },
 
     ],
   },

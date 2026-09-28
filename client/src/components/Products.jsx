@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { money, useStore } from "../StoreContext";
-import "./Products.css";
+import "./products.css";
 
 const PLACEHOLDER =
     "data:image/svg+xml;utf8," +
@@ -66,7 +66,7 @@ function Detail({ p, onClose }) {
 function CartDrawer({ onClose }) {
     const { cartItems, cartTotal, addToCart, decreaseItem, removeFromCart, clearCart } = useStore();
     return (
-        <div className="overlay" onClick={onClose}>
+        <div className="overlay side" onClick={onClose}>
             <aside className="drawer" role="dialog" aria-modal="true" aria-label="Cart" onClick={(e) => e.stopPropagation()}>
                 <h2>Your cart</h2>
                 <ul className="c-list">
@@ -126,9 +126,9 @@ export default function Products() {
     }, [overlayOpen]);
 
     return (
-        <>
+        <div className="zp">
             <main className="wrap">
-                <h1>Top Favorite Patterns</h1>
+                <h2 className="title">Top Favorite Patterns</h2>
 
                 {status === "ready" && products.length > 0 && (
                     <div className="toolbar">
@@ -197,6 +197,6 @@ export default function Products() {
 
             {current && <Detail key={current.id} p={current} onClose={() => setSelectedId(null)} />}
             {cartOpen && <CartDrawer onClose={() => setCartOpen(false)} />}
-        </>
+        </div>
     );
 }

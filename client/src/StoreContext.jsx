@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 
 /* ---------- CONFIG ---------- */
 // Vite reads VITE_API_URL from .env; falls back to the live backend
-export const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:4000").replace(/\/$/, "");
+export const API_URL = (import.meta.env.VITE_API_URL || "https://zootsy-backend.vercel.app").replace(/\/$/, "");
 export const LIST_PATH = "/api/food/list"; // mounted as app.use("/api/food", foodRouter)
 export const CURRENCY = "Rs.";
 
@@ -128,10 +128,14 @@ export function StoreProvider({ children }) {
     const cartCount = cartItems.reduce((s, i) => s + i.qty, 0);
     const cartTotal = cartItems.reduce((s, i) => s + i.product.price * i.qty, 0);
 
-    const value = {
-        products, categories, status, error, refresh: () => loadProducts(),
-        cartItems, cartCount, cartTotal, addToCart, decreaseItem, removeFromCart, clearCart,
-    };
+    const value = useMemo(
+        () => ({
+            products, categories, status, error, refresh: () => loadProducts(),
+            cartItems, cartCount, cartTotal, addToCart, decreaseItem, removeFromCart, clearCart,
+        }),
+        [products, categories, status, error, loadProducts, cartItems, cartCount, cartTotal,
+            addToCart, decreaseItem, removeFromCart, clearCart]
+    );
 
     return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }
