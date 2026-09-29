@@ -25,6 +25,7 @@ const placeOrder = async (req, res) => {
     if (!Array.isArray(items) || items.length === 0) {
       return res.json({ success: false, message: "Your cart is empty." });
     }
+    console.log("Gmail:", cleanItems)
     const cleanItems = items.map((i) => ({
       name: String(i.name || "").trim(),
       price: Number(i.price),
