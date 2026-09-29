@@ -29,6 +29,7 @@ const placeOrder = async (req, res) => {
       name: String(i.name || "").trim(),
       price: Number(i.price),
       quantity: Number(i.quantity),
+      pdfLink: String(i.pdfLink)
     }));
     const invalid = cleanItems.some(
       (i) => !i.name || !(i.price > 0) || !Number.isInteger(i.quantity) || i.quantity < 1
