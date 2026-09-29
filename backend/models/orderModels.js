@@ -1,14 +1,3 @@
-import mongoose from "mongoose";
-
-const orderItemSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    quantity: { type: Number, required: true, min: 1 },
-  },
-  { _id: false }
-);
-
 const orderSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   items: { type: [orderItemSchema], required: true },
@@ -19,7 +8,5 @@ const orderSchema = new mongoose.Schema({
   status: { type: String, default: "Awaiting Payment" },
   date: { type: Date, default: Date.now },
   payment: { type: Boolean, default: false },
+  stripeSessionId: { type: String },
 });
-
-const orderModel = mongoose.models.order || mongoose.model("order", orderSchema);
-export default orderModel;
