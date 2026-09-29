@@ -4,38 +4,57 @@ import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 //placing user order
 const placeOrder = async (req, res) => {
-  const frontend_url = "http://localhost:5173";
+  const frontend_url = process.env.FRONTEND_URL || "http://localhost:5173";
   try {
+    const { userId, items, address } = req.body;
+
+    // 1. Only the email is required from the customer
+    const email = String(address?.email || "").trim().toLowerCase();
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      return res.json({ success: false, message: "Please enter a valid email address." });
+    }
+
+    // 2. Each item needs a product name and a quantity
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.json({ success: false, message: "Your cart is empty." });
+    }
+    const cleanItems = items.map((i) => ({
+      name: String(i.name || "").trim(),
+      price: Number(i.price),
+      quantity: Number(i.quantity),
+    }));
+    const invalid = cleanItems.some(
+      (i) => !i.name || !(i.price > 0) || !Number.isInteger(i.quantity) || i.quantity < 1
+    );
+    if (invalid) {
+      return res.json({ success: false, message: "Invalid items in your cart." });
+    }
+
+    // 3. Total is calculated here, not trusted from the browser (no delivery fee)
+    const amount = cleanItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
     const newOrder = new orderModel({
-      userId: req.body.userId,
-      items: req.body.items,
-      amount: req.body.amount,
-      address: req.body.address,
+      userId,
+      items: cleanItems,      // name, price, quantity for each product
+      amount,
+      address: { email },     // email only
     });
     await newOrder.save();
-    await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
 
-    const line_items = req.body.items.map((item) => ({
+    const line_items = cleanItems.map((item) => ({
       price_data: {
         currency: "pkr",
         product_data: { name: item.name },
-        unit_amount: item.price * 100 * 80,
+        unit_amount: Math.round(item.price * 100 * 80),
       },
       quantity: item.quantity,
     }));
 
-    line_items.push({
-      price_data: {
-        currency: "pkr",
-        product_data: { name: "Delivery Charges" },
-        unit_amount: 2 * 100 * 80,
-      },
-      quantity: 1,
-    });
-
     const session = await stripe.checkout.sessions.create({
-      line_items: line_items,
+      line_items,
       mode: "payment",
+      customer_email: email,  // prefilled in Stripe, and the receipt goes here
+      metadata: { orderId: String(newOrder._id) },
       success_url: `${frontend_url}/verify?success=true&orderId=${newOrder._id}`,
       cancel_url: `${frontend_url}/verify?success=false&orderId=${newOrder._id}`,
     });

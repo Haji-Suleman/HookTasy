@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { API_URL, CURRENCY, money, useStore } from "../StoreContext";
 import "./PlaceOrder.css";
 
-const DELIVERY_FEE = 2; // must match the backend's delivery charge (in the same currency as item.price)
 
 const EMPTY_ADDRESS = { email: "" };
 
@@ -37,8 +36,7 @@ export default function PlaceOrder() {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
 
-    const deliveryFee = cartItems.length ? DELIVERY_FEE : 0;
-    const total = cartTotal + deliveryFee;
+    const total = cartTotal;
 
     const items = useMemo(
         () =>
@@ -130,10 +128,7 @@ export default function PlaceOrder() {
                     <span>Subtotal</span>
                     <span>{money(cartTotal)}</span>
                 </div>
-                <div className="po-line">
-                    <span>Delivery Fee</span>
-                    <span>{money(deliveryFee)}</span>
-                </div>
+                
                 <div className="po-line po-total">
                     <span>Total</span>
                     <span>{money(total)}</span>
