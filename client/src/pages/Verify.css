@@ -1,0 +1,322 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap");
+
+.vf {
+    --vf-bg: #f5f1f6;
+    --vf-ink: #27233a;
+    --vf-muted: #6f6a82;
+    --vf-line: #e4deea;
+    --vf-yarn: #e98aa6;
+    --vf-yarn-deep: #c9577c;
+    --vf-yarn-soft: #fbe7ee;
+    --vf-action: #17695f;
+    --vf-action-hover: #0f544c;
+    --vf-ok: #17695f;
+    --vf-ok-bg: #e2f2ef;
+    --vf-warn: #b26a00;
+    --vf-warn-bg: #fdf0d9;
+    --vf-err: #b3261e;
+    --vf-err-bg: #fdecea;
+    --vf-serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --vf-sans: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+    box-sizing: border-box;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px 16px;
+    font-family: var(--vf-sans);
+    color: var(--vf-ink);
+    background:
+        radial-gradient(circle at 12% 0%, var(--vf-yarn-soft) 0, transparent 38%),
+        var(--vf-bg);
+    -webkit-font-smoothing: antialiased;
+}
+
+.vf *,
+.vf *::before,
+.vf *::after {
+    box-sizing: border-box;
+}
+
+/* ---------- Card with stitched edge ---------- */
+
+.vf-card {
+    width: 100%;
+    max-width: 480px;
+    padding: 44px 36px 40px;
+    text-align: center;
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: 0 1px 2px rgba(39, 35, 58, 0.04), 0 22px 48px -24px rgba(39, 35, 58, 0.28);
+    outline: 2px dashed var(--vf-yarn);
+    outline-offset: -12px;
+}
+
+.vf-title {
+    margin: 0 0 12px;
+    font-family: var(--vf-serif);
+    font-weight: 600;
+    font-size: clamp(1.6rem, 4vw, 2rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+}
+
+.vf-text {
+    max-width: 36ch;
+    margin: 0 auto 8px;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--vf-muted);
+    overflow-wrap: anywhere;
+}
+
+.vf-text strong {
+    color: var(--vf-ink);
+    font-weight: 600;
+}
+
+.vf-text--small {
+    font-size: 0.9rem;
+}
+
+.vf-ref {
+    display: inline-block;
+    margin: 16px 0 0;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--vf-ink);
+    background: var(--vf-yarn-soft);
+    border-radius: 999px;
+}
+
+/* ---------- Yarn-ball loader ---------- */
+
+.vf-loader {
+    width: 200px;
+    max-width: 70%;
+    margin: 0 auto 20px;
+}
+
+.vf-loader__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.vf-loader__ball {
+    fill: var(--vf-yarn);
+}
+
+.vf-loader__line {
+    fill: none;
+    stroke: #fff;
+    stroke-opacity: 0.6;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+}
+
+.vf-loader__line--dark {
+    stroke: var(--vf-yarn-deep);
+    stroke-opacity: 0.55;
+}
+
+.vf-loader__spin {
+    transform-origin: 80px 58px;
+    animation: vf-spin 2.6s linear infinite;
+}
+
+.vf-loader__bob {
+    animation: vf-bob 1.3s ease-in-out infinite;
+}
+
+.vf-loader__shadow {
+    fill: var(--vf-ink);
+    opacity: 0.12;
+    transform-origin: 80px 110px;
+    animation: vf-shadow 1.3s ease-in-out infinite;
+}
+
+.vf-loader__thread-base {
+    fill: none;
+    stroke: var(--vf-yarn);
+    stroke-width: 3;
+    stroke-linecap: round;
+    opacity: 0.35;
+}
+
+/* dashes that travel along the thread, like stitches being pulled off */
+.vf-loader__thread {
+    fill: none;
+    stroke: var(--vf-yarn-deep);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 5 11;
+    animation: vf-thread 0.9s linear infinite;
+}
+
+@keyframes vf-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes vf-bob {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes vf-shadow {
+
+    0%,
+    100% {
+        transform: scaleX(1);
+        opacity: 0.12;
+    }
+
+    50% {
+        transform: scaleX(0.82);
+        opacity: 0.07;
+    }
+}
+
+@keyframes vf-thread {
+    to {
+        stroke-dashoffset: -16;
+    }
+}
+
+/* ---------- Status icons ---------- */
+
+.vf-icon {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+}
+
+.vf-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.vf-icon--ok {
+    background: var(--vf-ok-bg);
+    color: var(--vf-ok);
+}
+
+.vf-icon--warn {
+    background: var(--vf-warn-bg);
+    color: var(--vf-warn);
+}
+
+.vf-icon--err {
+    background: var(--vf-err-bg);
+    color: var(--vf-err);
+}
+
+.vf-icon svg path {
+    stroke: currentColor;
+}
+
+/* the checkmark draws itself */
+.vf-icon--ok svg path {
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    animation: vf-draw 0.5s 0.15s ease-out forwards;
+}
+
+@keyframes vf-draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* ---------- Buttons ---------- */
+
+.vf-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 200px;
+    height: 52px;
+    margin-top: 28px;
+    padding: 0 28px;
+    font: 700 1rem/1 var(--vf-sans);
+    color: #fff;
+    text-decoration: none;
+    background: var(--vf-action);
+    border-radius: 14px;
+    box-shadow: 0 10px 22px -10px rgba(23, 105, 95, 0.7);
+    transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.vf-btn:hover {
+    background: var(--vf-action-hover);
+}
+
+.vf-btn:active {
+    transform: translateY(1px);
+}
+
+.vf-link {
+    display: block;
+    margin-top: 18px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--vf-muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.vf-link:hover {
+    color: var(--vf-ink);
+}
+
+.vf-btn:focus-visible,
+.vf-link:focus-visible {
+    outline: 3px solid var(--vf-ink);
+    outline-offset: 3px;
+}
+
+/* ---------- Mobile / motion ---------- */
+
+@media (max-width: 420px) {
+    .vf-card {
+        padding: 36px 24px 32px;
+    }
+
+    .vf-btn {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vf-loader__spin {
+        animation-duration: 10s;
+    }
+
+    .vf-loader__bob,
+    .vf-loader__shadow,
+    .vf-loader__thread {
+        animation: none;
+    }
+
+    .vf-icon--ok svg path {
+        animation: none;
+        stroke-dashoffset: 0;
+    }
+}

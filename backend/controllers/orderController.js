@@ -66,18 +66,26 @@ const placeOrder = async (req, res) => {
   }
 };
 const verifyOrder = async (req, res) => {
-  const { orderId, success } = req.body;
+  const { orderId, sessionId } = req.body;
   try {
-    if (success === "true") {
-      await orderModel.findByIdAndUpdate(orderId, { payment: true });
-      return res.json({ success: true, message: "Paid" });
-    } else {
-      await orderModel.findByIdAndDelete(orderId);
-      return res.json({ success: false, message: "Not Paid" });
+    const order = await orderModel.findById(orderId);
+    if (!order) return res.json({ success: false, message: "Order not found." });
+
+    // already confirmed (e.g. the page was refreshed)
+    if (order.payment) return res.json({ success: true, email: order.address?.email });
+
+    // ask Stripe, don't trust the browser
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    if (session.payment_status === "paid" && session.metadata?.orderId === String(order._id)) {
+      order.payment = true;
+      order.status = "Paid";
+      await order.save();
+      return res.json({ success: true, email: order.address?.email });
     }
+    return res.json({ success: false, message: "Payment was not completed." });
   } catch (error) {
-    console.log(error);
-    return res.json({ success: false, message: "error" });
+    console.log("Error verifying order:", error);
+    return res.json({ success: false, message: "Could not verify payment." });
   }
 };
 // user orders for frontend
