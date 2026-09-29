@@ -1,23 +1,22 @@
 import Nodemailer from "nodemailer";
-
 const mail = async (req, res) => {
   try {
     let transporter = Nodemailer.createTransport({
-      service: "gmail",
+      service: "smtp.hostinger.com",
       auth: {
-        user: "mirhajisulemanjamali@gmail.com",
-        pass: "hoyd fqeg rpqs ckzo",
+        user: process.env.PROF_GMAIL,
+        pass: process.env.PROF_PASSWORD,
       },
     });
 
-    const { items }  = req.body;
+    const { items } = req.body;
     console.log("The items are:", items);
 
     let itemsNew = ""; // Change from 'const' to 'let'
     const itemslength = items.length;
     for (let i = 0; i < itemslength; i++) {
       if (i === itemslength - 1) {
-        itemsNew += items[i].name + " x " +  items[i].quantity;
+        itemsNew += items[i].name + " x " + items[i].quantity;
       } else {
         itemsNew += items[i].name + " x " + items[i].quantity + ", ";
       }
