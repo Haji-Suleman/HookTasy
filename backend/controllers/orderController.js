@@ -10,7 +10,7 @@ const USD_TO_PKR = 80;
 
 // placing user order
 const placeOrder = async (req, res) => {
-  const frontend_url = process.env.FRONTEND_URL || "http://localhost:5173";
+  const frontend_url = "https://hook-tasy.vercel.app";
   try {
     const { userId, items, address } = req.body;
 
