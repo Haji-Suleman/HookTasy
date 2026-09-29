@@ -66,29 +66,32 @@ const placeOrder = async (req, res) => {
   }
 };
 const verifyOrder = async (req, res) => {
-  const { orderId, sessionId } = req.body;
+  const { orderId } = req.body;
   try {
     const order = await orderModel.findById(orderId);
     if (!order) return res.json({ success: false, message: "Order not found." });
 
-    // already confirmed (e.g. the page was refreshed)
     if (order.payment) return res.json({ success: true, email: order.address?.email });
 
-    // ask Stripe, don't trust the browser
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-    if (session.payment_status === "paid" && session.metadata?.orderId === String(order._id)) {
+    if (!order.stripeSessionId) {
+      return res.json({ success: false, message: "No payment found for this order." });
+    }
+
+    const session = await stripe.checkout.sessions.retrieve(order.stripeSessionId);
+    if (session.payment_status === "paid") {
       order.payment = true;
       order.status = "Paid";
       await order.save();
       return res.json({ success: true, email: order.address?.email });
     }
+    newOrder.stripeSessionId = session.id;
+    await newOrder.save();
     return res.json({ success: false, message: "Payment was not completed." });
   } catch (error) {
     console.log("Error verifying order:", error);
     return res.json({ success: false, message: "Could not verify payment." });
   }
-};
-// user orders for frontend
+};// user orders for frontend
 const userOrders = async (req, res) => {
   try {
     const orders = await orderModel.find({ userId: req.body.userId });

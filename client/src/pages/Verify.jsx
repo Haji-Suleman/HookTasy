@@ -48,19 +48,19 @@ export default function Verify() {
     const [params] = useSearchParams();
     const success = params.get("success");
     const orderId = params.get("orderId");
-    const sessionId = params.get("session_id");
 
     // "loading" | "paid" | "cancelled" | "failed"
     const [status, setStatus] = useState(success === "false" ? "cancelled" : "loading");
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
+    const [networkError, setNetworkError] = useState(false);
     const ran = useRef(false); // stops React StrictMode from verifying twice in dev
 
     useEffect(() => {
         if (ran.current || success === "false") return;
         ran.current = true;
 
-        if (success !== "true" || !orderId || !sessionId) {
+        if (success !== "true" || !orderId) {
             setStatus("failed");
             setMessage("This payment link is incomplete.");
             return;
@@ -71,7 +71,7 @@ export default function Verify() {
                 const res = await fetch(`${API_URL}/api/order/verify`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ orderId, sessionId }),
+                    body: JSON.stringify({ orderId }),
                 });
                 const data = await res.json();
                 if (data.success) {
@@ -82,11 +82,12 @@ export default function Verify() {
                     setStatus("failed");
                 }
             } catch {
-                setMessage("We could not reach the server. Please check your connection and refresh this page.");
+                setNetworkError(true);
+                setMessage("We could not reach the server. Please check your connection and try again.");
                 setStatus("failed");
             }
         })();
-    }, [success, orderId, sessionId]);
+    }, [success, orderId]);
 
     return (
         <div className="vf">
@@ -143,7 +144,17 @@ export default function Verify() {
                             If money was taken from your account, contact us with the reference below and we'll sort it out.
                         </p>
                         {orderId && <p className="vf-ref">Order reference: {orderId.slice(-8)}</p>}
-                        <Link to="/" className="vf-btn">Back to the shop</Link>
+
+                        {networkError ? (
+                            <>
+                                <button type="button" className="vf-btn" onClick={() => window.location.reload()}>
+                                    Try again
+                                </button>
+                                <Link to="/" className="vf-link">Back to the shop</Link>
+                            </>
+                        ) : (
+                            <Link to="/" className="vf-btn">Back to the shop</Link>
+                        )}
                     </>
                 )}
             </div>
