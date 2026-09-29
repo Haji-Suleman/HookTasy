@@ -1,55 +1,39 @@
-import Nodemailer from "nodemailer";
-const mail = async (req, res) => {
-  try {
-    let transporter = Nodemailer.createTransport({
-      service: "smtp.hostinger.com",
-      auth: {
-        user: process.env.PROF_GMAIL,
-        pass: process.env.PROF_PASSWORD,
-      },
-    });
+import nodemailer from "nodemailer";
 
-    const { items } = req.body;
-    console.log("The items are:", items);
+const transporter = nodemailer.createTransport({
+  host: "smtp.hostinger.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.PROF_GMAIL,      // info@zootsyshop.com
+    pass: process.env.PROF_PASSWORD,
+  },
+});
 
-    let itemsNew = ""; // Change from 'const' to 'let'
-    const itemslength = items.length;
-    for (let i = 0; i < itemslength; i++) {
-      if (i === itemslength - 1) {
-        itemsNew += items[i].name + " x " + items[i].quantity;
-      } else {
-        itemsNew += items[i].name + " x " + items[i].quantity + ", ";
-      }
-    }
+const escapeHtml = (s) =>
+  String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-    const mailOptions = {
-      from: "mirhajisulemanjamali@gmail.com",
-      to: req.body.email,
-      subject: `Order Confirmation - Thank You, ${req.body.name}!`,
-      html: `
-        <h2 style="color: #333;">Order Confirmation</h2>
-        <p>Dear ${req.body.name},</p>
-        <p>Thank you for your order! We have received your request and are currently processing it.</p>
-        <h3 style="color: #555;">Order Summary:</h3>
-        <p><strong>Items Ordered:</strong> ${itemsNew}</p>
-    
-        <p>Your order will be prepared and delivered as soon as possible. If you have any questions, feel free to reply to this email or contact our support team.</p>
-    
-        <p>We appreciate your trust in us and look forward to serving you again.</p>
-    
-        <br>
-        <p style="font-weight: bold;">Best regards,</p>
-        <p><strong>Food Delivery Team</strong></p>
-      `,
-    };
+export const sendOrderEmail = async (order) => {
+  const to = order.address?.email;
+  if (!to) return;
 
-    let info = await transporter.sendMail(mailOptions);
-    console.log("Email sent:", info.response);
-    res.json({ success: true, message: "Email sent successfully" });
-  } catch (error) {
-    console.error("Mail error:", error);
-    res.json({ success: false, message: "Error sending email" });
-  }
+  const rows = order.items
+    .map((i) => `<li>${escapeHtml(i.name)} × ${i.quantity}</li>`)
+    .join("");
+
+  await transporter.sendMail({
+    from: `"Zootsy Shop" <${process.env.PROF_GMAIL}>`,
+    to,
+    subject: "Order Confirmation - Thank you for your purchase!",
+    html: `
+      <h2>Order Confirmation</h2>
+      <p>Hello,</p>
+      <p>Thank you for your order! We have received your payment.</p>
+      <h3>Order summary</h3>
+      <ul>${rows}</ul>
+      <p><strong>Order reference:</strong> ${String(order._id).slice(-8)}</p>
+      <p>If you have any questions, just reply to this email.</p>
+      <p><strong>Zootsy Shop</strong></p>
+    `,
+  });
 };
-
-export default mail;

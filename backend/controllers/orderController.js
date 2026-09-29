@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import orderModel from "../models/orderModels.js";
 import Stripe from "stripe";
 
+import { sendOrderEmail } from "../Mail/Nodemail.js";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Your prices are stored in USD; this converts them to PKR for Stripe.
@@ -76,7 +77,6 @@ const placeOrder = async (req, res) => {
   }
 };
 
-// called by the /verify page after Stripe redirects back
 const verifyOrder = async (req, res) => {
   const { orderId } = req.body;
   try {
@@ -96,9 +96,23 @@ const verifyOrder = async (req, res) => {
 
     const session = await stripe.checkout.sessions.retrieve(order.stripeSessionId);
     if (session.payment_status === "paid") {
-      order.payment = true;
-      order.status = "Paid";
-      await order.save();
+      // atomic: only the first request flips payment to true,
+      // so the email is sent once even if the page is refreshed or opened twice
+      const updated = await orderModel.findOneAndUpdate(
+        { _id: orderId, payment: false },
+        { payment: true, status: "Paid" },
+        { new: true }
+      );
+
+      if (updated) {
+        try {
+          await sendOrderEmail(updated);
+        } catch (mailError) {
+          // a mail problem must not make a paid order look failed
+          console.log("Confirmation email failed:", mailError);
+        }
+      }
+
       return res.json({ success: true, email: order.address?.email });
     }
 
