@@ -8,12 +8,12 @@ import {
   userOrders,
   verifyOrder,
 } from "../controllers/orderController.js";
-import Mail from "../Mail/Nodemail.js";
+import { sendOrderEmail } from "../Mail/Nodemail.js";
 const orderRouter = express.Router();
 orderRouter.post("/place", placeOrder);
 orderRouter.post("/verify", verifyOrder);
 orderRouter.post("/userorders", authMiddleware, userOrders);
 orderRouter.get("/list", listOrders);
 orderRouter.post("/status", updateStatus);
-orderRouter.post("/mail", mailMiddleWare, Mail);
+orderRouter.post("/mail", mailMiddleWare, sendOrderEmail);
 export default orderRouter;
