@@ -84,14 +84,12 @@ const verifyOrder = async (req, res) => {
       await order.save();
       return res.json({ success: true, email: order.address?.email });
     }
-    newOrder.stripeSessionId = session.id;
-    await newOrder.save();
     return res.json({ success: false, message: "Payment was not completed." });
   } catch (error) {
     console.log("Error verifying order:", error);
     return res.json({ success: false, message: "Could not verify payment." });
   }
-};// user orders for frontend
+};
 const userOrders = async (req, res) => {
   try {
     const orders = await orderModel.find({ userId: req.body.userId });
