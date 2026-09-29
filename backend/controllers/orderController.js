@@ -69,10 +69,11 @@ const verifyOrder = async (req, res) => {
   const { orderId } = req.body;
   try {
     const order = await orderModel.findById(orderId);
-    console.log(order)
     if (!order) return res.json({ success: false, message: "Order not found." });
 
     if (order.payment) return res.json({ success: true, email: order.address?.email });
+
+    console.log(order)
 
     if (!order.stripeSessionId) {
       return res.json({ success: false, message: "No payment found for this order." });
