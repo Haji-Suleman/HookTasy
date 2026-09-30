@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import orderModel from "../models/orderModels.js";
-import foodModel from "../models/foodModel.js"; // adjust the path/name if yours differs
+import foodModel from "../models/foodModles.js";
 import Stripe from "stripe";
 
 import { sendOrderEmail } from "../Mail/Nodemail.js";
