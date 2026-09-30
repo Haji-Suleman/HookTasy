@@ -15,11 +15,15 @@ const escapeHtml = (s) =>
 
 export const sendOrderEmail = async (order) => {
   const to = order.address?.email;
-  console.log(order)
   if (!to) return;
 
   const rows = order.items
-    .map((i) => `<li>${escapeHtml(i.name)} × ${i.quantity}</li>`)
+    .map((i) => {
+      const link = i.pdfLink
+        ? `<br><a href="${escapeHtml(i.pdfLink)}">Download your PDF pattern</a>`
+        : "";
+      return `<li style="margin-bottom:12px;">${escapeHtml(i.name)} × ${i.quantity}${link}</li>`;
+    })
     .join("");
 
   await transporter.sendMail({
@@ -29,9 +33,8 @@ export const sendOrderEmail = async (order) => {
     html: `
       <h2>Order Confirmation</h2>
       <p>Hello,</p>
-      <p>${order.pdfLink}</p>
       <p>Thank you for your order! We have received your payment.</p>
-      <h3>Order summary</h3>
+      <h3>Your patterns</h3>
       <ul>${rows}</ul>
       <p><strong>Order reference:</strong> ${String(order._id).slice(-8)}</p>
 

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import orderModel from "../models/orderModels.js";
+import foodModel from "../models/foodModel.js"; // adjust the path/name if yours differs
 import Stripe from "stripe";
 
 import { sendOrderEmail } from "../Mail/Nodemail.js";
@@ -21,25 +22,57 @@ const placeOrder = async (req, res) => {
       return res.json({ success: false, message: "Please enter a valid email address." });
     }
 
-    // 2. Each item needs a product name, a price and a quantity
+    // 2. Each item needs a product id and a quantity
     if (!Array.isArray(items) || items.length === 0) {
       return res.json({ success: false, message: "Your cart is empty." });
     }
-    console.log("Gmail:", cleanItems)
-    const cleanItems = items.map((i) => ({
-      name: String(i.name || "").trim(),
-      price: Number(i.price),
+
+    const requested = items.map((i) => ({
+      id: String(i._id || i.id || ""),
       quantity: Number(i.quantity),
-      pdfLink: String(i.pdfLink)
     }));
-    const invalid = cleanItems.some(
-      (i) => !i.name || !(i.price > 0) || !Number.isInteger(i.quantity) || i.quantity < 1
+
+    const badRequest = requested.some(
+      (i) =>
+        !mongoose.Types.ObjectId.isValid(i.id) ||
+        !Number.isInteger(i.quantity) ||
+        i.quantity < 1
     );
+    if (badRequest) {
+      return res.json({ success: false, message: "Invalid items in your cart." });
+    }
+
+    // 3. Name, price and pdfLink come from the database, not from the browser
+    const products = await foodModel.find({
+      _id: { $in: [...new Set(requested.map((i) => i.id))] },
+    });
+    const productMap = new Map(products.map((p) => [String(p._id), p]));
+
+    const cleanItems = requested.map((i) => {
+      const p = productMap.get(i.id);
+      return p
+        ? {
+          name: String(p.name || "").trim(),
+          price: Number(p.price),
+          quantity: i.quantity,
+          pdfLink: String(p.pdfLink || "").trim(),
+        }
+        : null;
+    });
+
+    const invalid =
+      cleanItems.some((i) => i === null) ||
+      cleanItems.some(
+        (i) =>
+          !i.name ||
+          !(i.price > 0) ||
+          !/^https?:\/\//i.test(i.pdfLink)
+      );
     if (invalid) {
       return res.json({ success: false, message: "Invalid items in your cart." });
     }
 
-    // 3. Total is calculated here, not trusted from the browser (no delivery fee)
+    // 4. Total is calculated here, not trusted from the browser (no delivery fee)
     const amount = cleanItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
     const newOrder = new orderModel({
@@ -68,7 +101,7 @@ const placeOrder = async (req, res) => {
       cancel_url: `${frontend_url}/verify?success=false&orderId=${newOrder._id}`,
     });
 
-    // THE FIX: remember which Stripe session belongs to this order
+    // remember which Stripe session belongs to this order
     newOrder.stripeSessionId = session.id;
     await newOrder.save();
 

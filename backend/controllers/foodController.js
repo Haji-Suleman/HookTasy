@@ -2,7 +2,6 @@ import foodModel from "../models/foodModles.js";
 
 import { v2 as cloudinary } from "cloudinary";
 
-
 const addFood = async (req, res) => {
   // req.files comes from multer's upload.array("images", n)
   if (!req.files || req.files.length === 0) {
@@ -21,6 +20,14 @@ const addFood = async (req, res) => {
     return res.status(400).send("Invalid price");
   }
 
+  // Video URLs are uploaded to Cloudinary by the admin panel and sent as a JSON string
+  let videos = [];
+  try {
+    videos = req.body.videos ? JSON.parse(req.body.videos) : [];
+  } catch (e) {
+    return res.status(400).send("Invalid videos data");
+  }
+
   const food = new foodModel({
     name,
     description,
@@ -28,6 +35,7 @@ const addFood = async (req, res) => {
     category,
     pdfLink,
     images: image_filenames,
+    videos,
   });
 
   try {
@@ -72,11 +80,31 @@ const removeFood = async (req, res) => {
       }
     }
 
+    if (Array.isArray(food.videos)) {
+      for (const vidUrl of food.videos) {
+        // URL looks like .../video/upload/v123/optional-folder/name.mp4
+        // public_id = everything after the version, without the extension
+        const afterUpload = vidUrl.split("/upload/")[1];
+        if (!afterUpload) continue;
+        const publicId = afterUpload
+          .replace(/^v\d+\//, "")
+          .replace(/\.[^/.]+$/, "");
+
+        try {
+          const result = await cloudinary.uploader.destroy(publicId, {
+            resource_type: "video",
+          });
+          console.log("Video removed:", publicId, result);
+        } catch (err) {
+          console.log("Error removing video:", publicId, err);
+        }
+      }
+    }
+
     res.json({ success: true, message: "Food removed" });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: "Error" });
   }
 }
-
 export { addFood, listFood, removeFood };
