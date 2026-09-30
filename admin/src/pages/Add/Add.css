@@ -95,3 +95,9 @@
     transform: rotate(360deg);
   }
 }
+
+.add-img-preview video {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+}

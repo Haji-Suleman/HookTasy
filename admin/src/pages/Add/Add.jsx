@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 
 const Add = ({ url }) => {
   const [images, setImages] = useState([]);
+  const [videos, setVideos] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [data, setData] = useState({
     name: "",
@@ -29,6 +30,30 @@ const Add = ({ url }) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const onVideoChangeHandler = (event) => {
+    const files = Array.from(event.target.files);
+    setVideos((prev) => [...prev, ...files]);
+    event.target.value = "";
+  };
+
+  const removeVideo = (index) => {
+    setVideos((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const uploadVideoToCloudinary = async (file) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/video/upload`,
+      { method: "POST", body: fd }
+    );
+    if (!res.ok) throw new Error("Video upload failed");
+    const json = await res.json();
+    return json.secure_url;
+  };
+
   const onSubmitHandler = async (event) => {
     event.preventDefault();
 
@@ -41,18 +66,21 @@ const Add = ({ url }) => {
 
     setIsSubmitting(true);
 
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("pdfLink", data.pdfLink);
-    formData.append("description", data.description);
-    formData.append("price", Number(data.price));
-    formData.append("category", data.category);
-
-    images.forEach((img) => {
-      formData.append("images", img);
-    });
-
     try {
+      const videoUrls = await Promise.all(videos.map(uploadVideoToCloudinary));
+
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("pdfLink", data.pdfLink);
+      formData.append("description", data.description);
+      formData.append("price", Number(data.price));
+      formData.append("category", data.category);
+      formData.append("videos", JSON.stringify(videoUrls));
+
+      images.forEach((img) => {
+        formData.append("images", img);
+      });
+
       const response = await fetch(`${url}/api/food/add`, {
         method: "POST",
         body: formData
@@ -68,6 +96,7 @@ const Add = ({ url }) => {
           category: "Salad"
         });
         setImages([]);
+        setVideos([]);
       } else {
         toast.error("Error adding food");
       }
@@ -108,6 +137,38 @@ const Add = ({ url }) => {
             id="image"
             name="images"
             accept="image/*"
+            multiple
+            hidden
+            disabled={isSubmitting}
+          />
+        </div>
+
+        <div className="add-img-upload flex-col">
+          <p>Upload Videos (optional)</p>
+
+          <div className="add-img-previews">
+            {videos.map((vid, index) => (
+              <div className="add-img-preview" key={index}>
+                <video src={URL.createObjectURL(vid)} muted />
+                <span
+                  className="add-img-remove"
+                  onClick={() => removeVideo(index)}
+                >
+                  &times;
+                </span>
+              </div>
+            ))}
+
+            <label htmlFor="video" className="add-img-add-more">
+              <img src={assets.upload_area} alt="upload video" />
+            </label>
+          </div>
+
+          <input
+            onChange={onVideoChangeHandler}
+            type="file"
+            id="video"
+            accept="video/*"
             multiple
             hidden
             disabled={isSubmitting}
