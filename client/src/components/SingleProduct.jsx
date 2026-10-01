@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import DOMPurify from "dompurify";
+import "react-quill-new/dist/quill.snow.css";
 import { useStore } from "../StoreContext";
 import { Price } from "./Products";
 import CartDrawer from "./Cartdrawer";
@@ -15,6 +17,24 @@ const PLACEHOLDER =
     encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect width="100%" height="100%" fill="#f1f1f1"/></svg>');
 
 const onImgError = (e) => { e.currentTarget.src = PLACEHOLDER; };
+
+/* ---------- description: renders the rich-text HTML safely ---------- */
+function ProductDescription({ html }) {
+    // Make links open in a new tab, safely
+    const clean = useMemo(() => {
+        const dirty = DOMPurify.sanitize(html || "", { ADD_ATTR: ["target"] });
+        return dirty.replace(/<a /g, '<a target="_blank" rel="noopener noreferrer" ');
+    }, [html]);
+
+    return (
+        <div className="ql-snow">
+            <div
+                className="ql-editor sp-desc"
+                dangerouslySetInnerHTML={{ __html: clean }}
+            />
+        </div>
+    );
+}
 
 /* ---------- gallery: first image, then videos, then the other images ---------- */
 function Gallery({ media, name }) {
@@ -224,7 +244,7 @@ export default function SingleProduct() {
                     {product.category && <p className="cat">{product.category}</p>}
                     <h1>{product.name}</h1>
                     <Price p={product} />
-                    {product.description && <p className="sp-desc">{product.description}</p>}
+                    {product.description && <ProductDescription html={product.description} />}
 
                     {/* pass the whole product so the cart can snapshot it */}
                     <button className="add" onClick={() => { addToCart(product); setAdded(true); }}>
