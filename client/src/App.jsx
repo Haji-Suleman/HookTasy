@@ -6,6 +6,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { Authen } from './Auth';
 import { StoreProvider } from './StoreContext';
 import PlaceOrder from './pages/PlaceOrder';
+import SingleProduct from './components/SingleProduct';
 import Verify from './pages/Verify';
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
           <Route path='/account' element={<Authen />} />
           <Route path="/checkout" element={<PlaceOrder />} />
           <Route path="/verify" element={<Verify />} />
+
+          <Route path="/product/:id" element={<SingleProduct />} />
         </Routes>
       </BrowserRouter>
     </StoreProvider>
