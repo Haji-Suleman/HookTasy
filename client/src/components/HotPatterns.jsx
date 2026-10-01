@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useStore } from "../StoreContext";
-import { Detail, Price } from "./Products";
-import "./Products.css";     // cards, grid, price, buttons, popup (scoped under .zp)
+import { Price } from "./Products";
+import "./Products.css";     // cards, grid, price, buttons (scoped under .zp)
 import "./HotPatterns.css";  // the two headings + tabs
 
 const PLACEHOLDER =
@@ -32,12 +33,8 @@ export default function HotPatterns({
     tabs = DEFAULT_TABS,  // "New Arrivals" shows random products, every other tab matches the product category
     newCount = 20,        // how many random products "New Arrivals" shows
 }) {
-    console.log("HotPatterns file loaded");
-
-
     const { products, categories, status, error, refresh, addToCart } = useStore();
     const [tab, setTab] = useState(tabs[0]);
-    const [selectedId, setSelectedId] = useState(null);
     /* picked once per product load, so switching tabs does not reshuffle it */
     const randomPicks = useMemo(() => shuffle(products).slice(0, newCount), [products, newCount]);
 
@@ -45,22 +42,6 @@ export default function HotPatterns({
         () => (tab === NEW_TAB ? randomPicks : products.filter((p) => key(p.category) === key(tab))),
         [tab, products, randomPicks]
     );
-    console.log({ status, count: products.length, categories, tab, first: products[0] });
-
-    const current = selectedId !== null ? products.find((p) => String(p.id) === String(selectedId)) : null;
-
-    useEffect(() => {
-        console.log({ status, count: products.length, categories, tab, first: products[0] });
-        if (!current) return undefined;
-        const onKey = (e) => { if (e.key === "Escape") setSelectedId(null); };
-        const prev = document.body.style.overflow;
-        window.addEventListener("keydown", onKey);
-        document.body.style.overflow = "hidden";
-        return () => {
-            window.removeEventListener("keydown", onKey);
-            document.body.style.overflow = prev;
-        };
-    }, [current]);
 
     const onTabKey = (e, i) => {
         if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
@@ -125,10 +106,10 @@ export default function HotPatterns({
                     {status === "ready" &&
                         list.map((p) => (
                             <article className="card" key={p.id}>
-                                <button className="thumb" onClick={() => setSelectedId(p.id)} aria-label={`View ${p.name}`}>
+                                <Link className="thumb" to={`/product/${p.id}`} aria-label={`View ${p.name}`}>
                                     <img src={p.images[0] || PLACEHOLDER} alt={p.name} loading="lazy" onError={onImgError} />
-                                </button>
-                                <button className="name" onClick={() => setSelectedId(p.id)}>{p.name}</button>
+                                </Link>
+                                <Link className="name" to={`/product/${p.id}`}>{p.name}</Link>
                                 <Price p={p} />
                                 {/* addToCart needs the whole product, not just the id */}
                                 <button className="add" onClick={() => addToCart(p)}>ADD TO CART</button>
@@ -136,8 +117,6 @@ export default function HotPatterns({
                         ))}
                 </div>
             </section>
-
-            {current && <Detail key={current.id} p={current} onClose={() => setSelectedId(null)} />}
         </div>
     );
 }
