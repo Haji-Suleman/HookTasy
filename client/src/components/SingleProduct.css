@@ -1,0 +1,233 @@
+/* Product page. Scoped under .zp so it shares the colors and fonts from Products.css */
+
+.zp .sp-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px clamp(16px, 4.5vw, 64px) 120px;
+}
+
+.zp .sp-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 28px;
+    color: var(--zp-muted);
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.zp .sp-back:hover {
+    color: var(--zp-ink);
+}
+
+.zp .sp-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: clamp(24px, 4vw, 64px);
+    align-items: start;
+}
+
+@media (max-width: 800px) {
+    .zp .sp-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- gallery ---------- */
+
+.zp .sp-gallery {
+    min-width: 0;
+    /* lets Swiper shrink inside the grid column */
+}
+
+.zp .sp-stage {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.zp .sp-swiper {
+    width: 100%;
+    height: 100%;
+}
+
+.zp .sp-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zp .sp-media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* videos keep their full frame instead of being cropped */
+.zp .sp-video {
+    object-fit: contain;
+    background: #000;
+}
+
+/* chevrons: green background, white arrow */
+.zp .sp-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--zp-green);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.zp .sp-nav svg {
+    width: 20px;
+    height: 20px;
+}
+
+.zp .sp-nav:hover {
+    background: var(--zp-green-d);
+    transform: translateY(-50%) scale(1.08);
+}
+
+.zp .sp-nav--prev {
+    left: 12px;
+}
+
+.zp .sp-nav--next {
+    right: 12px;
+}
+
+/* thumbnails (images and videos) */
+.zp .sp-thumbs {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.zp .sp-thumb {
+    position: relative;
+    flex: 0 0 68px;
+    height: 68px;
+    padding: 0;
+    border: 2px solid transparent;
+    background: #f1f1f1;
+    cursor: pointer;
+    overflow: hidden;
+    opacity: 0.7;
+    transition: opacity 0.15s ease, border-color 0.15s ease;
+}
+
+.zp .sp-thumb:hover,
+.zp .sp-thumb[aria-current="true"] {
+    opacity: 1;
+}
+
+.zp .sp-thumb[aria-current="true"] {
+    border-color: var(--zp-ink);
+}
+
+.zp .sp-thumb img,
+.zp .sp-thumb video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+}
+
+.zp .sp-play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 16px;
+    background: rgba(0, 0, 0, 0.35);
+    pointer-events: none;
+}
+
+/* ---------- info ---------- */
+
+.zp .sp-info h1 {
+    font-weight: 500;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    line-height: 1.2;
+    margin: 0 0 12px;
+}
+
+.zp .sp-info .price {
+    font-size: 1.6rem;
+    margin: 0 0 24px;
+}
+
+.zp .sp-desc {
+    white-space: pre-line;
+    line-height: 1.7;
+    color: #333;
+    margin: 0 0 28px;
+}
+
+.zp .sp-info .add {
+    margin-top: 0;
+    max-width: 420px;
+}
+
+/* ---------- loading and messages ---------- */
+
+.zp .sp-skel {
+    background: #f1f1f1;
+    animation: zp-pulse 1.2s ease-in-out infinite alternate;
+}
+
+.zp .sp-skel--img {
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+}
+
+.zp .sp-skel--bar {
+    height: 24px;
+    width: 80%;
+    margin-bottom: 16px;
+}
+
+.zp .sp-skel--short {
+    width: 40%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .zp .sp-skel {
+        animation: none;
+    }
+}
+
+.zp .sp-msg {
+    text-align: center;
+    padding: 48px 16px;
+    color: #444;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.zp .sp-msg p {
+    margin: 0 0 8px;
+}
+
+.zp .sp-retry-link {
+    display: inline-block;
+    text-decoration: none;
+}

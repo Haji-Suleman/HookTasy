@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 import "./NewestCollection.css";
 import halloween from "../assets/Navbar/001_1_09e65484-34e5-4eb7-8a25-28110cb77099.png"
 import chrismis from "../assets/Navbar/002_HTS_Subscription_8b271e49-390d-4e3f-af69-34b2304e83e6.png"
@@ -23,91 +25,17 @@ const items = [
     { src: flowers, label: "Flowers" },
 ];
 
-function getCardsPerView() {
-    if (typeof window === "undefined") return 4;
-    const w = window.innerWidth;
-    if (w < 640) return 1;
-    if (w < 960) return 2;
-    return 4;
-}
-
 export default function CollectionCarousel({ title = "Newest collection", cards = items }) {
-    const viewportRef = useRef(null);
+    const [swiper, setSwiper] = useState(null);
     const [index, setIndex] = useState(0);
-    const [cardsPerView, setCardsPerView] = useState(getCardsPerView());
-    const dragState = useRef({ dragging: false, pointerId: null, startX: 0, startScroll: 0, moved: false, raf: null });
+    const [isBeginning, setIsBeginning] = useState(true);
+    const [isEnd, setIsEnd] = useState(false);
 
-    const maxIndex = Math.max(0, cards.length - cardsPerView);
-
-    function cardStep() {
-        const viewport = viewportRef.current;
-        if (!viewport) return 0;
-        const first = viewport.querySelector(".collection__card");
-        if (!first) return 0;
-        const gap = parseFloat(getComputedStyle(viewport.firstElementChild).gap || 0);
-        return first.getBoundingClientRect().width + gap;
-    }
-
-    function goTo(i, smooth = true) {
-        const clamped = Math.min(Math.max(i, 0), maxIndex);
-        setIndex(clamped);
-        viewportRef.current?.scrollTo({ left: clamped * cardStep(), behavior: smooth ? "smooth" : "auto" });
-    }
-
-    useEffect(() => {
-        function handleResize() {
-            setCardsPerView(getCardsPerView());
-        }
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
-
-    useEffect(() => {
-        goTo(index, false);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [cardsPerView]);
-
-    // Pointer-based drag: uses pointer capture so a fast swipe never "escapes"
-    // the element, and turns scroll-snap off mid-drag so the row tracks the
-    // finger/cursor 1:1 instead of fighting the snap points.
-    function handlePointerDown(e) {
-        const viewport = viewportRef.current;
-        viewport.setPointerCapture(e.pointerId);
-        viewport.classList.add("is-dragging");
-        dragState.current = {
-            dragging: true,
-            pointerId: e.pointerId,
-            startX: e.clientX,
-            startScroll: viewport.scrollLeft,
-            moved: false,
-            raf: null,
-        };
-    }
-
-    function handlePointerMove(e) {
-        const state = dragState.current;
-        const viewport = viewportRef.current;
-        if (!state.dragging) return;
-        const delta = e.clientX - state.startX;
-        if (Math.abs(delta) > 6) state.moved = true;
-        if (state.raf) cancelAnimationFrame(state.raf);
-        state.raf = requestAnimationFrame(() => {
-            viewport.scrollLeft = state.startScroll - delta;
-        });
-    }
-
-    function handlePointerUp(e) {
-        const state = dragState.current;
-        const viewport = viewportRef.current;
-        if (!state.dragging) return;
-        if (state.raf) cancelAnimationFrame(state.raf);
-        state.dragging = false;
-        viewport.classList.remove("is-dragging");
-        if (viewport.hasPointerCapture?.(e.pointerId)) {
-            viewport.releasePointerCapture(e.pointerId);
-        }
-        const nearest = Math.round(viewport.scrollLeft / cardStep());
-        goTo(nearest);
+    // Keep the counter and the arrow disabled-states in sync with Swiper
+    function sync(s) {
+        setIndex(s.activeIndex);
+        setIsBeginning(s.isBeginning);
+        setIsEnd(s.isEnd);
     }
 
     return (
@@ -119,8 +47,8 @@ export default function CollectionCarousel({ title = "Newest collection", cards 
                 <div className="collection__nav">
                     <button
                         className="collection__arrow"
-                        onClick={() => goTo(index - 1)}
-                        disabled={index <= 0}
+                        onClick={() => swiper?.slidePrev()}
+                        disabled={isBeginning}
                         aria-label="Previous"
                     >
                         <svg viewBox="0 0 24 24" width="16" height="16">
@@ -136,8 +64,8 @@ export default function CollectionCarousel({ title = "Newest collection", cards 
 
                     <button
                         className="collection__arrow"
-                        onClick={() => goTo(index + 1)}
-                        disabled={index >= maxIndex}
+                        onClick={() => swiper?.slideNext()}
+                        disabled={isEnd}
                         aria-label="Next"
                     >
                         <svg viewBox="0 0 24 24" width="16" height="16">
@@ -147,25 +75,35 @@ export default function CollectionCarousel({ title = "Newest collection", cards 
                 </div>
             </div>
 
-            <div
+            <Swiper
                 className="collection__viewport"
-                ref={viewportRef}
-                onPointerDown={handlePointerDown}
-                onPointerMove={handlePointerMove}
-                onPointerUp={handlePointerUp}
-                onPointerCancel={handlePointerUp}
+                grabCursor={true}
+                spaceBetween={20}
+                slidesPerView={1.14}
+                breakpoints={{
+                    640: { slidesPerView: 2 },
+                    960: { slidesPerView: 4 },
+                }}
+                onSwiper={(s) => {
+                    setSwiper(s);
+                    sync(s);
+                }}
+                onSlideChange={sync}
+                onResize={sync}
+                onBreakpoint={sync}
+                onReachBeginning={sync}
+                onReachEnd={sync}
+                onFromEdge={sync}
             >
-                <ul className="collection__track">
-                    {cards.map((card, i) => (
-                        <li className="collection__card" key={i}>
-                            <div className="collection__frame">
-                                <img src={card.src} alt={card.label || ""} draggable="false" />
-                            </div>
-                            <p className="collection__label">{card.label}</p>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+                {cards.map((card, i) => (
+                    <SwiperSlide className="collection__card" key={i}>
+                        <div className="collection__frame">
+                            <img src={card.src} alt={card.label || ""} draggable="false" />
+                        </div>
+                        <p className="collection__label">{card.label}</p>
+                    </SwiperSlide>
+                ))}
+            </Swiper>
         </section>
     );
 }

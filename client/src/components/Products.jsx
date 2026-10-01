@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { money, useStore } from "../StoreContext";
 import CartDrawer from "./Cartdrawer";
 import "./Products.css";
@@ -18,53 +19,6 @@ export function Price({ p }) {
     );
 }
 
-/* ---------- product popup ---------- */
-export function Detail({ p, onClose }) {
-    const { addToCart } = useStore();
-    const [idx, setIdx] = useState(0);
-    const [added, setAdded] = useState(false);
-    const imgs = p.images.length ? p.images : [PLACEHOLDER];
-
-    useEffect(() => {
-        if (!added) return;
-        const t = setTimeout(() => setAdded(false), 1200);
-        return () => clearTimeout(t);
-    }, [added]);
-
-    return (
-        <div className="overlay" onClick={onClose}>
-            <div className="modal" role="dialog" aria-modal="true" aria-label={p.name} onClick={(e) => e.stopPropagation()}>
-                <button className="x" onClick={onClose} aria-label="Close" autoFocus>&times;</button>
-                <div className="d-body">
-                    <div>
-                        <img className="d-main" src={imgs[idx]} alt={p.name} onError={onImgError} />
-                        {imgs.length > 1 && (
-                            <div className="d-thumbs">
-                                {imgs.map((s, i) => (
-                                    <button key={i} aria-label={`Image ${i + 1}`} aria-current={i === idx ? "true" : undefined} onClick={() => setIdx(i)}>
-                                        <img src={s} alt="" onError={onImgError} />
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                    <div className="d-info">
-                        {p.category && <p className="cat">{p.category}</p>}
-                        <h2>{p.name}</h2>
-                        <Price p={p} />
-                        {p.description && <p className="d-desc">{p.description}</p>}
-                        {/* pass the whole product so the cart can snapshot it */}
-
-                        <button className="add" onClick={() => { addToCart(p); setAdded(true); }}>
-                            {added ? "ADDED" : "ADD TO CART"}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
 /* ---------- main component ---------- */
 export default function Products() {
     const {
@@ -73,7 +27,6 @@ export default function Products() {
     } = useStore();
     const [filter, setFilter] = useState("All");
     const [query, setQuery] = useState("");
-    const [selectedId, setSelectedId] = useState(null);
     const [cartOpen, setCartOpen] = useState(false);
     const visible = useMemo(() => {
         const q = query.trim().toLowerCase();
@@ -81,9 +34,6 @@ export default function Products() {
             (p) => (filter === "All" || p.category === filter) && (!q || p.name.toLowerCase().includes(q))
         );
     }, [products, filter, query]);
-
-    const current = selectedId !== null ? products.find((p) => String(p.id) === String(selectedId)) : null;
-    const overlayOpen = Boolean(current) || cartOpen;
 
     /* Map context cart shape → CartDrawer's expected shape */
     const drawerItems = useMemo(
@@ -105,20 +55,18 @@ export default function Products() {
         else if (nextQty < cur) decreaseItem(id);
     };
 
-    /* Escape closes popups; page does not scroll behind them */
+    /* Escape closes the cart; page does not scroll behind it */
     useEffect(() => {
-        const onKey = (e) => { if (e.key === "Escape") { setSelectedId(null); setCartOpen(false); } };
+        const onKey = (e) => { if (e.key === "Escape") setCartOpen(false); };
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
     }, []);
 
     useEffect(() => {
-        document.body.style.overflow = overlayOpen ? "hidden" : "";
+        document.body.style.overflow = cartOpen ? "hidden" : "";
         return () => { document.body.style.overflow = ""; };
-    }, [overlayOpen]);
+    }, [cartOpen]);
 
-    console.log("cartItems from context:", cartItems);
-    console.log("drawerItems passed to drawer:", drawerItems);
     return (
         <div className="zp">
             <main className="wrap">
@@ -170,10 +118,10 @@ export default function Products() {
                     {status === "ready" &&
                         visible.map((p) => (
                             <article className="card" key={p.id}>
-                                <button className="thumb" onClick={() => setSelectedId(p.id)} aria-label={`View ${p.name}`}>
+                                <Link className="thumb" to={`/product/${p.id}`} aria-label={`View ${p.name}`}>
                                     <img src={p.images[0] || PLACEHOLDER} alt={p.name} loading="lazy" onError={onImgError} />
-                                </button>
-                                <button className="name" onClick={() => setSelectedId(p.id)}>{p.name}</button>
+                                </Link>
+                                <Link className="name" to={`/product/${p.id}`}>{p.name}</Link>
                                 <Price p={p} />
                                 {/* pass the whole product so the cart can snapshot it */}
                                 <button className="add" onClick={() => addToCart(p)}>ADD TO CART</button>
@@ -189,8 +137,6 @@ export default function Products() {
                 </svg>
                 <span className="badge">{cartCount}</span>
             </button>
-
-            {current && <Detail key={current.id} p={current} onClose={() => setSelectedId(null)} />}
 
             <CartDrawer
                 isOpen={cartOpen}
