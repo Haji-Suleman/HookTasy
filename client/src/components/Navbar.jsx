@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect, useCallback, useId } from 'react';
+import { useState, useRef, useEffect, useCallback, useId, useMemo } from 'react';
+import { useStore } from '../StoreContext';
 import logo from '../assets/zootsy-logo-nobg.png';
 import './Navbar.css';
 import CartDrawer from './Cartdrawer';
@@ -105,11 +106,8 @@ const MenuIcon = ({ className = 'icon-lg' }) => <Svg className={className}><path
    NAVBAR
    ===================================================================== */
 export default function Navbar({
-  cartItems = [],
   accountHref = '/account',
   onSearch,
-  onCartRemove,
-  onCartQtyChange,
   onCheckout,
   onChatClick,
   continueShoppingHref = '/',
@@ -126,7 +124,35 @@ export default function Navbar({
   const [navHidden, setNavHidden] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
 
-  const cartCount = cartItems.reduce((sum, item) => sum + item.qty, 0);
+  /* The cart lives in the store, so the badge and drawer stay in sync on every page */
+  const {
+    cartCount,
+    cartItems: storeCart,
+    addToCart,
+    decreaseItem,
+    removeFromCart,
+  } = useStore();
+
+  /* Map store cart shape → CartDrawer's expected shape */
+  const cartItems = useMemo(
+    () =>
+      storeCart.map(({ product: p, qty }) => ({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        originalPrice: p.compare,
+        qty,
+        image: (p.images && p.images[0]) || '',
+      })),
+    [storeCart]
+  );
+
+  const handleCartQty = (id, nextQty) => {
+    const entry = storeCart.find((i) => String(i.product.id) === String(id));
+    if (!entry) return;
+    if (nextQty > entry.qty) addToCart(entry.product);
+    else if (nextQty < entry.qty) decreaseItem(id);
+  };
 
   const navRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -503,17 +529,14 @@ export default function Navbar({
         onClose={() => setCartOpen(false)}
         items={cartItems}
         currency={currency}
-        onRemove={onCartRemove}
-        onQtyChange={onCartQtyChange}
+        onRemove={removeFromCart}
+        onQtyChange={handleCartQty}
         onCheckout={onCheckout}
         continueShoppingHref={continueShoppingHref}
         checkoutHref={checkoutHref}
         linkComponent={LinkComp}
         linkProp={linkProp}
       />
-
-
-
     </header>
   );
 }

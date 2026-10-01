@@ -7,6 +7,8 @@ import { Price } from "./Products";
 import CartDrawer from "./Cartdrawer";
 import "./Products.css";
 import "./SingleProduct.css";
+import Navbar from "./Navbar";
+import Footer from "../pages/Footer";
 
 const PLACEHOLDER =
     "data:image/svg+xml;utf8," +
@@ -218,37 +220,41 @@ export default function SingleProduct() {
     }
 
     return (
-        <div className="zp sp">
-            <main className="sp-wrap">
-                <Link className="sp-back" to="/">
-                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-                        <path d="M15 5 7 12l8 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <>
+            <Navbar />
+            <div className="zp sp">
+                <main className="sp-wrap">
+                    <Link className="sp-back" to="/">
+                        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                            <path d="M15 5 7 12l8 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        All patterns
+                    </Link>
+
+                    {content}
+                </main>
+
+                <button className="fab" onClick={() => setCartOpen(true)} aria-label={`Open cart, ${cartCount} items`}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M6 8h12l-1 12H7L6 8z" />
+                        <path d="M9 8V6a3 3 0 0 1 6 0v2" />
                     </svg>
-                    All patterns
-                </Link>
+                    <span className="badge">{cartCount}</span>
+                </button>
 
-                {content}
-            </main>
-
-            <button className="fab" onClick={() => setCartOpen(true)} aria-label={`Open cart, ${cartCount} items`}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M6 8h12l-1 12H7L6 8z" />
-                    <path d="M9 8V6a3 3 0 0 1 6 0v2" />
-                </svg>
-                <span className="badge">{cartCount}</span>
-            </button>
-
-            <CartDrawer
-                isOpen={cartOpen}
-                onClose={() => setCartOpen(false)}
-                items={drawerItems}
-                currency="$"
-                onRemove={removeFromCart}
-                onQtyChange={handleQtyChange}
-                onCheckout={() => setCartOpen(false)}
-                continueShoppingHref="/"
-                checkoutHref="/checkout"
-            />
-        </div>
+                <CartDrawer
+                    isOpen={cartOpen}
+                    onClose={() => setCartOpen(false)}
+                    items={drawerItems}
+                    currency="$"
+                    onRemove={removeFromCart}
+                    onQtyChange={handleQtyChange}
+                    onCheckout={() => setCartOpen(false)}
+                    continueShoppingHref="/"
+                    checkoutHref="/checkout"
+                />
+            </div>
+            <Footer />
+        </>
     );
 }

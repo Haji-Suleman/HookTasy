@@ -133,16 +133,21 @@
   padding: 0;
   list-style: none;
   display: flex;
-  align-items: center;
+  /* items stretch to the full height of the bar, so there is no dead gap
+     between a menu label and its dropdown panel */
+  align-items: stretch;
   justify-content: center;
   gap: 12px;
   min-width: 0;
+  flex: 1 1 auto;
   flex-wrap: nowrap;
   white-space: nowrap;
 }
 
 .navbar-desktop-nav__item {
   position: static;
+  display: flex;
+  align-items: center;
 }
 
 .navbar-link {
@@ -194,6 +199,17 @@
   box-shadow: var(--sh-md);
   transition: opacity var(--ease), transform var(--ease), visibility var(--ease);
   z-index: 10;
+}
+
+/* Invisible bridge above the panel: if the pointer ever lands in a tiny gap
+   between the menu label and the panel, it still counts as hovering the menu */
+.dropdown-panel::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -20px;
+  height: 20px;
 }
 
 .dropdown-panel[data-open="false"] {
@@ -556,8 +572,11 @@
    DESKTOP — gradual scale, no overlap at any zoom
    ===================================================================== */
 @media (min-width: 1200px) {
+
+  /* flex + stretch: the nav fills the full height of the bar */
   .navbar-desktop-nav {
-    display: block;
+    display: flex;
+    align-self: stretch;
   }
 
   .icon-btn--desktop-only {
