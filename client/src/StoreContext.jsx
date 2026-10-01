@@ -42,6 +42,17 @@ export function normalizeProduct(p, i) {
     const one = pick(p, ["image", "thumbnail", "img"]);
     if (!imgs.length && one) imgs = [one];
 
+    // ---- NEW: normalize videos the same way ----
+    let vids = pick(p, ["videos", "videoUrls", "video_urls", "videoList", "video"]) || [];
+    if (typeof vids === "string") {
+        try { vids = JSON.parse(vids); } catch { vids = vids.split(","); }
+    }
+    vids = (Array.isArray(vids) ? vids : [vids])
+        .map((x) => (typeof x === "string" ? x : x && (x.url || x.src || x.secure_url)))
+        .filter(Boolean)
+        .map((s) => s.trim());
+    // -------------------------------------------
+
     return {
         id: pick(p, ["id", "_id"]) ?? i,
         name: pick(p, ["name", "title"]) || "Untitled",
@@ -50,9 +61,9 @@ export function normalizeProduct(p, i) {
         category: pick(p, ["category", "type"]) || "",
         description: pick(p, ["description", "desc"]) || "",
         images: imgs,
+        videos: vids,   // <-- ADD THIS
     };
 }
-
 /* Read the saved cart and drop anything malformed */
 function loadCart() {
     try {

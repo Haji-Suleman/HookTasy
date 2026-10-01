@@ -50,11 +50,15 @@ function Gallery({ media, name }) {
                                 />
                             ) : (
                                 <video
-                                    className="sp-media sp-video swiper-no-swiping"
+                                    className="sp-media sp-video"
                                     src={m.src}
                                     controls
                                     playsInline
                                     preload="metadata"
+                                    onError={(e) => {
+                                        console.warn("[SingleProduct] video failed to load:", m.src);
+                                        e.currentTarget.poster = PLACEHOLDER;
+                                    }}
                                 />
                             )}
                         </SwiperSlide>
@@ -115,17 +119,45 @@ export default function SingleProduct() {
 
     const product = products.find((p) => String(p.id) === String(id));
 
-    // Image 1 first, then every video, then the remaining images
+    // ---- DEBUG: show the raw product shape coming from the store ----
+    console.log("[SingleProduct] id from URL:", id);
+    console.log("[SingleProduct] status:", status);
+    console.log("[SingleProduct] product found:", product);
+    console.log("[SingleProduct] product.images (raw):", product?.images);
+    console.log("[SingleProduct] product.videos (raw):", product?.videos);
+    // ---------------------------------------------------------------
+
+    // Image 1 first, then every video, then the remaining images.
+    // Normalizes entries so they can be plain strings OR objects like { url } / { src }.
     const media = useMemo(() => {
         if (!product) return [];
-        const images = product.images && product.images.length ? product.images : [PLACEHOLDER];
-        const videos = product.videos || [];
+
+        const normalize = (v) =>
+            typeof v === "string" ? v : v?.url || v?.src || null;
+
+        const rawImages = Array.isArray(product.images) ? product.images : [];
+        const images = rawImages.map(normalize).filter(Boolean);
+        if (images.length === 0) images.push(PLACEHOLDER);
+
+        const videos = (Array.isArray(product.videos) ? product.videos : [])
+            .map(normalize)
+            .filter(Boolean);
+
         const [first, ...rest] = images;
-        return [
+
+        const result = [
             { type: "image", src: first },
             ...videos.map((src) => ({ type: "video", src })),
             ...rest.map((src) => ({ type: "image", src })),
         ];
+
+        // ---- DEBUG: what the gallery will actually receive ----
+        console.log("[SingleProduct] normalized images:", images);
+        console.log("[SingleProduct] normalized videos:", videos);
+        console.log("[SingleProduct] final media array:", result);
+        // -------------------------------------------------------
+
+        return result;
     }, [product]);
 
     /* Map context cart shape → CartDrawer's expected shape */
@@ -143,9 +175,10 @@ export default function SingleProduct() {
     );
 
     const handleQtyChange = (itemId, nextQty) => {
-        const cur = cartItems.find((i) => String(i.product.id) === String(itemId))?.qty ?? 0;
-        if (nextQty > cur) addToCart(cartItems.find((i) => String(i.product.id) === String(itemId)).product);
-        else if (nextQty < cur) decreaseItem(itemId);
+        const line = cartItems.find((i) => String(i.product.id) === String(itemId));
+        if (!line) return;
+        if (nextQty > line.qty) addToCart(line.product);
+        else if (nextQty < line.qty) decreaseItem(itemId);
     };
 
     // Open every product page at the top
