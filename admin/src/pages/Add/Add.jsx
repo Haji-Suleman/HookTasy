@@ -1,9 +1,26 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import ReactQuill from 'react-quill-new'
+import 'react-quill-new/dist/quill.snow.css'
 import "./Add.css"
 import { assets } from '../../assets/assets'
 import { toast } from 'react-toastify'
 
 const DEFAULT_CATEGORY = "Halloween";
+
+const quillModules = {
+  toolbar: [
+    [{ header: [2, 3, false] }],
+    ["bold", "italic", "underline"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ align: [] }],
+    ["link"],
+    ["clean"],
+  ],
+};
+
+// Quill reports an empty editor as "<p><br></p>", so strip tags before checking
+const isDescriptionEmpty = (html) =>
+  !html || html.replace(/<[^>]*>/g, "").trim().length === 0;
 
 const Add = ({ url }) => {
   const [images, setImages] = useState([]);
@@ -40,6 +57,10 @@ const Add = ({ url }) => {
   const onChangeHandler = (event) => {
     const { name, value } = event.target;
     setData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const onDescriptionChange = (html) => {
+    setData((prevData) => ({ ...prevData, description: html }));
   };
 
   const onImageChangeHandler = (event) => {
@@ -120,6 +141,11 @@ const Add = ({ url }) => {
       return;
     }
 
+    if (isDescriptionEmpty(data.description)) {
+      toast.error("Please write a product description");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -139,7 +165,7 @@ const Add = ({ url }) => {
       const formData = new FormData();
       formData.append("name", data.name);
       formData.append("pdfLink", data.pdfLink);
-      formData.append("description", data.description);
+      formData.append("description", data.description); // HTML from the editor
       formData.append("price", Number(data.price));
       formData.append("category", data.category);
       formData.append("videos", JSON.stringify(videoUrls));
@@ -255,7 +281,14 @@ const Add = ({ url }) => {
         </div>
         <div className="add-product-description flex-col">
           <p>Product Description</p>
-          <textarea onChange={onChangeHandler} value={data.description} name="description" rows="6" placeholder='Write content here' required disabled={isSubmitting}></textarea>
+          <ReactQuill
+            theme="snow"
+            value={data.description}
+            onChange={onDescriptionChange}
+            modules={quillModules}
+            placeholder="Write content here"
+            readOnly={isSubmitting}
+          />
         </div>
         <div className="add-category-price">
           <div className="add-category flex-col">
