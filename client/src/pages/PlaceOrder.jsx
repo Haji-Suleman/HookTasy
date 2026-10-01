@@ -40,10 +40,13 @@ export default function PlaceOrder() {
 
     const items = useMemo(
         () =>
-            cartItems.map(({ product, qty }) => ({
+            cartItems.map(({ id, product, qty }) => ({
+                _id: product._id || id,
+                productId: product._id || id,
                 name: product.name,
-                price: product.price,
-                quantity: qty,
+                price: Number(product.price),
+                quantity: Number(qty),
+                pdfLink: product.pdfLink || "",
             })),
         [cartItems]
     );
@@ -128,7 +131,7 @@ export default function PlaceOrder() {
                     <span>Subtotal</span>
                     <span>{money(cartTotal)}</span>
                 </div>
-                
+
                 <div className="po-line po-total">
                     <span>Total</span>
                     <span>{money(total)}</span>

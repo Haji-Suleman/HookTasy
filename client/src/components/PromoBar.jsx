@@ -1,4 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from 'swiper/modules';
+import 'swiper/css';
 import './PromoBar.css';
 
 /* =====================================================================
@@ -47,65 +50,59 @@ function PromoArrow({ direction, onClick }) {
 }
 
 /* =====================================================================
-   PROMO BAR — top green announcement strip
+   PROMO BAR — top announcement strip
    ===================================================================== */
 const DEFAULT_ANNOUNCEMENTS = ['Pick 3 & Get 1 Small', 'Pick 5 & Get 2 Large'];
 
 export default function PromoBar({ announcements = DEFAULT_ANNOUNCEMENTS }) {
     const [visible, setVisible] = useState(true);
-    const [index, setIndex] = useState(0);
-    const intervalRef = useRef(null);
+    const swiperRef = useRef(null);
 
-    const total = announcements.length;
-    const canCycle = total > 1;
+    const canCycle = announcements.length > 1;
 
-    const goPrev = () => setIndex((i) => (i - 1 + total) % total);
-    const goNext = () => setIndex((i) => (i + 1) % total);
-
-    /* Auto-cycle every 4 seconds */
-    useEffect(() => {
-        if (!canCycle || !visible) return undefined;
-        intervalRef.current = setInterval(goNext, 4000);
-        return () => clearInterval(intervalRef.current);
-    }, [canCycle, visible, total]);
+    /* Swiper loop needs enough slides; repeat short lists so autoplay keeps going */
+    const slides =
+        announcements.length > 1 && announcements.length < 4
+            ? [...announcements, ...announcements]
+            : announcements;
 
     if (!visible) return null;
-
-    /* Each slide's horizontal offset relative to the active one, normalized
-       to the shortest wrap-around distance so the track never has to travel
-       "the long way round". */
-    const getDelta = (i) => {
-        let d = ((i - index) % total + total) % total;
-        if (d > total / 2) d -= total;
-        return d;
-    };
 
     return (
         <div role="region" aria-label="Promotions" className="promo-bar">
             <div className="promo-bar__inner">
-                <PromoArrow direction="left" onClick={canCycle ? goPrev : undefined} />
+                <PromoArrow
+                    direction="left"
+                    onClick={canCycle ? () => swiperRef.current?.slidePrev() : undefined}
+                />
 
-                {/* Sliding stack — new slide enters from the left, old slide exits
-            to the right (left-to-right swipe). */}
                 <div className="promo-viewport">
-                    {announcements.map((text, i) => {
-                        const delta = getDelta(i);
-                        return (
-                            <p
-                                key={text}
-                                className="promo-text"
-                                style={{ transform: `translateX(${-delta * 100}%)` }}
-                                data-active={delta === 0 ? 'true' : 'false'}
-                                aria-live={delta === 0 ? 'polite' : 'off'}
-                                aria-hidden={delta !== 0}
-                            >
-                                {text}
-                            </p>
-                        );
-                    })}
+                    <Swiper
+                        className="promo-swiper"
+                        modules={[Autoplay]}
+                        onSwiper={(swiper) => (swiperRef.current = swiper)}
+                        slidesPerView={1}
+                        loop={canCycle}
+                        speed={500}
+                        allowTouchMove={canCycle}
+                        autoplay={
+                            canCycle
+                                ? { delay: 4000, disableOnInteraction: false }
+                                : false
+                        }
+                    >
+                        {slides.map((text, i) => (
+                            <SwiperSlide key={`${text}-${i}`}>
+                                <p className="promo-text">{text}</p>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
                 </div>
 
-                <PromoArrow direction="right" onClick={canCycle ? goNext : undefined} />
+                <PromoArrow
+                    direction="right"
+                    onClick={canCycle ? () => swiperRef.current?.slideNext() : undefined}
+                />
             </div>
 
             <button

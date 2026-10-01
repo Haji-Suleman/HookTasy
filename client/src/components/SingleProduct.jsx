@@ -50,15 +50,11 @@ function Gallery({ media, name }) {
                                 />
                             ) : (
                                 <video
-                                    className="sp-media sp-video"
+                                    className="sp-media sp-video swiper-no-swiping"
                                     src={m.src}
                                     controls
                                     playsInline
                                     preload="metadata"
-                                    onError={(e) => {
-                                        console.warn("[SingleProduct] video failed to load:", m.src);
-                                        e.currentTarget.poster = PLACEHOLDER;
-                                    }}
                                 />
                             )}
                         </SwiperSlide>
@@ -119,14 +115,6 @@ export default function SingleProduct() {
 
     const product = products.find((p) => String(p.id) === String(id));
 
-    // ---- DEBUG: show the raw product shape coming from the store ----
-    console.log("[SingleProduct] id from URL:", id);
-    console.log("[SingleProduct] status:", status);
-    console.log("[SingleProduct] product found:", product);
-    console.log("[SingleProduct] product.images (raw):", product?.images);
-    console.log("[SingleProduct] product.videos (raw):", product?.videos);
-    // ---------------------------------------------------------------
-
     // Image 1 first, then every video, then the remaining images.
     // Normalizes entries so they can be plain strings OR objects like { url } / { src }.
     const media = useMemo(() => {
@@ -145,19 +133,14 @@ export default function SingleProduct() {
 
         const [first, ...rest] = images;
 
-        const result = [
+        // TEMP debug — remove once the image shows correctly.
+        console.log("[SingleProduct] images:", images, "videos:", videos);
+
+        return [
             { type: "image", src: first },
             ...videos.map((src) => ({ type: "video", src })),
             ...rest.map((src) => ({ type: "image", src })),
         ];
-
-        // ---- DEBUG: what the gallery will actually receive ----
-        console.log("[SingleProduct] normalized images:", images);
-        console.log("[SingleProduct] normalized videos:", videos);
-        console.log("[SingleProduct] final media array:", result);
-        // -------------------------------------------------------
-
-        return result;
     }, [product]);
 
     /* Map context cart shape → CartDrawer's expected shape */

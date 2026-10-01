@@ -10,6 +10,33 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 // Change it if you want a different rate.
 const USD_TO_PKR = 80;
 
+// Returns a plain copy of the order where every item has its pdfLink,
+// read from the products collection. Works even if the order schema
+// does not store pdfLink.
+const withPdfLinks = async (order, productIds = []) => {
+  const plain = order.toObject();
+
+  const items = await Promise.all(
+    plain.items.map(async (item, idx) => {
+      if (item.pdfLink) return item;
+
+      let product = null;
+
+      const id = productIds[idx];
+      if (id && mongoose.Types.ObjectId.isValid(id)) {
+        product = await foodModel.findById(id).select("pdfLink");
+      }
+      if (!product?.pdfLink) {
+        product = await foodModel.findOne({ name: item.name }).select("pdfLink");
+      }
+
+      return { ...item, pdfLink: product?.pdfLink || "" };
+    })
+  );
+
+  return { ...plain, items };
+};
+
 // placing user order
 const placeOrder = async (req, res) => {
   const frontend_url = "https://zootsyshop.com";
@@ -92,11 +119,18 @@ const placeOrder = async (req, res) => {
       quantity: item.quantity,
     }));
 
+    // Product ids (same order as the order's items) so the confirmation email
+    // can always find each pdfLink. Stripe metadata values max out at 500 chars.
+    const productIdsMeta = requested.map((i) => i.id).join(",");
+
     const session = await stripe.checkout.sessions.create({
       line_items,
       mode: "payment",
       customer_email: email,
-      metadata: { orderId: String(newOrder._id) },
+      metadata: {
+        orderId: String(newOrder._id),
+        ...(productIdsMeta.length <= 500 ? { productIds: productIdsMeta } : {}),
+      },
       success_url: `${frontend_url}/verify?success=true&orderId=${newOrder._id}`,
       cancel_url: `${frontend_url}/verify?success=false&orderId=${newOrder._id}`,
     });
@@ -141,7 +175,12 @@ const verifyOrder = async (req, res) => {
 
       if (updated) {
         try {
-          await sendOrderEmail(updated);
+          const productIds = (session.metadata?.productIds || "")
+            .split(",")
+            .filter(Boolean);
+
+          const orderForEmail = await withPdfLinks(updated, productIds);
+          await sendOrderEmail(orderForEmail);
         } catch (mailError) {
           // a mail problem must not make a paid order look failed
           console.log("Confirmation email failed:", mailError);
