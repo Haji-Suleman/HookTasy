@@ -90,7 +90,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 5;
+    z-index: 20;
     transition: background-color 150ms ease, transform 150ms ease, color 150ms ease;
 }
 
@@ -115,6 +115,8 @@
     gap: 12px;
     background-color: #fafafa;
     border-radius: 16px 0 0 16px;
+    min-width: 0;
+    /* lets Swiper shrink inside the grid column */
 }
 
 .popup-main-image {
@@ -129,23 +131,31 @@
     justify-content: center;
 }
 
+/* Swiper fills the square frame */
+.popup-swiper {
+    width: 100%;
+    height: 100%;
+}
+
+.popup-slide {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .popup-main-image-el {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    animation: imageFade 260ms ease;
+    display: block;
 }
 
-@keyframes imageFade {
-    from {
-        opacity: 0;
-        transform: scale(1.03);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+/* Videos keep their full frame instead of being cropped */
+.popup-main-video {
+    object-fit: contain;
+    background-color: #000;
 }
 
 .popup-no-image {
@@ -153,10 +163,12 @@
     font-size: 14px;
 }
 
+/* Chevrons: hidden until the gallery is hovered */
 .popup-nav {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+    z-index: 10;
     width: 34px;
     height: 34px;
     border: none;
@@ -168,7 +180,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 150ms ease, transform 150ms ease;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease, background-color 150ms ease, transform 150ms ease;
+}
+
+.popup-main-image:hover .popup-nav,
+.popup-nav:focus-visible {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .popup-nav:hover {
@@ -184,6 +204,15 @@
     right: 10px;
 }
 
+/* Touch screens have no hover, so keep the chevrons visible there */
+@media (hover: none) {
+    .popup-nav {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+/* Thumbnails (images and videos) */
 .popup-thumbnails {
     display: flex;
     gap: 8px;
@@ -192,15 +221,25 @@
 }
 
 .popup-thumbnail {
+    position: relative;
     width: 56px;
     height: 56px;
-    object-fit: cover;
     border-radius: 8px;
+    overflow: hidden;
     cursor: pointer;
     border: 2px solid transparent;
     opacity: 0.6;
     transition: opacity 150ms ease, border-color 150ms ease, transform 150ms ease;
     flex-shrink: 0;
+}
+
+.popup-thumbnail img,
+.popup-thumbnail video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
 }
 
 .popup-thumbnail:hover {
@@ -211,6 +250,18 @@
 .popup-thumbnail--active {
     opacity: 1;
     border-color: #3b8733;
+}
+
+.popup-thumbnail-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0.35);
+    pointer-events: none;
 }
 
 /* ---------- Details ---------- */

@@ -1,30 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 import "./Popup.css";
 
 const Popup = ({ item, url, onClose }) => {
+    const [swiper, setSwiper] = useState(null);
     const [activeIndex, setActiveIndex] = useState(0);
     const [closing, setClosing] = useState(false);
 
-    const images = item?.images || [];
-
-    useEffect(() => {
-        setActiveIndex(0);
+    // Images first, then videos, all in one gallery
+    const media = useMemo(() => {
+        const images = (item?.images || []).map((src) => ({ type: 'image', src }));
+        const videos = (item?.videos || []).map((src) => ({ type: 'video', src }));
+        return [...images, ...videos];
     }, [item]);
 
+    // Start from the first slide whenever a different product is opened
+    useEffect(() => {
+        setActiveIndex(0);
+        if (swiper && !swiper.destroyed) {
+            swiper.slideTo(0, 0);
+        }
+    }, [item, swiper]);
+
+    const pauseAllVideos = () => {
+        if (swiper && !swiper.destroyed) {
+            swiper.el.querySelectorAll('video').forEach((v) => v.pause());
+        }
+    };
+
     const handleClose = () => {
+        pauseAllVideos();
         setClosing(true);
         setTimeout(() => {
             onClose();
         }, 200);
     };
 
-    const goPrev = () => {
-        setActiveIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-    };
+    const goPrev = () => swiper?.slidePrev();
+    const goNext = () => swiper?.slideNext();
 
-    const goNext = () => {
-        setActiveIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-    };
+    const goTo = (index) => swiper?.slideTo(index);
 
     if (!item) return null;
 
@@ -44,39 +60,71 @@ const Popup = ({ item, url, onClose }) => {
                 <div className="popup-body">
                     <div className="popup-gallery">
                         <div className="popup-main-image">
-                            {images.length > 0 ? (
-                                <img
-                                    src={images[activeIndex]}
-                                    alt={item.name}
-                                    key={activeIndex}
-                                    className="popup-main-image-el"
-                                />
+                            {media.length > 0 ? (
+                                <Swiper
+                                    className="popup-swiper"
+                                    onSwiper={setSwiper}
+                                    onSlideChange={(s) => {
+                                        pauseAllVideos();
+                                        setActiveIndex(s.activeIndex);
+                                    }}
+                                    spaceBetween={0}
+                                    slidesPerView={1}
+                                    rewind={true}
+                                >
+                                    {media.map((m, index) => (
+                                        <SwiperSlide key={`${m.type}-${index}`} className="popup-slide">
+                                            {m.type === 'image' ? (
+                                                <img
+                                                    src={m.src}
+                                                    alt={`${item.name} ${index + 1}`}
+                                                    className="popup-main-image-el"
+                                                />
+                                            ) : (
+                                                <video
+                                                    src={m.src}
+                                                    controls
+                                                    playsInline
+                                                    preload="metadata"
+                                                    className="popup-main-image-el popup-main-video swiper-no-swiping"
+                                                />
+                                            )}
+                                        </SwiperSlide>
+                                    ))}
+                                </Swiper>
                             ) : (
                                 <div className="popup-no-image">No Image</div>
                             )}
 
-                            {images.length > 1 && (
+                            {media.length > 1 && (
                                 <React.Fragment>
-                                    <button className="popup-nav popup-nav--prev" onClick={goPrev} aria-label="Previous image">
+                                    <button className="popup-nav popup-nav--prev" onClick={goPrev} aria-label="Previous">
                                         ‹
                                     </button>
-                                    <button className="popup-nav popup-nav--next" onClick={goNext} aria-label="Next image">
+                                    <button className="popup-nav popup-nav--next" onClick={goNext} aria-label="Next">
                                         ›
                                     </button>
                                 </React.Fragment>
                             )}
                         </div>
 
-                        {images.length > 1 && (
+                        {media.length > 1 && (
                             <div className="popup-thumbnails">
-                                {images.map((imgUrl, index) => (
-                                    <img
-                                        key={index}
-                                        src={imgUrl}
-                                        alt={`thumb-${index}`}
+                                {media.map((m, index) => (
+                                    <div
+                                        key={`thumb-${m.type}-${index}`}
                                         className={`popup-thumbnail ${index === activeIndex ? "popup-thumbnail--active" : ""}`}
-                                        onClick={() => setActiveIndex(index)}
-                                    />
+                                        onClick={() => goTo(index)}
+                                    >
+                                        {m.type === 'image' ? (
+                                            <img src={m.src} alt={`thumb-${index}`} />
+                                        ) : (
+                                            <>
+                                                <video src={m.src} muted preload="metadata" />
+                                                <span className="popup-thumbnail-play">▶</span>
+                                            </>
+                                        )}
+                                    </div>
                                 ))}
                             </div>
                         )}
