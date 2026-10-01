@@ -39,7 +39,7 @@
 }
 
 /* ================================
-   LIST WRAPPER (holds arrows + list)
+   LIST WRAPPER (holds arrows + swiper)
 ================================ */
 
 .comments-list-wrapper {
@@ -50,27 +50,22 @@
 }
 
 /* ================================
-   CARDS CONTAINER
+   SWIPER
 ================================ */
 
-.comments-list {
-    display: flex;
-    align-items: stretch;
-    gap: 30px;
+.comments-swiper {
     width: 100%;
-
-    overflow-x: auto;
-    overflow-y: hidden;
-
-    scroll-behavior: smooth;
-    scroll-snap-type: x mandatory;
-
-    scrollbar-width: none;
-    -ms-overflow-style: none;
 }
 
-.comments-list::-webkit-scrollbar {
-    display: none;
+/* Slide takes the card's own width; height stretches so all cards match */
+.comments-swiper .swiper-slide {
+    width: auto;
+    height: auto;
+}
+
+.comment-click {
+    height: 100%;
+    cursor: pointer;
 }
 
 /* ================================
@@ -108,6 +103,12 @@
     transform: translateY(-50%) scale(1.15);
 }
 
+.comments-arrow:disabled {
+    opacity: 0.25;
+    cursor: default;
+    transform: translateY(-50%);
+}
+
 .comments-arrow-left {
     left: 0;
 }
@@ -117,40 +118,16 @@
 }
 
 /* ================================
-   TABLET
+   TABLET & BELOW — no chevrons, swipe only
 ================================ */
 
-@media (max-width: 1200px) {
-    .comments-list-wrapper {
-        padding: 0 35px;
-    }
-
-    .comments-list {
-        gap: 20px;
-    }
-}
-
-/* ================================
-   SMALL TABLET
-================================ */
-
-@media (max-width: 900px) {
-    .comments-list-wrapper {
-        padding: 0 25px;
-    }
-
-    .comments-list {
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        scrollbar-width: none;
-    }
-
-    .comments-list::-webkit-scrollbar {
-        display: none;
-    }
-
+@media (max-width: 1024px) {
     .comments-arrow {
         display: none;
+    }
+
+    .comments-list-wrapper {
+        padding: 0 25px;
     }
 }
 
@@ -177,9 +154,5 @@
 
     .comments-rating-stars {
         font-size: 22px;
-    }
-
-    .comments-list {
-        gap: 15px;
     }
 }

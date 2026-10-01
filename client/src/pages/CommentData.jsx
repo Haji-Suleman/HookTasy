@@ -1,49 +1,59 @@
-import React, { useRef, useState } from "react"; // Add useState
+import React, { useRef, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 import "./CommentData.css";
 import Comment from "../components/Comment";
 import { Comments } from "../assets/Comments/Comments";
-import CommentModal from "../components/CommentModal"; // Import the modal
+import CommentModal from "../components/CommentModal";
 
 const CommentData = () => {
-    const commentsListRef = useRef(null);
-
-    // 1. Add state for the modal
+    const swiperRef = useRef(null);
     const [selectedComment, setSelectedComment] = useState(null);
+    const [atStart, setAtStart] = useState(true);
+    const [atEnd, setAtEnd] = useState(false);
 
-    const scrollComments = (direction) => {
-        // ... (your existing scroll logic remains exactly the same)
-        const container = commentsListRef.current;
-        if (!container) return;
-        const card = container.querySelector(".comment-card");
-        if (!card) return;
-        const cardWidth = card.offsetWidth;
-        const gap = 30;
-        container.scrollBy({
-            left: direction === "right" ? cardWidth + gap : -(cardWidth + gap),
-            behavior: "smooth",
-        });
+    const syncEdges = (swiper) => {
+        setAtStart(swiper.isBeginning);
+        setAtEnd(swiper.isEnd);
     };
+
     return (
-        <>
+        <div className="comments-wrapper">
+            <div className="comments-list-wrapper">
+                <button
+                    className="comments-arrow comments-arrow-left"
+                    onClick={() => swiperRef.current?.slidePrev()}
+                    disabled={atStart}
+                    aria-label="Previous reviews"
+                >
+                    ‹
+                </button>
 
-        
-            <div className="comments-wrapper">
-                <div className="comments-list-wrapper">
-                    <button
-                        className="comments-arrow comments-arrow-left"
-                        onClick={() => scrollComments("left")}
-                        aria-label="Previous reviews"
-                    >
-                        ‹
-                    </button>
-
-                    <div className="comments-list" ref={commentsListRef}>
-                        {Comments.map((item) => (
-                            // 2. Wrap in a clickable div or pass onClick to Comment
+                <Swiper
+                    className="comments-swiper"
+                    onSwiper={(swiper) => {
+                        swiperRef.current = swiper;
+                        syncEdges(swiper);
+                    }}
+                    onSlideChange={syncEdges}
+                    onReachBeginning={syncEdges}
+                    onReachEnd={syncEdges}
+                    onResize={syncEdges}
+                    slidesPerView="auto"
+                    spaceBetween={30}
+                    speed={500}
+                    grabCursor
+                    breakpoints={{
+                        0: { spaceBetween: 15 },
+                        601: { spaceBetween: 20 },
+                        1201: { spaceBetween: 30 },
+                    }}
+                >
+                    {Comments.map((item) => (
+                        <SwiperSlide key={item.id}>
                             <div
-                                key={item.id}
+                                className="comment-click"
                                 onClick={() => setSelectedComment(item)}
-                                style={{ cursor: "pointer" }}
                             >
                                 <Comment
                                     id={item.id}
@@ -56,26 +66,26 @@ const CommentData = () => {
                                     product={item.product}
                                 />
                             </div>
-                        ))}
-                    </div>
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
 
-                    <button
-                        className="comments-arrow comments-arrow-right"
-                        onClick={() => scrollComments("right")}
-                        aria-label="Next reviews"
-                    >
-                        ›
-                    </button>
-                </div>
-
-                {/* 3. Render the Modal */}
-                <CommentModal
-                    isOpen={selectedComment !== null}
-                    onClose={() => setSelectedComment(null)}
-                    commentData={selectedComment}
-                />
+                <button
+                    className="comments-arrow comments-arrow-right"
+                    onClick={() => swiperRef.current?.slideNext()}
+                    disabled={atEnd}
+                    aria-label="Next reviews"
+                >
+                    ›
+                </button>
             </div>
-        </>
+
+            <CommentModal
+                isOpen={selectedComment !== null}
+                onClose={() => setSelectedComment(null)}
+                commentData={selectedComment}
+            />
+        </div>
     );
 };
 
