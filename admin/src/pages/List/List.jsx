@@ -54,6 +54,16 @@ const List = ({ url }) => {
     }
   };
 
+  // Removes HTML tags and converts things like &nbsp; into normal spaces
+  const stripHtml = (html) => {
+    if (!html) return "";
+
+    const temp = document.createElement("div");
+    temp.innerHTML = html;
+
+    return temp.textContent || temp.innerText || "";
+  };
+
   useEffect(() => {
     fetchList()
   }, []);
@@ -77,6 +87,7 @@ const List = ({ url }) => {
             <b>Price</b>
             <b>Action</b>
           </div>
+
           {list.map((item, index) => {
             return (
               <div key={item._id ?? index} className='list-table-format'>
@@ -87,13 +98,29 @@ const List = ({ url }) => {
                   onClick={() => setSelectedItem(item)}
                   style={{ cursor: 'pointer' }}
                 />
-                <p onClick={() => setSelectedItem(item)} style={{ cursor: 'pointer' }}>
+
+                <p
+                  onClick={() => setSelectedItem(item)}
+                  style={{ cursor: 'pointer' }}
+                >
                   {item.name}
                 </p>
-                <a href={item.pdfLink} target="_blank" rel="noopener noreferrer">PDF link</a>
+
+                <a
+                  href={item.pdfLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  PDF link
+                </a>
+
                 <p>{item.category}</p>
+
                 <p>{item.price}</p>
-                <p className='cursor' onClick={() => confirmRemove(item)}>X</p>
+
+                <p className='cursor' onClick={() => confirmRemove(item)}>
+                  X
+                </p>
               </div>
             )
           })}
@@ -104,11 +131,14 @@ const List = ({ url }) => {
         <div className="confirm-overlay" onClick={cancelRemove}>
           <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
             <div className="confirm-icon">!</div>
+
             <h3>Delete this product?</h3>
+
             <p>
               Are you sure you want to delete <b>{confirmTarget.name}</b>?
               This action cannot be undone.
             </p>
+
             <div className="confirm-actions">
               <button
                 className="confirm-btn confirm-btn--cancel"
@@ -117,6 +147,7 @@ const List = ({ url }) => {
               >
                 Cancel
               </button>
+
               <button
                 className="confirm-btn confirm-btn--delete"
                 onClick={removeFood}

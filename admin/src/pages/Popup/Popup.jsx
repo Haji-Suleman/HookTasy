@@ -73,7 +73,10 @@ const Popup = ({ item, url, onClose }) => {
                                     rewind={true}
                                 >
                                     {media.map((m, index) => (
-                                        <SwiperSlide key={`${m.type}-${index}`} className="popup-slide">
+                                        <SwiperSlide
+                                            key={`${m.type}-${index}`}
+                                            className="popup-slide"
+                                        >
                                             {m.type === 'image' ? (
                                                 <img
                                                     src={m.src}
@@ -98,10 +101,19 @@ const Popup = ({ item, url, onClose }) => {
 
                             {media.length > 1 && (
                                 <React.Fragment>
-                                    <button className="popup-nav popup-nav--prev" onClick={goPrev} aria-label="Previous">
+                                    <button
+                                        className="popup-nav popup-nav--prev"
+                                        onClick={goPrev}
+                                        aria-label="Previous"
+                                    >
                                         ‹
                                     </button>
-                                    <button className="popup-nav popup-nav--next" onClick={goNext} aria-label="Next">
+
+                                    <button
+                                        className="popup-nav popup-nav--next"
+                                        onClick={goNext}
+                                        aria-label="Next"
+                                    >
                                         ›
                                     </button>
                                 </React.Fragment>
@@ -113,15 +125,24 @@ const Popup = ({ item, url, onClose }) => {
                                 {media.map((m, index) => (
                                     <div
                                         key={`thumb-${m.type}-${index}`}
-                                        className={`popup-thumbnail ${index === activeIndex ? "popup-thumbnail--active" : ""}`}
+                                        className={`popup-thumbnail ${index === activeIndex
+                                            ? "popup-thumbnail--active"
+                                            : ""
+                                            }`}
                                         onClick={() => goTo(index)}
                                     >
                                         {m.type === 'image' ? (
                                             <img src={m.src} alt={`thumb-${index}`} />
                                         ) : (
                                             <>
-                                                <video src={m.src} muted preload="metadata" />
-                                                <span className="popup-thumbnail-play">▶</span>
+                                                <video
+                                                    src={m.src}
+                                                    muted
+                                                    preload="metadata"
+                                                />
+                                                <span className="popup-thumbnail-play">
+                                                    ▶
+                                                </span>
                                             </>
                                         )}
                                     </div>
@@ -131,13 +152,33 @@ const Popup = ({ item, url, onClose }) => {
                     </div>
 
                     <div className="popup-details">
-                        <span className="popup-category-badge">{item.category}</span>
-                        <h2 className="popup-title">{item.name}</h2>
-                        <p className="popup-price">${item.price}</p>
-                        <p className="popup-description">{item.description}</p>
+                        <span className="popup-category-badge">
+                            {item.category}
+                        </span>
+
+                        <h2 className="popup-title">
+                            {item.name}
+                        </h2>
+
+                        <p className="popup-price">
+                            ${item.price}
+                        </p>
+
+                        {/* Render Quill HTML as formatted content */}
+                        <div
+                            className="popup-description"
+                            dangerouslySetInnerHTML={{
+                                __html: item.description || ""
+                            }}
+                        />
 
                         {item.pdfLink && (
-                            <a href={item.pdfLink} target="_blank" rel="noopener noreferrer" className="popup-pdf-link">
+                            <a
+                                href={item.pdfLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="popup-pdf-link"
+                            >
                                 View PDF Pattern
                             </a>
                         )}

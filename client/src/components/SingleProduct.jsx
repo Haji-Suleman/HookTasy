@@ -11,6 +11,8 @@ import "./Products.css";
 import "./SingleProduct.css";
 import Navbar from "./Navbar";
 import Footer from "../pages/Footer";
+import ExtraProductDetails from "./ExtraProductDetails";
+import Faqs from "./Faqs";
 
 const PLACEHOLDER =
     "data:image/svg+xml;utf8," +
@@ -290,6 +292,9 @@ export default function SingleProduct() {
                     checkoutHref="/checkout"
                 />
             </div>
+            <ExtraProductDetails />
+
+            <Faqs />
             <Footer />
         </>
     );
