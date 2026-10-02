@@ -1,16 +1,16 @@
 /* Product page. Scoped under .zp so it shares the colors and fonts from Products.css */
 
 .zp .sp-wrap {
-    max-width: 1200px;
+    max-width: 1120px;
     margin: 0 auto;
-    padding: 40px clamp(16px, 4.5vw, 64px) 120px;
+    padding: 32px clamp(16px, 4vw, 48px) 100px;
 }
 
 .zp .sp-back {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
     color: var(--zp-muted);
     text-decoration: none;
     font-size: 1rem;
@@ -20,10 +20,11 @@
     color: var(--zp-ink);
 }
 
+/* two equal columns: gallery left, info right */
 .zp .sp-grid {
     display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: clamp(24px, 4vw, 64px);
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 4.5vw, 56px);
     align-items: start;
 }
 
@@ -40,12 +41,13 @@
     /* lets Swiper shrink inside the grid column */
 }
 
+/* square stage with sharp corners */
 .zp .sp-stage {
     position: relative;
     aspect-ratio: 1 / 1;
     overflow: hidden;
     background: #f1f1f1;
-    border-radius: 4px;
+    border-radius: 0;
 }
 
 .zp .sp-swiper {
@@ -72,14 +74,14 @@
     background: #000;
 }
 
-/* chevrons: green background, white arrow */
+/* chevrons: green circle, white arrow */
 .zp .sp-nav {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     z-index: 10;
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     padding: 0;
     border: 0;
     border-radius: 50%;
@@ -112,11 +114,11 @@
 }
 
 .zp .sp-nav--prev {
-    left: 12px;
+    left: 16px;
 }
 
 .zp .sp-nav--next {
-    right: 12px;
+    right: 16px;
 }
 
 /* touch screens have no hover, so keep the chevrons visible there */
@@ -127,31 +129,29 @@
     }
 }
 
-/* thumbnails (images and videos) */
+/* thumbnails: five across, active one gets a dark outline */
 .zp .sp-thumbs {
     display: flex;
-    gap: 8px;
-    margin-top: 10px;
+    gap: 12px;
+    margin-top: 14px;
     overflow-x: auto;
     padding-bottom: 4px;
 }
 
 .zp .sp-thumb {
     position: relative;
-    flex: 0 0 68px;
-    height: 68px;
+    flex: 0 0 calc((100% - 48px) / 5);
+    aspect-ratio: 1 / 1;
     padding: 0;
     border: 2px solid transparent;
     background: #f1f1f1;
     cursor: pointer;
     overflow: hidden;
-    opacity: 0.7;
-    transition: opacity 0.15s ease, border-color 0.15s ease;
+    transition: border-color 0.15s ease;
 }
 
-.zp .sp-thumb:hover,
-.zp .sp-thumb[aria-current="true"] {
-    opacity: 1;
+.zp .sp-thumb:hover {
+    border-color: #bbb;
 }
 
 .zp .sp-thumb[aria-current="true"] {
@@ -167,23 +167,28 @@
     pointer-events: none;
 }
 
+/* small dark badge in the top-right corner of video thumbnails */
 .zp .sp-play {
     position: absolute;
-    inset: 0;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
     display: grid;
     place-items: center;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.75);
     color: #fff;
-    font-size: 16px;
-    background: rgba(0, 0, 0, 0.35);
+    font-size: 9px;
     pointer-events: none;
 }
 
 /* ---------- info ---------- */
 
 .zp .sp-info h1 {
-    font-weight: 500;
-    font-size: clamp(1.8rem, 3vw, 2.6rem);
-    line-height: 1.2;
+    font-weight: 400;
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    line-height: 1.3;
     margin: 0 0 12px;
 }
 
@@ -196,12 +201,19 @@
     white-space: pre-line;
     line-height: 1.7;
     color: #333;
-    margin: 0 0 28px;
+    margin: 0 0 24px;
 }
 
+/* full-width, slim ADD TO CART */
 .zp .sp-info .add {
+    width: 100%;
+    max-width: none;
     margin-top: 0;
-    max-width: 420px;
+    padding: 15px 0;
+    border-radius: 2px;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0;
 }
 
 /* ---------- loading and messages ---------- */
@@ -213,7 +225,6 @@
 
 .zp .sp-skel--img {
     aspect-ratio: 1 / 1;
-    border-radius: 4px;
 }
 
 .zp .sp-skel--bar {

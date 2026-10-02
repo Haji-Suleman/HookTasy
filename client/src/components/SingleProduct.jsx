@@ -13,6 +13,7 @@ import Navbar from "./Navbar";
 import Footer from "../pages/Footer";
 import ExtraProductDetails from "./ExtraProductDetails";
 import Faqs from "./Faqs";
+import DealTimer from "./Dealtime";
 
 const PLACEHOLDER =
     "data:image/svg+xml;utf8," +
@@ -249,6 +250,8 @@ export default function SingleProduct() {
                     {product.description && <ProductDescription html={product.description} />}
 
                     {/* pass the whole product so the cart can snapshot it */}
+                    <DealTimer />
+
                     <button className="add" onClick={() => { addToCart(product); setAdded(true); }}>
                         {added ? "ADDED" : "ADD TO CART"}
                     </button>
@@ -279,7 +282,6 @@ export default function SingleProduct() {
                     </svg>
                     <span className="badge">{cartCount}</span>
                 </button>
-
                 <CartDrawer
                     isOpen={cartOpen}
                     onClose={() => setCartOpen(false)}
@@ -291,6 +293,7 @@ export default function SingleProduct() {
                     continueShoppingHref="/"
                     checkoutHref="/checkout"
                 />
+
             </div>
             <ExtraProductDetails />
 
