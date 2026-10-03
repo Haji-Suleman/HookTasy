@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 /* ---------- CONFIG ---------- */
-export const API_URL = ("https://zootsy-backend.vercel.app").replace(/\/$/, "");
+export const API_URL = ("https://hooktasy.onrender.com").replace(/\/$/, "");
 export const LIST_PATH = "/api/food/list";
 export const CURRENCY = "$";
 const CART_KEY = "cart";
