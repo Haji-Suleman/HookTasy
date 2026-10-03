@@ -10,27 +10,35 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 // Change it if you want a different rate.
 const USD_TO_PKR = 80;
 
-// Returns a plain copy of the order where every item has its pdfLink,
-// read from the products collection. Works even if the order schema
-// does not store pdfLink.
+// First image of a product, whether stored as a string or { url } / { src }
+const firstImage = (product) => {
+  const raw = Array.isArray(product?.images) ? product.images[0] : product?.image;
+  return typeof raw === "string" ? raw : raw?.url || raw?.src || "";
+};
+
+// Returns a plain copy of the order where every item has its pdfLink
+// and first image (img), read from the products collection. Works even if
+// the order schema does not store them.
 const withPdfLinks = async (order, productIds = []) => {
   const plain = order.toObject();
 
   const items = await Promise.all(
     plain.items.map(async (item, idx) => {
-      if (item.pdfLink) return item;
-
       let product = null;
 
       const id = productIds[idx];
       if (id && mongoose.Types.ObjectId.isValid(id)) {
-        product = await foodModel.findById(id).select("pdfLink");
+        product = await foodModel.findById(id).select("pdfLink images image");
       }
-      if (!product?.pdfLink) {
-        product = await foodModel.findOne({ name: item.name }).select("pdfLink");
+      if (!product) {
+        product = await foodModel.findOne({ name: item.name }).select("pdfLink images image");
       }
 
-      return { ...item, pdfLink: product?.pdfLink || "" };
+      return {
+        ...item,
+        pdfLink: item.pdfLink || product?.pdfLink || "",
+        img: firstImage(product),
+      };
     })
   );
 
@@ -120,7 +128,7 @@ const placeOrder = async (req, res) => {
     }));
 
     // Product ids (same order as the order's items) so the confirmation email
-    // can always find each pdfLink. Stripe metadata values max out at 500 chars.
+    // can always find each pdfLink and image. Stripe metadata values max out at 500 chars.
     const productIdsMeta = requested.map((i) => i.id).join(",");
 
     const session = await stripe.checkout.sessions.create({

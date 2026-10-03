@@ -19,13 +19,22 @@ export const sendOrderEmail = async (order) => {
 
   const rows = order.items
     .map((i) => {
+      const image = /^https?:\/\//i.test(i.img || "")
+        ? `<img src="${escapeHtml(i.img)}" alt="${escapeHtml(i.name)}" width="100" height="100"
+              style="display:block;width:100px;height:100px;object-fit:cover;border-radius:6px;" />`
+        : "";
       const link = i.pdfLink
         ? `<br><a href="${escapeHtml(i.pdfLink)}">Download your PDF pattern</a>`
         : "";
-      return `<li style="margin-bottom:12px;">${escapeHtml(i.name)} × ${i.quantity}${link}</li>`;
+      return `
+      <tr>
+        <td style="padding:0 14px 14px 0;vertical-align:top;">${image}</td>
+        <td style="padding:0 0 14px 0;vertical-align:top;">
+          ${escapeHtml(i.name)} × ${i.quantity}${link}
+        </td>
+      </tr>`;
     })
     .join("");
-
   await transporter.sendMail({
     from: `"Zootsy Shop" <${process.env.PROF_GMAIL}>`,
     to,
