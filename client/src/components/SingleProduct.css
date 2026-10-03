@@ -23,7 +23,8 @@
 /* two equal columns: gallery left, info right */
 .zp .sp-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    /* was: 1fr 1fr */
     gap: clamp(24px, 4.5vw, 56px);
     align-items: start;
 }
@@ -184,6 +185,9 @@
 }
 
 /* ---------- info ---------- */
+.zp .sp-info {
+    min-width: 0;
+}
 
 .zp .sp-info h1 {
     font-weight: 400;
