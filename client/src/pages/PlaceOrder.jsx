@@ -92,16 +92,7 @@ export default function PlaceOrder() {
         }
     };
 
-    if (cartItems.length === 0) {
-        return (
-            <div className="po">
-                <div className="po-empty">
-                    <p>Your cart is empty.</p>
-                    <button className="po-link" onClick={() => navigate("/")}>Continue shopping</button>
-                </div>
-            </div>
-        );
-    }
+
 
     return (
         <div className="po">
