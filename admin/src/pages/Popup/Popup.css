@@ -102,7 +102,7 @@
 
 .popup-body {
     display: grid;
-    grid-template-columns: 1.1fr 1fr;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
     gap: 0;
 }
 
@@ -133,6 +133,8 @@
 
 /* Swiper fills the square frame */
 .popup-swiper {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
 }
@@ -272,6 +274,8 @@
     flex-direction: column;
     gap: 12px;
     animation: detailsIn 300ms ease 60ms backwards;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 @keyframes detailsIn {
