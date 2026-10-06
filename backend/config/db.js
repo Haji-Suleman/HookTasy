@@ -2,9 +2,7 @@ import mongoose from "mongoose";
 
 export const connectDB = async () => {
   try {
-    if (mongoose.connection.readyState >= 1) {
-      return;
-    }
+
 
     console.log("🚀 Attempting to connect to MongoDB...");
 
