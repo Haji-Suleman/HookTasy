@@ -30,9 +30,11 @@ export default function Products() {
     const [cartOpen, setCartOpen] = useState(false);
     const visible = useMemo(() => {
         const q = query.trim().toLowerCase();
-        return products.filter(
-            (p) => (filter === "All" || p.category === filter) && (!q || p.name.toLowerCase().includes(q))
-        );
+        return products
+            .filter(
+                (p) => (filter === "All" || p.category === filter) && (!q || p.name.toLowerCase().includes(q))
+            )
+            .sort((a, b) => Number(b.price) - Number(a.price)); // max → min
     }, [products, filter, query]);
 
     /* Map context cart shape → CartDrawer's expected shape */
