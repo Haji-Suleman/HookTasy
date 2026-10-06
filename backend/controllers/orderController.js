@@ -6,10 +6,6 @@ import Stripe from "stripe";
 import { sendOrderEmail } from "../Mail/Nodemail.js";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// Your prices are stored in USD; this converts them to PKR for Stripe.
-// Change it if you want a different rate.
-const USD_TO_PKR = 80;
-
 // First image of a product, whether stored as a string or { url } / { src }
 const firstImage = (product) => {
   const raw = Array.isArray(product?.images) ? product.images[0] : product?.image;
@@ -116,9 +112,9 @@ const placeOrder = async (req, res) => {
 
     const line_items = cleanItems.map((item) => ({
       price_data: {
-        currency: "pkr",
+        currency: "usd",
         product_data: { name: item.name },
-        unit_amount: Math.round(item.price * 100 * USD_TO_PKR),
+        unit_amount: Math.round(item.price * 100), // dollars → cents
       },
       quantity: item.quantity,
     }));
