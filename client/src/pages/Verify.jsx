@@ -52,6 +52,8 @@ export default function Verify() {
     // "loading" | "paid" | "cancelled" | "failed"
     const [status, setStatus] = useState(success === "false" ? "cancelled" : "loading");
     const [email, setEmail] = useState("");
+    const [items, setItems] = useState([]); // [{ name, pdfLink, img }]
+    const [emailSent, setEmailSent] = useState(true);
     const [message, setMessage] = useState("");
     const [networkError, setNetworkError] = useState(false);
     const ran = useRef(false); // stops React StrictMode from verifying twice in dev
@@ -76,6 +78,8 @@ export default function Verify() {
                 const data = await res.json();
                 if (data.success) {
                     setEmail(data.email || "");
+                    setItems(Array.isArray(data.items) ? data.items : []);
+                    setEmailSent(data.emailSent !== false);
                     setStatus("paid");
                 } else {
                     setMessage(data.message || "We could not confirm your payment.");
@@ -110,9 +114,37 @@ export default function Verify() {
                         <h1 className="vf-title">Payment received</h1>
                         <p className="vf-text">
                             Thank you for your order.
-                            {email && <> Your confirmation is on its way to <strong>{email}</strong>.</>}
+                            {email && emailSent && <> A copy of your links has also been sent to <strong>{email}</strong>.</>}
+                            {email && !emailSent && <> We couldn't email your links just now, so please download your patterns below and save them. We'll try the email again if you reopen this page.</>}
                         </p>
                         {orderId && <p className="vf-ref">Order reference: {orderId.slice(-8)}</p>}
+
+                        {items.length > 0 && (
+                            <div className="vf-downloads">
+                                <h2 className="vf-downloads__title">Your patterns</h2>
+                                <ul className="vf-downloads__list">
+                                    {items.map((item, idx) => (
+                                        <li key={idx} className="vf-downloads__item">
+                                            {item.img && (
+                                                <img src={item.img} alt="" className="vf-downloads__img" />
+                                            )}
+                                            <span className="vf-downloads__name">{item.name}</span>
+                                            {item.pdfLink && (
+                                                <a
+                                                    href={item.pdfLink}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="vf-downloads__btn"
+                                                >
+                                                    Download PDF
+                                                </a>
+                                            )}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
                         <Link to="/" className="vf-btn">Continue shopping</Link>
                     </>
                 )}

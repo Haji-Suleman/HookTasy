@@ -97,12 +97,7 @@ const placeOrder = async (req, res) => {
 
     const invalid =
       cleanItems.some((i) => i === null) ||
-      cleanItems.some(
-        (i) =>
-          !i.name ||
-          !(i.price > 0) ||
-          !/^https?:\/\//i.test(i.pdfLink)
-      );
+      cleanItems.some((i) => !i.name || !/^https?:\/\//i.test(i.pdfLink));
     if (invalid) {
       return res.json({ success: false, message: "Invalid items in your cart." });
     }
@@ -115,6 +110,7 @@ const placeOrder = async (req, res) => {
       items: cleanItems,
       amount,
       address: { email },
+      emailSent: false, // the confirmation email has not been sent yet
     });
     await newOrder.save();
 
@@ -164,8 +160,52 @@ const verifyOrder = async (req, res) => {
     const order = await orderModel.findById(orderId);
     if (!order) return res.json({ success: false, message: "Order not found." });
 
-    // already confirmed earlier (e.g. page refreshed)
-    if (order.payment) return res.json({ success: true, email: order.address?.email });
+    console.log("[verify] hit:", orderId, "| payment:", order.payment, "| emailSent:", order.emailSent);
+
+    // the list of patterns the verify page shows
+    const buildDownloads = async (orderDoc, productIds = []) => {
+      const full = await withPdfLinks(orderDoc, productIds);
+      return full.items.map((i) => ({ name: i.name, pdfLink: i.pdfLink, img: i.img }));
+    };
+
+    // Sends the confirmation email at most once, and retries after a failure.
+    // Returns true = sent, false = failed (retried on the next verify), null = nothing to do.
+    // Only orders stored with emailSent: false are touched, so old orders never get a surprise email.
+    const sendEmailOnce = async (productIds = []) => {
+      // atomic claim: only one request can flip emailSent from false to true
+      const claimed = await orderModel.findOneAndUpdate(
+        { _id: orderId, payment: true, emailSent: false },
+        { emailSent: true },
+        { new: true }
+      );
+      if (!claimed) {
+        console.log("[verify] email skipped (already sent, being sent, or legacy order):", orderId);
+        return null;
+      }
+
+      try {
+        const orderForEmail = await withPdfLinks(claimed, productIds);
+        await sendOrderEmail(orderForEmail);
+        return true;
+      } catch (mailError) {
+        console.log("Confirmation email failed:", mailError);
+        // release the claim so the next verify call tries again
+        await orderModel.updateOne({ _id: orderId }, { emailSent: false });
+        return false;
+      }
+    };
+
+    // already confirmed earlier (page refreshed, or a previous email failed)
+    if (order.payment) {
+      const result = await sendEmailOnce();
+      const items = await buildDownloads(order);
+      return res.json({
+        success: true,
+        email: order.address?.email,
+        items,
+        emailSent: result !== false,
+      });
+    }
 
     if (!order.stripeSessionId) {
       return res.json({ success: false, message: "No payment found for this order." });
@@ -173,29 +213,25 @@ const verifyOrder = async (req, res) => {
 
     const session = await stripe.checkout.sessions.retrieve(order.stripeSessionId);
     if (session.payment_status === "paid") {
-      // atomic: only the first request flips payment to true,
-      // so the email is sent once even if the page is refreshed or opened twice
+      // atomic: only the first request flips payment to true
       const updated = await orderModel.findOneAndUpdate(
         { _id: orderId, payment: false },
         { payment: true, status: "Paid" },
         { new: true }
       );
 
-      if (updated) {
-        try {
-          const productIds = (session.metadata?.productIds || "")
-            .split(",")
-            .filter(Boolean);
+      const productIds = (session.metadata?.productIds || "")
+        .split(",")
+        .filter(Boolean);
 
-          const orderForEmail = await withPdfLinks(updated, productIds);
-          await sendOrderEmail(orderForEmail);
-        } catch (mailError) {
-          // a mail problem must not make a paid order look failed
-          console.log("Confirmation email failed:", mailError);
-        }
-      }
-
-      return res.json({ success: true, email: order.address?.email });
+      const result = await sendEmailOnce(productIds);
+      const items = await buildDownloads(updated || order, productIds);
+      return res.json({
+        success: true,
+        email: order.address?.email,
+        items,
+        emailSent: result !== false,
+      });
     }
 
     return res.json({ success: false, message: "Payment was not completed." });

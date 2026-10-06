@@ -5,7 +5,7 @@ const orderItemSchema = new mongoose.Schema(
     name: { type: String, required: true },
     price: { type: Number, required: true },
     quantity: { type: Number, required: true, min: 1 },
-    pdfLink: { type: String, required: true }
+    pdfLink: { type: String, required: true },
   },
   { _id: false }
 );
@@ -19,6 +19,9 @@ const orderSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
   payment: { type: Boolean, default: false },
   stripeSessionId: { type: String },
+  // true once the confirmation email has been sent; verifyOrder retries while it is false
+  emailSent: { type: Boolean, default: false },
 });
+
 const orderModel = mongoose.models.order || mongoose.model("order", orderSchema);
 export default orderModel;
