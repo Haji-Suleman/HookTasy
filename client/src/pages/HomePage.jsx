@@ -16,7 +16,7 @@ const HomePage = () => {
             <NewestCollection />
             <Products />
             <ReviewsPage />
-            {/* <HotPatterns /> */}
+            <HotPatterns />
             <AboutUs />
             <Footer />
         </>

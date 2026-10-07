@@ -4,6 +4,8 @@ import { useStore } from "../StoreContext";
 import { Price } from "./Products";
 import "./Products.css";     // cards, grid, price, buttons (scoped under .zp)
 import "./HotPatterns.css";  // the two headings + tabs
+import "./FlyToCart.css";
+import flyToCart from "./FlyToCart";
 
 const PLACEHOLDER =
     "data:image/svg+xml;utf8," +
@@ -13,7 +15,7 @@ const onImgError = (e) => {
 };
 
 const NEW_TAB = "New Arrivals";
-const DEFAULT_TABS = ["Bundle", NEW_TAB, "Valentine", "Car Hanging"];
+const DEFAULT_TABS = [NEW_TAB, "Bundle", "Valentine", "Car Hanging"];
 
 /* "Car Hanging", "car hanging", "CarHanging" and "Car Hangings" all become "carhanging" */
 const key = (s) => String(s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "").replace(/s$/, "");
@@ -42,6 +44,16 @@ export default function HotPatterns({
         () => (tab === NEW_TAB ? randomPicks : products.filter((p) => key(p.category) === key(tab))),
         [tab, products, randomPicks]
     );
+    const handleAdd = (e, p) => {
+        addToCart(p);
+        flyToCart(e.currentTarget);
+    };
+    const handleQtyChange = (id, nextQty) => {
+        const cur = cartItems.find((i) => String(i.product.id) === String(id))?.qty ?? 0;
+        if (nextQty > cur) addToCart(cartItems.find((i) => String(i.product.id) === String(id)).product);
+        else if (nextQty < cur) decreaseItem(id);
+    };
+
 
     const onTabKey = (e, i) => {
         if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
@@ -112,11 +124,11 @@ export default function HotPatterns({
                                 <Link className="name" to={`/product/${p.id}`}>{p.name}</Link>
                                 <Price p={p} />
                                 {/* addToCart needs the whole product, not just the id */}
-                                <button className="add" onClick={() => addToCart(p)}>ADD TO CART</button>
+                                <button className="add" onClick={(e) => handleAdd(e, p)}> ADD TO CART</button>
                             </article>
                         ))}
                 </div>
-            </section>
-        </div>
+            </section >
+        </div >
     );
 }
