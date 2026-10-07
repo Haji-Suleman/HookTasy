@@ -7,7 +7,7 @@ import Comment from "../components/Comment";
 import { Comments } from "../assets/Comments/Comments";
 import CommentModal from "../components/CommentModal";
 
-const AUTOPLAY_DELAY = 5000; // 5 seconds
+const AUTOPLAY_DELAY = 2000; // 5 seconds
 
 const CommentData = () => {
     const swiperRef = useRef(null);
