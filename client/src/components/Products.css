@@ -4,7 +4,7 @@
 .zp {
     --zp-ink: #1b1b1b;
     --zp-muted: #8a8a8a;
-    --zp-green: #2f7d2f;
+    --zp-green: rgba(172, 114, 172, 0.817);
     --zp-green-d: #256425;
     --zp-red: #d61f1f;
     --zp-line: #e6e6e6;

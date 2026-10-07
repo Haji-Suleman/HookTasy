@@ -1,5 +1,5 @@
 /* =====================================================================
-   PROMO BAR — design tokens (self-contained)
+   PROMO BAR: design tokens (self-contained)
    ===================================================================== */
 .promo-bar {
     --c-green: rgba(172, 114, 172, 0.817);
@@ -14,16 +14,50 @@
     overflow: hidden;
 }
 
+/* Mobile first: small side padding (equal on both sides so the text stays
+   centred, and wide enough to keep the close button clear) */
 .promo-bar__inner {
     display: flex;
     width: 100%;
     align-items: center;
     justify-content: center;
-    gap: clamp(2px, 1vw, 8px);
-    padding: 0 clamp(100px, 20vw, 200px);
+    gap: 2px;
+    padding: 0 44px;
+    box-sizing: border-box;
 }
 
 .promo-bar__nav-btn {
+    display: inline-flex;
+    height: 32px;
+    width: 32px;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    flex: none;
+    padding: 0;
+    z-index: 2;
+}
+
+.promo-bar__nav-btn--static {
+    cursor: default;
+}
+
+.promo-bar__inner>.promo-bar__nav-btn:first-child {
+    margin-right: 4px;
+}
+
+.promo-bar__inner>.promo-bar__nav-btn:last-child {
+    margin-left: 4px;
+}
+
+.promo-bar__close-btn {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
     display: inline-flex;
     height: 36px;
     width: 36px;
@@ -33,66 +67,27 @@
     background: transparent;
     color: inherit;
     cursor: pointer;
-    flex: none;
-    z-index: 2;
-}
-
-.promo-bar__nav-btn--static {
-    cursor: default;
-}
-
-/* Push chevrons away from the text (50px on larger screens,
-   smaller on mobile so nothing gets clipped) */
-.promo-bar__inner>.promo-bar__nav-btn:first-child {
-    margin-right: 12px;
-}
-
-.promo-bar__inner>.promo-bar__nav-btn:last-child {
-    margin-left: 12px;
-}
-
-@media (min-width: 640px) {
-    .promo-bar__inner>.promo-bar__nav-btn:first-child {
-        margin-right: 50px;
-    }
-
-    .promo-bar__inner>.promo-bar__nav-btn:last-child {
-        margin-left: 50px;
-    }
-}
-
-.promo-bar__close-btn {
-    position: absolute;
-    right: clamp(6px, 1.5vw, 12px);
-    top: 50%;
-    transform: translateY(-50%);
-    display: inline-flex;
-    height: 40px;
-    width: 40px;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
+    padding: 0;
     z-index: 2;
 }
 
 /* ── Icon sizing ── */
 .icon-promo,
 .icon-close-promo {
-    width: clamp(18px, 2.5vw, 22px);
-    height: clamp(18px, 2.5vw, 22px);
+    width: 18px;
+    height: 18px;
 }
 
-/* ── Swiper viewport (sized to the text so chevrons stay close) ── */
+/* ── Swiper viewport: takes whatever space is left between the arrows ── */
 .promo-viewport {
     position: relative;
-    flex: 0 1 auto;
-    width: clamp(100px, 40vw, 260px);
+    flex: 1 1 0;
     min-width: 0;
+    /* lets it shrink instead of overflowing */
+    max-width: 320px;
     overflow: hidden;
     height: 1.4em;
+    font-size: clamp(13px, 3.6vw, 16px);
 }
 
 .promo-swiper {
@@ -100,13 +95,65 @@
     height: 100%;
 }
 
-/* Swiper handles the sliding: new slide enters from the right,
-   old slide exits to the left. */
+/* Each slide clips its own text so neighbouring slides can never overlap */
+.promo-swiper .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
 .promo-text {
     margin: 0;
+    max-width: 100%;
     text-align: center;
-    font-size: clamp(16px, 1.6vw, 1.25rem);
+    font-size: inherit;
     font-weight: 600;
     line-height: 1.4em;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* safety net on very narrow phones */
+}
+
+/* =====================================================================
+   TABLET / DESKTOP (original look)
+   ===================================================================== */
+@media (min-width: 640px) {
+    .promo-bar__inner {
+        gap: clamp(2px, 1vw, 8px);
+        padding: 0 clamp(100px, 20vw, 200px);
+    }
+
+    .promo-bar__nav-btn {
+        height: 36px;
+        width: 36px;
+    }
+
+    .promo-bar__inner>.promo-bar__nav-btn:first-child {
+        margin-right: 50px;
+    }
+
+    .promo-bar__inner>.promo-bar__nav-btn:last-child {
+        margin-left: 50px;
+    }
+
+    .promo-bar__close-btn {
+        right: clamp(6px, 1.5vw, 12px);
+        height: 40px;
+        width: 40px;
+    }
+
+    .icon-promo,
+    .icon-close-promo {
+        width: clamp(18px, 2.5vw, 22px);
+        height: clamp(18px, 2.5vw, 22px);
+    }
+
+    .promo-viewport {
+        flex: 0 1 auto;
+        width: clamp(100px, 40vw, 260px);
+        max-width: none;
+        font-size: clamp(16px, 1.6vw, 1.25rem);
+    }
 }
