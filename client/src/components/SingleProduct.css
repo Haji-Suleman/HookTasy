@@ -1,7 +1,12 @@
 /* Product page. Scoped under .zp so it shares the colors and fonts from Products.css */
 
+.zp.sp {
+    --sp-sticky-top: 100px;
+    /* gap under your navbar while the gallery is stuck */
+}
+
 .zp .sp-wrap {
-    max-width: 1120px;
+    max-width: 1360px;
     margin: 0 auto;
     padding: 32px clamp(16px, 4vw, 48px) 100px;
 }
@@ -20,12 +25,12 @@
     color: var(--zp-ink);
 }
 
-/* two equal columns: gallery left, info right */
+/* two equal columns: gallery left, info right.
+   align-items:start is REQUIRED for the sticky gallery to work */
 .zp .sp-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    /* was: 1fr 1fr */
-    gap: clamp(24px, 4.5vw, 56px);
+    gap: clamp(24px, 4.5vw, 64px);
     align-items: start;
 }
 
@@ -35,14 +40,24 @@
     }
 }
 
-/* ---------- gallery ---------- */
+/* ---------- gallery (sticky) ---------- */
 
 .zp .sp-gallery {
     min-width: 0;
-    /* lets Swiper shrink inside the grid column */
+    position: sticky;
+    top: var(--sp-sticky-top);
+    /* stays square and always fits inside the screen height */
+    width: min(100%, max(420px, calc(100vh - 260px)));
 }
 
-/* square stage with sharp corners */
+/* phones/tablets: normal flow, no sticky */
+@media (max-width: 800px) {
+    .zp .sp-gallery {
+        position: static;
+        width: 100%;
+    }
+}
+
 .zp .sp-stage {
     position: relative;
     aspect-ratio: 1 / 1;
@@ -69,13 +84,11 @@
     display: block;
 }
 
-/* videos keep their full frame instead of being cropped */
 .zp .sp-video {
     object-fit: contain;
     background: #000;
 }
 
-/* chevrons: green circle, white arrow */
 .zp .sp-nav {
     position: absolute;
     top: 50%;
@@ -102,7 +115,6 @@
     height: 20px;
 }
 
-/* appear only while the pointer is over the gallery (or when focused by keyboard) */
 .zp .sp-stage:hover .sp-nav,
 .zp .sp-nav:focus-visible {
     opacity: 1;
@@ -122,7 +134,6 @@
     right: 16px;
 }
 
-/* touch screens have no hover, so keep the chevrons visible there */
 @media (hover: none) {
     .zp .sp-nav {
         opacity: 1;
@@ -130,7 +141,7 @@
     }
 }
 
-/* thumbnails: five across, active one gets a dark outline */
+/* thumbnails: five across */
 .zp .sp-thumbs {
     display: flex;
     gap: 12px;
@@ -168,7 +179,6 @@
     pointer-events: none;
 }
 
-/* small dark badge in the top-right corner of video thumbnails */
 .zp .sp-play {
     position: absolute;
     top: 4px;
@@ -184,40 +194,338 @@
     pointer-events: none;
 }
 
-/* ---------- info ---------- */
+/* ---------- info column ---------- */
+
 .zp .sp-info {
     min-width: 0;
 }
 
+.zp .sp-titleRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
 .zp .sp-info h1 {
     font-weight: 400;
-    font-size: clamp(1.5rem, 2.4vw, 2rem);
-    line-height: 1.3;
-    margin: 0 0 12px;
+    font-size: clamp(1.5rem, 2.2vw, 2rem);
+    line-height: 1.25;
+    margin: 0;
 }
 
-.zp .sp-info .price {
-    font-size: 1.6rem;
-    margin: 0 0 24px;
+.zp .sp-heart {
+    flex: none;
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    border: 1px solid var(--zp-line);
+    border-radius: 50%;
+    background: #fff;
+    color: var(--zp-ink);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
-.zp .sp-desc {
-    white-space: pre-line;
-    line-height: 1.7;
-    color: #333;
-    margin: 0 0 24px;
+.zp .sp-heart svg {
+    width: 22px;
+    height: 22px;
 }
 
-/* full-width, slim ADD TO CART */
+.zp .sp-heart:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.zp .sp-heart:active {
+    transform: scale(0.9);
+}
+
+.zp .sp-heart[aria-pressed="true"] {
+    color: var(--zp-red);
+}
+
+.zp .sp-priceRow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 18px;
+}
+
+.zp .sp-price {
+    font-size: 1.75rem;
+    line-height: 1.2;
+}
+
+.zp .sp-compare {
+    color: var(--zp-muted);
+    font-size: 1rem;
+}
+
+.zp .sp-save {
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--zp-red);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.zp .sp-lang {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 20px;
+    font-size: 1rem;
+}
+
 .zp .sp-info .add {
     width: 100%;
     max-width: none;
-    margin-top: 0;
-    padding: 15px 0;
+    height: 56px;
+    margin-top: 18px;
+    padding: 0;
     border-radius: 2px;
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 600;
     letter-spacing: 0;
+}
+
+.zp .sp-share {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 24px;
+    padding: 0 0 12px;
+    border: 0;
+    border-bottom: 1px solid var(--zp-line);
+    background: none;
+    color: var(--zp-ink);
+    font: inherit;
+    font-size: 1rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.zp .sp-share:hover {
+    text-decoration: underline;
+}
+
+/* ---------- frequently bought together ---------- */
+
+.zp .sp-fbt {
+    margin-top: 32px;
+}
+
+.zp .sp-fbt h2 {
+    margin: 0 0 14px;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.zp .sp-fbt__item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    border: 1px solid #d6d6d6;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.zp .sp-fbt__item:hover {
+    border-color: #999;
+}
+
+.zp .sp-fbt__item.is-locked {
+    cursor: default;
+}
+
+.zp .sp-fbt__item input {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: #111;
+    cursor: inherit;
+}
+
+.zp .sp-fbt__item img {
+    flex: none;
+    width: 76px;
+    height: 76px;
+    object-fit: cover;
+    border-radius: 4px;
+    background: #f1f1f1;
+}
+
+.zp .sp-fbt__text {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.zp .sp-fbt__name {
+    font-size: 1rem;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.zp .sp-fbt__price {
+    color: var(--zp-red);
+    font-size: 1rem;
+}
+
+.zp .sp-fbt__price s,
+.zp .sp-claim s {
+    margin-left: 8px;
+    font-size: 0.85em;
+    opacity: 0.6;
+}
+
+.zp .sp-fbt__price s {
+    color: var(--zp-muted);
+    opacity: 1;
+}
+
+.zp .sp-claim {
+    width: 100%;
+    height: 56px;
+    border: 0;
+    border-radius: 6px;
+    background: #111;
+    color: #fff;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.zp .sp-claim:hover {
+    background: #333;
+}
+
+.zp .sp-claim:active {
+    transform: scale(0.985);
+}
+
+/* ---------- secure checkout image ---------- */
+
+.zp .sp-secure {
+    margin: 32px 0 8px;
+}
+
+.zp .sp-secure img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* ---------- accordions ---------- */
+
+.zp .sp-accs {
+    margin-top: 16px;
+}
+
+.zp .sp-acc {
+    border-bottom: 1px solid var(--zp-line);
+}
+
+.zp .sp-acc__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 26px 0;
+    border: 0;
+    background: none;
+    color: var(--zp-ink);
+    font: inherit;
+    font-size: 1.15rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+}
+
+.zp .sp-acc__head svg {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+}
+
+.zp .sp-acc.is-open .sp-acc__head svg {
+    transform: rotate(180deg);
+}
+
+/* smooth open/close; closed content can't be tabbed into */
+.zp .sp-acc__body {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition: grid-template-rows 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.zp .sp-acc.is-open .sp-acc__body {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition: grid-template-rows 0.3s ease, visibility 0s;
+}
+
+.zp .sp-acc__inner {
+    min-height: 0;
+    overflow: hidden;
+    line-height: 1.7;
+    color: #333;
+}
+
+.zp .sp-acc.is-open .sp-acc__inner {
+    padding-bottom: 24px;
+}
+
+.zp .sp-acc__inner ul {
+    margin: 0 0 8px;
+    padding-left: 22px;
+}
+
+.zp .sp-acc__inner li {
+    margin-bottom: 8px;
+}
+
+.zp .sp-acc__inner a {
+    color: inherit;
+}
+
+.zp .sp-warn {
+    margin: 0 0 16px;
+    font-weight: 600;
+}
+
+.zp .sp-policy {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.zp .sp-desc {
+    padding: 0;
+    white-space: pre-line;
+    line-height: 1.7;
+    color: #333;
 }
 
 /* ---------- loading and messages ---------- */
@@ -244,6 +552,11 @@
 @media (prefers-reduced-motion: reduce) {
     .zp .sp-skel {
         animation: none;
+    }
+
+    .zp .sp-acc__body,
+    .zp .sp-acc__head svg {
+        transition: none;
     }
 }
 
