@@ -1,325 +1,354 @@
-/* =========================================
-   MODAL OVERLAY & CONTAINER
-========================================= */
+/* ================================
+   OVERLAY
+================================ */
 
-.modal-overlay {
+.cm-overlay {
     position: fixed;
     inset: 0;
-    width: 100dvw;
-    height: 100dvh;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(2px);
+    z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
-    padding: 20px;
+    padding: 24px;
     box-sizing: border-box;
-    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.6);
+    animation: cm-fade 0.2s ease;
 }
 
-.modal-container {
-    background: #fff;
-    width: 100%;
-    max-width: 1100px;
-    max-height: 90dvh;
-    min-height: 0;
-    margin: auto;
-    /* keeps it centered even when overlay scrolls */
-    border-radius: 12px;
+@keyframes cm-fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ================================
+   MODAL: never taller than the screen
+================================ */
+
+.cm-modal {
     position: relative;
-    display: flex;
-    overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-}
-
-/* Close Button */
-.modal-close-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 36px;
-    height: 36px;
-    background: #000;
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    transition: transform 0.2s ease;
-}
-
-.modal-close-btn:hover {
-    transform: scale(1.1);
-}
-
-/* =========================================
-   LEFT SIDE: IMAGE GALLERY
-========================================= */
-
-.modal-left {
-    flex: 0 0 55%;
-    background: #000;
     display: flex;
     flex-direction: column;
-    position: relative;
-    min-height: 0;
-    min-width: 0;
+    width: 100%;
+    max-width: 1000px;
+    max-height: calc(100vh - 48px);
+    max-height: calc(100dvh - 48px);
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    animation: cm-pop 0.22s ease;
 }
 
-.modal-main-image-wrapper {
-    flex: 1;
+@keyframes cm-pop {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ================================
+   CLOSE
+================================ */
+
+.cm-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 5;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.cm-close:hover {
+    background: #000;
+}
+
+/* ================================
+   MEDIA (image stage + thumbnails)
+================================ */
+
+.cm-media {
+    flex: 0 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: #000;
+}
+
+/* Stage height scales with viewport; the image is fully visible inside it */
+.cm-stage {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    height: clamp(240px, 52vh, 520px);
+    background: #000;
     overflow: hidden;
-    min-height: 0;
-    /* prevents flex child from forcing extra height */
 }
 
-.modal-main-image {
+.cm-stage-img {
+    display: block;
     max-width: 100%;
     max-height: 100%;
     width: auto;
     height: auto;
     object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
-.modal-arrow {
+/* Photo arrows */
+
+.cm-nav {
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.8);
+    z-index: 3;
+    width: 48px;
+    height: 48px;
+    padding: 0 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: none;
     border-radius: 50%;
-    font-size: 24px;
+    background: rgba(255, 255, 255, 0.85);
     color: #000;
+    font-size: 30px;
+    line-height: 1;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 5;
-    transition: background 0.2s;
+    transform: translateY(-50%);
+    transition: background 0.2s ease, transform 0.2s ease;
 }
 
-.modal-arrow:hover {
+.cm-nav:hover {
     background: #fff;
+    transform: translateY(-50%) scale(1.08);
 }
 
-.modal-arrow-left {
-    left: 15px;
+.cm-nav-left {
+    left: 16px;
 }
 
-.modal-arrow-right {
-    right: 15px;
+.cm-nav-right {
+    right: 16px;
 }
 
-.modal-thumbnails {
-    height: 80px;
-    background: #111;
+/* Thumbnails */
+
+.cm-thumbs {
     display: flex;
-    align-items: center;
     justify-content: center;
     gap: 10px;
-    padding: 10px;
-    flex-shrink: 0;
+    padding: 12px 16px;
+    background: #111;
     overflow-x: auto;
 }
 
-.modal-thumb-btn {
-    width: 50px;
-    height: 50px;
-    flex-shrink: 0;
-    border: 2px solid transparent;
-    border-radius: 6px;
-    overflow: hidden;
-    cursor: pointer;
-    background: transparent;
+.cm-thumb {
+    flex: none;
+    width: 64px;
+    height: 64px;
     padding: 0;
-    transition: border-color 0.2s;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #222;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
 }
 
-.modal-thumb-btn.active {
+.cm-thumb:hover {
+    opacity: 1;
+}
+
+.cm-thumb.is-active {
+    opacity: 1;
     border-color: #fff;
 }
 
-.modal-thumb-img {
+.cm-thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
 }
 
-/* =========================================
-   RIGHT SIDE: COMMENT DETAILS
-========================================= */
+/* ================================
+   BODY: scrolls if the text is long
+================================ */
 
-.modal-right {
-    flex: 1;
-    padding: 40px 40px 30px;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    background: #fff;
+.cm-body {
+    flex: 1 1 auto;
     min-height: 0;
-    min-width: 0;
+    overflow-y: auto;
+    padding: 24px 32px 32px;
+    box-sizing: border-box;
 }
 
-.modal-stars {
-    font-size: clamp(18px, 3vw, 28px);
-    letter-spacing: 2px;
+.cm-stars {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+}
+
+.cm-star {
+    width: 28px;
+    height: 28px;
     color: #000;
-    margin-bottom: 25px;
 }
 
-.modal-user-info {
+.cm-author {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 25px;
+    gap: 16px;
+    margin-bottom: 22px;
 }
 
-.modal-avatar {
-    width: 48px;
-    height: 48px;
+.cm-avatar {
+    flex: none;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 50%;
-    background: #eaeaea;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: 500;
-    color: #555;
-    flex-shrink: 0;
+    background: #e8e8e8;
+    color: #333;
+    font-size: 22px;
 }
 
-.modal-user-text {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.modal-user-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.modal-user-name {
-    margin: 0;
-    font-size: 18px;
+.cm-name {
+    font-size: 22px;
     font-weight: 700;
+    line-height: 1.2;
     color: #000;
 }
 
-.modal-verified-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #000;
-    border-radius: 20px;
-    padding: 2px 10px;
-    font-size: 12px;
-    font-weight: 500;
-    color: #000;
-    text-transform: capitalize;
-    line-height: 1.4;
-    flex-shrink: 0;
-}
-
-.modal-user-date {
-    margin: 4px 0 0 0;
-    font-size: 14px;
+.cm-date {
+    margin-top: 2px;
+    font-size: 16px;
     color: #777;
 }
 
-.modal-comment-text {
-    font-size: clamp(14px, 2vw, 16px);
-    line-height: 1.6;
+.cm-text {
+    margin: 0 0 24px;
+    font-size: 19px;
+    line-height: 1.5;
     color: #222;
-    margin: 0 0 30px 0;
+    overflow-wrap: anywhere;
 }
 
-.modal-product-tag {
-    display: inline-block;
+.cm-product {
+    padding: 16px 20px;
+    border-radius: 12px;
     background: #f0f0f0;
-    padding: 14px 16px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
+    font-size: 17px;
+    color: #222;
+    overflow-wrap: anywhere;
+}
+
+.cm-product a,
+.cm-product span {
+    color: inherit;
     text-decoration: underline;
     text-underline-offset: 3px;
-    cursor: pointer;
-    transition: background 0.2s;
-    width: 100%;
-    box-sizing: border-box;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-top: auto;
-    /* pushes it down consistently regardless of comment length */
 }
 
-.modal-product-tag:hover {
-    background: #e5e5e5;
-}
-
-/* =========================================
-   RESPONSIVE — reacts to a short viewport
-   (zoom-in), not just a narrow one
-========================================= */
-
-@media (max-width: 900px),
-(max-height: 700px) {
-    .modal-container {
-        flex-direction: column;
-        max-height: 95dvh;
-    }
-
-    .modal-left {
-        flex: 0 0 auto;
-        max-height: 45dvh;
-    }
-
-    .modal-main-image-wrapper {
-        min-height: 180px;
-    }
-
-    .modal-right {
-        padding: 20px;
-    }
-}
+/* ================================
+   MOBILE
+================================ */
 
 @media (max-width: 600px) {
-    .modal-overlay {
-        padding: 0;
+    .cm-overlay {
+        padding: 12px;
     }
 
-    .modal-container {
-        border-radius: 0;
-        max-height: 100dvh;
+    .cm-modal {
+        max-height: calc(100vh - 24px);
+        max-height: calc(100dvh - 24px);
+        border-radius: 18px;
     }
 
-    .modal-thumbnails {
-        height: 60px;
-        padding: 6px;
+    .cm-close {
+        top: 10px;
+        right: 10px;
+        width: 38px;
+        height: 38px;
     }
 
-    .modal-thumb-btn {
-        width: 40px;
-        height: 40px;
+    .cm-stage {
+        height: clamp(220px, 42vh, 360px);
     }
 
-    .modal-right {
-        padding: 20px;
+    /* swipe on phones instead of arrow buttons */
+    .cm-nav {
+        width: 38px;
+        height: 38px;
+        font-size: 24px;
+    }
+
+    .cm-nav-left {
+        left: 8px;
+    }
+
+    .cm-nav-right {
+        right: 8px;
+    }
+
+    .cm-thumb {
+        width: 52px;
+        height: 52px;
+    }
+
+    .cm-body {
+        padding: 18px 18px 22px;
+    }
+
+    .cm-star {
+        width: 24px;
+        height: 24px;
+    }
+
+    .cm-name {
+        font-size: 19px;
+    }
+
+    .cm-text {
+        font-size: 17px;
+    }
+
+    .cm-product {
+        font-size: 15px;
+        padding: 14px 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .cm-overlay,
+    .cm-modal {
+        animation: none;
     }
 }

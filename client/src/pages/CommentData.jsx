@@ -1,20 +1,27 @@
 import React, { useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import "./CommentData.css";
 import Comment from "../components/Comment";
 import { Comments } from "../assets/Comments/Comments";
 import CommentModal from "../components/CommentModal";
 
+const AUTOPLAY_DELAY = 5000; // 5 seconds
+
 const CommentData = () => {
     const swiperRef = useRef(null);
     const [selectedComment, setSelectedComment] = useState(null);
-    const [atStart, setAtStart] = useState(true);
-    const [atEnd, setAtEnd] = useState(false);
 
-    const syncEdges = (swiper) => {
-        setAtStart(swiper.isBeginning);
-        setAtEnd(swiper.isEnd);
+    // Pause autoplay while the modal is open, resume when it closes
+    const openComment = (item) => {
+        swiperRef.current?.autoplay?.stop();
+        setSelectedComment(item);
+    };
+
+    const closeComment = () => {
+        setSelectedComment(null);
+        swiperRef.current?.autoplay?.start();
     };
 
     return (
@@ -23,7 +30,6 @@ const CommentData = () => {
                 <button
                     className="comments-arrow comments-arrow-left"
                     onClick={() => swiperRef.current?.slidePrev()}
-                    disabled={atStart}
                     aria-label="Previous reviews"
                 >
                     ‹
@@ -31,29 +37,29 @@ const CommentData = () => {
 
                 <Swiper
                     className="comments-swiper"
-                    onSwiper={(swiper) => {
-                        swiperRef.current = swiper;
-                        syncEdges(swiper);
-                    }}
-                    onSlideChange={syncEdges}
-                    onReachBeginning={syncEdges}
-                    onReachEnd={syncEdges}
-                    onResize={syncEdges}
+                    modules={[Autoplay]}
+                    onSwiper={(swiper) => (swiperRef.current = swiper)}
                     slidesPerView="auto"
-                    spaceBetween={30}
-                    speed={500}
+                    spaceBetween={28}
+                    speed={600}
                     grabCursor
+                    rewind
+                    autoplay={{
+                        delay: AUTOPLAY_DELAY,
+                        disableOnInteraction: false,
+                        pauseOnMouseEnter: true,
+                    }}
                     breakpoints={{
-                        0: { spaceBetween: 15 },
+                        0: { spaceBetween: 14 },
                         601: { spaceBetween: 20 },
-                        1201: { spaceBetween: 30 },
+                        1201: { spaceBetween: 28 },
                     }}
                 >
                     {Comments.map((item) => (
                         <SwiperSlide key={item.id}>
                             <div
                                 className="comment-click"
-                                onClick={() => setSelectedComment(item)}
+                                onClick={() => openComment(item)}
                             >
                                 <Comment
                                     id={item.id}
@@ -73,7 +79,6 @@ const CommentData = () => {
                 <button
                     className="comments-arrow comments-arrow-right"
                     onClick={() => swiperRef.current?.slideNext()}
-                    disabled={atEnd}
                     aria-label="Next reviews"
                 >
                     ›
@@ -82,7 +87,7 @@ const CommentData = () => {
 
             <CommentModal
                 isOpen={selectedComment !== null}
-                onClose={() => setSelectedComment(null)}
+                onClose={closeComment}
                 commentData={selectedComment}
             />
         </div>

@@ -10,8 +10,6 @@
     box-sizing: border-box;
 }
 
-/* Header */
-
 .comments-wrapper h2 {
     margin: 0;
     text-align: center;
@@ -39,25 +37,23 @@
 }
 
 /* ================================
-   LIST WRAPPER (holds arrows + swiper)
+   LIST WRAPPER (arrows + swiper)
 ================================ */
 
 .comments-list-wrapper {
     position: relative;
     width: 100%;
-    padding: 0 55px;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 60px;
     box-sizing: border-box;
 }
-
-/* ================================
-   SWIPER
-================================ */
 
 .comments-swiper {
     width: 100%;
 }
 
-/* Slide takes the card's own width; height stretches so all cards match */
+/* Slide is as wide as the card; all cards stretch to equal height */
 .comments-swiper .swiper-slide {
     width: auto;
     height: auto;
@@ -69,44 +65,32 @@
 }
 
 /* ================================
-   ARROW BUTTONS
+   ARROWS
 ================================ */
 
 .comments-arrow {
     position: absolute;
     top: 50%;
     z-index: 5;
-
     width: 48px;
     height: 48px;
-
+    padding: 0;
     border: none;
     background: transparent;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     cursor: pointer;
-
-    font-size: 50px;
+    font-size: 54px;
     font-weight: 300;
+    line-height: 1;
     color: #000;
-
     transform: translateY(-50%);
-    transition:
-        transform 0.2s ease,
-        opacity 0.2s ease;
+    transition: transform 0.2s ease;
 }
 
 .comments-arrow:hover {
     transform: translateY(-50%) scale(1.15);
-}
-
-.comments-arrow:disabled {
-    opacity: 0.25;
-    cursor: default;
-    transform: translateY(-50%);
 }
 
 .comments-arrow-left {
@@ -118,7 +102,7 @@
 }
 
 /* ================================
-   TABLET & BELOW — no chevrons, swipe only
+   TABLET & BELOW: swipe only
 ================================ */
 
 @media (max-width: 1024px) {
@@ -127,7 +111,7 @@
     }
 
     .comments-list-wrapper {
-        padding: 0 25px;
+        padding: 0 20px;
     }
 }
 
@@ -137,7 +121,7 @@
 
 @media (max-width: 600px) {
     .comments-list-wrapper {
-        padding: 0 16px;
+        padding: 0 12px;
     }
 
     .comments-wrapper h2 {
@@ -154,5 +138,11 @@
 
     .comments-rating-stars {
         font-size: 22px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .comments-arrow {
+        transition: none;
     }
 }
