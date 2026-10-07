@@ -28,7 +28,7 @@ const Footer = () => {
     const storeInfo = {
         name: "Anna LLC",
         address: "30 N Gould St Ste N\nSheridan, LA 82801",
-        email: "info@zootsy.com"
+        email: "info@zootsyshop.com"
     };
 
     const socialLinks = [
