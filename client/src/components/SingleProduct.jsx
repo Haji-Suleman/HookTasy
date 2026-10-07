@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -102,12 +102,52 @@ function Accordion({ title, children }) {
 }
 
 /* ---------- gallery: first image, then videos, then the other images ---------- */
+const THUMBS_VISIBLE = 5; // thumbnails fully visible at once
+
 function Gallery({ media, name }) {
     const [swiper, setSwiper] = useState(null);
     const [active, setActive] = useState(0);
+    const thumbsRef = useRef(null);
+    const [edge, setEdge] = useState({ left: false, right: false });
+
+    const manyThumbs = media.length > THUMBS_VISIBLE;
 
     const pauseVideos = (s) => {
         s?.el?.querySelectorAll("video").forEach((v) => v.pause());
+    };
+
+    /* which side of the thumbnail row still has hidden thumbnails */
+    const syncEdges = () => {
+        const el = thumbsRef.current;
+        if (!el) return;
+        setEdge({
+            left: el.scrollLeft > 2,
+            right: el.scrollLeft + el.clientWidth < el.scrollWidth - 2,
+        });
+    };
+
+    useEffect(() => {
+        syncEdges();
+        window.addEventListener("resize", syncEdges);
+        return () => window.removeEventListener("resize", syncEdges);
+    }, [media.length]);
+
+    /* keep the current thumbnail in view (centred) whenever the image changes */
+    useEffect(() => {
+        const el = thumbsRef.current;
+        const thumb = el?.children[active];
+        if (!el || !thumb) return;
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        el.scrollTo({
+            left: thumb.offsetLeft - (el.clientWidth - thumb.offsetWidth) / 2,
+            behavior: reduce ? "auto" : "smooth",
+        });
+    }, [active]);
+
+    const scrollThumbs = (dir) => {
+        const el = thumbsRef.current;
+        if (!el) return;
+        el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: "smooth" });
     };
 
     return (
@@ -158,25 +198,57 @@ function Gallery({ media, name }) {
             </div>
 
             {media.length > 1 && (
-                <div className="sp-thumbs">
-                    {media.map((m, i) => (
+                <div className="sp-thumbs-wrap">
+                    {/* with more than five items, a sixth thumbnail peeks in so it is clear the row scrolls */}
+                    <div
+                        ref={thumbsRef}
+                        className={`sp-thumbs${manyThumbs ? " sp-thumbs--many" : ""}`}
+                        onScroll={syncEdges}
+                    >
+                        {media.map((m, i) => (
+                            <button
+                                key={`thumb-${m.type}-${i}`}
+                                className="sp-thumb"
+                                aria-label={`${m.type === "video" ? "Video" : "Image"} ${i + 1}`}
+                                aria-current={i === active ? "true" : undefined}
+                                onClick={() => swiper?.slideTo(i)}
+                            >
+                                {m.type === "image" ? (
+                                    <img src={m.src} alt="" onError={onImgError} />
+                                ) : (
+                                    <>
+                                        <video src={`${m.src}#t=0.1`} muted preload="metadata" />
+                                        <span className="sp-play" aria-hidden="true">▶</span>
+                                    </>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+
+                    {manyThumbs && edge.left && (
                         <button
-                            key={`thumb-${m.type}-${i}`}
-                            className="sp-thumb"
-                            aria-label={`${m.type === "video" ? "Video" : "Image"} ${i + 1}`}
-                            aria-current={i === active ? "true" : undefined}
-                            onClick={() => swiper?.slideTo(i)}
+                            type="button"
+                            className="sp-thumbs-nav sp-thumbs-nav--prev"
+                            onClick={() => scrollThumbs(-1)}
+                            aria-label="Scroll thumbnails left"
                         >
-                            {m.type === "image" ? (
-                                <img src={m.src} alt="" onError={onImgError} />
-                            ) : (
-                                <>
-                                    <video src={`${m.src}#t=0.1`} muted preload="metadata" />
-                                    <span className="sp-play" aria-hidden="true">▶</span>
-                                </>
-                            )}
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M15 5 7 12l8 7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
                         </button>
-                    ))}
+                    )}
+                    {manyThumbs && edge.right && (
+                        <button
+                            type="button"
+                            className="sp-thumbs-nav sp-thumbs-nav--next"
+                            onClick={() => scrollThumbs(1)}
+                            aria-label="Scroll thumbnails right"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M9 5l8 7-8 7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </button>
+                    )}
                 </div>
             )}
         </div>
