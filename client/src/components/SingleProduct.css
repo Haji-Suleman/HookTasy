@@ -46,8 +46,8 @@
     min-width: 0;
     position: sticky;
     top: var(--sp-sticky-top);
-    /* stays square and always fits inside the screen height */
-    width: min(100%, max(420px, calc(100vh - 260px)));
+    /* square, and leaves room for the thumbnail row inside the screen height */
+    width: min(100%, max(380px, calc(100vh - 340px)));
 }
 
 /* phones/tablets: normal flow, no sticky */
@@ -148,6 +148,11 @@
     margin-top: 14px;
     overflow-x: auto;
     padding-bottom: 4px;
+    scrollbar-width: none;
+}
+
+.zp .sp-thumbs::-webkit-scrollbar {
+    display: none;
 }
 
 .zp .sp-thumb {
@@ -213,6 +218,7 @@
     font-size: clamp(1.5rem, 2.2vw, 2rem);
     line-height: 1.25;
     margin: 0;
+    overflow-wrap: anywhere;
 }
 
 .zp .sp-heart {
@@ -379,6 +385,7 @@
     line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -528,6 +535,51 @@
     color: #333;
 }
 
+/* ---------- phones ---------- */
+
+@media (max-width: 600px) {
+    .zp .sp-wrap {
+        padding-top: 20px;
+    }
+
+    .zp .sp-price {
+        font-size: 1.5rem;
+    }
+
+    .zp .sp-heart {
+        width: 40px;
+        height: 40px;
+    }
+
+    .zp .sp-info .add,
+    .zp .sp-claim {
+        height: 50px;
+    }
+
+    .zp .sp-fbt__item {
+        gap: 10px;
+        padding: 10px 12px;
+    }
+
+    .zp .sp-fbt__item img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .zp .sp-acc__head {
+        padding: 20px 0;
+        font-size: 1.05rem;
+    }
+
+    .zp .sp-thumbs {
+        gap: 8px;
+    }
+
+    .zp .sp-thumb {
+        flex-basis: calc((100% - 32px) / 5);
+    }
+}
+
 /* ---------- loading and messages ---------- */
 
 .zp .sp-skel {
@@ -555,7 +607,8 @@
     }
 
     .zp .sp-acc__body,
-    .zp .sp-acc__head svg {
+    .zp .sp-acc__head svg,
+    .zp .sp-nav {
         transition: none;
     }
 }

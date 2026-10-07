@@ -6,7 +6,7 @@ import DOMPurify from "dompurify";
 import "react-quill-new/dist/quill.snow.css";
 import { money, useStore } from "../StoreContext";
 import CartDrawer from "./Cartdrawer";
-import { flyToCart } from "./FlyToCart"; // same import you use in Products.jsx
+import { flyToCart } from "./FlyToCart";
 import "./Products.css";
 import "./FlyToCart.css";
 import "./SingleProduct.css";
@@ -24,9 +24,32 @@ import DealTimer from "./Dealtime";
 // import secureCheckout from "../assets/secure-checkout.png";
 const SECURE_IMG = null;
 
-/* "Frequently bought together" discount: 0.2 = 20% off.
-   Keep it 0 until your checkout/backend really applies it (see notes). */
+/* "Frequently bought together" real discount: 0.2 = 20% off.
+   Keep it 0 until your checkout/backend really applies it. */
 const BUNDLE_DISCOUNT = 0;
+
+/* Dummy discount on every product. Set to 0 to turn it off.
+   Crossed-out price = real price / (1 - 0.74) */
+const FAKE_DISCOUNT = 74;
+const wasPrice = (price) =>
+    FAKE_DISCOUNT > 0 ? Math.round(Number(price) / (1 - FAKE_DISCOUNT / 100)) : 0;
+
+const WISH_KEY = "zootsy-wishlist";
+const readWish = () => {
+    try {
+        const v = JSON.parse(localStorage.getItem(WISH_KEY));
+        return Array.isArray(v) ? v : [];
+    } catch {
+        return [];
+    }
+};
+const writeWish = (list) => {
+    try {
+        localStorage.setItem(WISH_KEY, JSON.stringify(list));
+    } catch {
+        /* storage blocked: the heart still toggles for this visit */
+    }
+};
 
 const PLACEHOLDER =
     "data:image/svg+xml;utf8," +
@@ -170,32 +193,35 @@ function FrequentlyBought({ product, products, addToCart }) {
 
     const deal = (n) => Number(n) * (1 - BUNDLE_DISCOUNT);
     const chosen = [product, ...related.filter((p) => !off[p.id])];
-    const original = chosen.reduce((s, p) => s + Number(p.price), 0);
-    const total = deal(original);
+    const total = chosen.reduce((s, p) => s + deal(p.price), 0);
+    const crossed = chosen.reduce((s, p) => s + wasPrice(p.price), 0);
 
     const claim = (e) => {
         chosen.forEach((p) => addToCart(p));
         flyToCart(e.currentTarget);
     };
 
-    const row = (p, locked) => (
-        <label className={`sp-fbt__item${locked ? " is-locked" : ""}`} key={p.id}>
-            <input
-                type="checkbox"
-                checked={locked ? true : !off[p.id]}
-                disabled={locked}
-                onChange={() => setOff((o) => ({ ...o, [p.id]: !o[p.id] }))}
-            />
-            <img src={(p.images && p.images[0]) || PLACEHOLDER} alt="" onError={onImgError} />
-            <span className="sp-fbt__text">
-                <span className="sp-fbt__name">{p.name}</span>
-                <span className="sp-fbt__price">
-                    {money(deal(p.price))}
-                    {BUNDLE_DISCOUNT > 0 && <s>{money(p.price)}</s>}
+    const row = (p, locked) => {
+        const was = wasPrice(p.price);
+        return (
+            <label className={`sp-fbt__item${locked ? " is-locked" : ""}`} key={p.id}>
+                <input
+                    type="checkbox"
+                    checked={locked ? true : !off[p.id]}
+                    disabled={locked}
+                    onChange={() => setOff((o) => ({ ...o, [p.id]: !o[p.id] }))}
+                />
+                <img src={(p.images && p.images[0]) || PLACEHOLDER} alt="" onError={onImgError} />
+                <span className="sp-fbt__text">
+                    <span className="sp-fbt__name">{p.name}</span>
+                    <span className="sp-fbt__price">
+                        {money(deal(p.price))}
+                        {was > Number(p.price) && <s>{money(was)}</s>}
+                    </span>
                 </span>
-            </span>
-        </label>
-    );
+            </label>
+        );
+    };
 
     return (
         <section className="sp-fbt" aria-label="Frequently bought together">
@@ -204,7 +230,7 @@ function FrequentlyBought({ product, products, addToCart }) {
             {related.map((p) => row(p, false))}
             <button type="button" className="sp-claim" onClick={claim}>
                 Claim Offer · {money(total)}
-                {BUNDLE_DISCOUNT > 0 && <s>{money(original)}</s>}
+                {crossed > total && <s>{money(crossed)}</s>}
             </button>
         </section>
     );
@@ -253,7 +279,7 @@ export default function SingleProduct() {
                 id: p.id,
                 name: p.name,
                 price: p.price,
-                originalPrice: p.compare,
+                originalPrice: wasPrice(p.price),
                 qty,
                 image: (p.images && p.images[0]) || PLACEHOLDER,
             })),
@@ -273,6 +299,14 @@ export default function SingleProduct() {
         flyToCart(e.currentTarget);
     };
 
+    const toggleLike = () => {
+        const key = String(id);
+        const list = readWish();
+        const next = list.includes(key) ? list.filter((x) => x !== key) : [...list, key];
+        writeWish(next);
+        setLiked(next.includes(key));
+    };
+
     const handleShare = async () => {
         const url = window.location.href;
         try {
@@ -287,10 +321,10 @@ export default function SingleProduct() {
         }
     };
 
-    // Open every product page at the top
+    // Open every product page at the top, and restore the saved heart
     useEffect(() => {
         window.scrollTo(0, 0);
-        setLiked(false);
+        setLiked(readWish().includes(String(id)));
     }, [id]);
 
     useEffect(() => {
@@ -317,10 +351,8 @@ export default function SingleProduct() {
         return () => { document.body.style.overflow = ""; };
     }, [cartOpen]);
 
-    const pct =
-        product && Number(product.compare) > Number(product.price)
-            ? Math.round((1 - Number(product.price) / Number(product.compare)) * 100)
-            : 0;
+    const was = product ? wasPrice(product.price) : 0;
+    const pct = product && was > Number(product.price) ? FAKE_DISCOUNT : 0;
 
     let content;
 
@@ -363,7 +395,7 @@ export default function SingleProduct() {
                             className="sp-heart"
                             aria-pressed={liked}
                             aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
-                            onClick={() => setLiked((v) => !v)}
+                            onClick={toggleLike}
                         >
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <path
@@ -381,7 +413,7 @@ export default function SingleProduct() {
                         <span className="sp-price">{money(product.price)}</span>
                         {pct > 0 && (
                             <>
-                                <s className="sp-compare">{money(product.compare)}</s>
+                                <s className="sp-compare">{money(was)}</s>
                                 <span className="sp-save">SAVE {pct}%</span>
                             </>
                         )}
