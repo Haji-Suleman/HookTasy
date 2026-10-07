@@ -15,14 +15,13 @@ import Footer from "../pages/Footer";
 import ExtraProductDetails from "./ExtraProductDetails";
 import Faqs from "./Faqs";
 import DealTimer from "./Dealtime";
-
+import SECURE_IMG from "../assets/image.png"
 /* ---------------------------------------------------------------
    YOUR "GUARANTEED SAFE CHECKOUT" IMAGE:
    1) uncomment the import and fix the path/file name
    2) set SECURE_IMG = secureCheckout
    --------------------------------------------------------------- */
 // import secureCheckout from "../assets/secure-checkout.png";
-const SECURE_IMG = null;
 
 /* "Frequently bought together" real discount: 0.2 = 20% off.
    Keep it 0 until your checkout/backend really applies it. */
@@ -34,6 +33,12 @@ const FAKE_DISCOUNT = 74;
 const wasPrice = (price) =>
     FAKE_DISCOUNT > 0 ? Math.round(Number(price) / (1 - FAKE_DISCOUNT / 100)) : 0;
 
+/* A bundle = the title starts with a whole number ("10 Crochet Patterns ...")
+   AND the price is more than this many dollars. */
+/* A bundle = any product priced more than this many dollars */
+const BUNDLE_MIN_PRICE = 5;
+const isBundle = (p) =>
+    Number(String(p?.price ?? "").replace(/[^0-9.]/g, "")) > BUNDLE_MIN_PRICE;
 const WISH_KEY = "zootsy-wishlist";
 const readWish = () => {
     try {
@@ -178,14 +183,20 @@ function Gallery({ media, name }) {
     );
 }
 
-/* ---------- frequently bought together ---------- */
+/* ---------- frequently bought together (bundles first) ---------- */
 function FrequentlyBought({ product, products, addToCart }) {
-    const related = useMemo(() => {
-        const others = products.filter((p) => String(p.id) !== String(product.id));
-        const same = others.filter((p) => p.category && p.category === product.category);
-        const rest = others.filter((p) => !same.includes(p));
-        return [...same, ...rest].slice(0, 2);
-    }, [products, product]);
+    const related = useMemo(
+        () =>
+            products
+                .filter((p) => String(p.id) !== String(product.id) && isBundle(p))
+                .sort(
+                    (a, b) =>
+                        (b.category === product.category) -
+                        (a.category === product.category)
+                )
+                .slice(0, 2),
+        [products, product]
+    );
 
     const [off, setOff] = useState({}); // ids the customer un-ticked
 
@@ -203,6 +214,7 @@ function FrequentlyBought({ product, products, addToCart }) {
 
     const row = (p, locked) => {
         const was = wasPrice(p.price);
+        console.log(p.price)
         return (
             <label className={`sp-fbt__item${locked ? " is-locked" : ""}`} key={p.id}>
                 <input
@@ -213,6 +225,7 @@ function FrequentlyBought({ product, products, addToCart }) {
                 />
                 <img src={(p.images && p.images[0]) || PLACEHOLDER} alt="" onError={onImgError} />
                 <span className="sp-fbt__text">
+                    {isBundle(p) && <span className="sp-fbt__tag">Bundle</span>}
                     <span className="sp-fbt__name">{p.name}</span>
                     <span className="sp-fbt__price">
                         {money(deal(p.price))}
@@ -417,6 +430,7 @@ export default function SingleProduct() {
                                 <span className="sp-save">SAVE {pct}%</span>
                             </>
                         )}
+                        {isBundle(product) && <span className="sp-bundle">Bundle</span>}
                     </div>
 
                     <p className="sp-lang">
