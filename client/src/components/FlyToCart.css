@@ -1,0 +1,111 @@
+/* All of these live on <body>, so they are not inside .zp */
+
+/* the flying dot: glossy, glowing red ball */
+.fly-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ff9a9a 0%, #e32b2b 45%, #a30f0f 100%);
+    box-shadow:
+        0 0 0 3px rgba(214, 31, 31, 0.22),
+        0 0 14px 4px rgba(255, 60, 60, 0.55),
+        0 4px 10px rgba(214, 31, 31, 0.5);
+    z-index: 99999;
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+
+/* tail ghosts: same dot, softer, no hard glow */
+.fly-dot--ghost {
+    box-shadow: 0 0 10px 2px rgba(255, 60, 60, 0.4);
+    z-index: 99998;
+}
+
+/* shockwave ring (button click + cart landing) */
+.fly-ring {
+    position: fixed;
+    border-radius: 50%;
+    border: 3px solid #d61f1f;
+    box-shadow: 0 0 12px rgba(214, 31, 31, 0.6), inset 0 0 8px rgba(214, 31, 31, 0.35);
+    z-index: 99997;
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+
+/* sparks */
+.fly-spark {
+    position: fixed;
+    border-radius: 50%;
+    z-index: 99999;
+    pointer-events: none;
+    box-shadow: 0 0 6px rgba(255, 200, 80, 0.8);
+    will-change: transform, opacity;
+}
+
+/* floating +1 */
+.fly-plus {
+    position: fixed;
+    z-index: 99999;
+    pointer-events: none;
+    font: 700 1.25rem/1 "Jost", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    color: #d61f1f;
+    text-shadow: 0 0 6px #fff, 0 0 2px #fff, 0 2px 6px rgba(214, 31, 31, 0.5);
+    will-change: transform, opacity;
+}
+
+/* cart icon: jelly pop with a little wiggle when the dot lands */
+.cart-bump {
+    animation: cart-bump 0.6s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+@keyframes cart-bump {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    25% {
+        transform: scale(1.3) rotate(-10deg);
+    }
+
+    45% {
+        transform: scale(0.9) rotate(8deg);
+    }
+
+    65% {
+        transform: scale(1.12) rotate(-4deg);
+    }
+
+    85% {
+        transform: scale(0.98) rotate(2deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* the red number badge bounces too */
+.badge-pop {
+    animation: badge-pop 0.7s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+@keyframes badge-pop {
+    0% {
+        transform: scale(1);
+    }
+
+    30% {
+        transform: scale(1.7);
+    }
+
+    60% {
+        transform: scale(0.85);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}

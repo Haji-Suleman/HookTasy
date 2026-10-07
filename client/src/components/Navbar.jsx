@@ -388,6 +388,7 @@ export default function Navbar({
 
             <button
               type="button"
+              data-cart-target
               onClick={() => setCartOpen(true)}
               aria-label={`Cart, ${cartCount} items`}
               aria-haspopup="true"

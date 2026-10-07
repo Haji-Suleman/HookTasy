@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { money, useStore } from "../StoreContext";
 import CartDrawer from "./Cartdrawer";
+import flyToCart from "./FlyToCart";
 import "./Products.css";
+import "./FlyToCart.css";
 
 const PLACEHOLDER =
     "data:image/svg+xml;utf8," +
@@ -55,6 +57,12 @@ export default function Products() {
         const cur = cartItems.find((i) => String(i.product.id) === String(id))?.qty ?? 0;
         if (nextQty > cur) addToCart(cartItems.find((i) => String(i.product.id) === String(id)).product);
         else if (nextQty < cur) decreaseItem(id);
+    };
+
+    /* add to cart + red dot flies to every cart icon */
+    const handleAdd = (e, p) => {
+        addToCart(p);
+        flyToCart(e.currentTarget);
     };
 
     /* Escape closes the cart; page does not scroll behind it */
@@ -123,16 +131,22 @@ export default function Products() {
                                 <Link className="thumb" to={`/product/${p.id}`} aria-label={`View ${p.name}`}>
                                     <img src={p.images[0] || PLACEHOLDER} alt={p.name} loading="lazy" onError={onImgError} />
                                 </Link>
-                                <Link className="name" to={`/product/${p.id}`}>{p.name}</Link>
+                                <Link className="name" to={`/product/${p.id}`} title={p.name}>{p.name}</Link>
                                 <Price p={p} />
                                 {/* pass the whole product so the cart can snapshot it */}
-                                <button className="add" onClick={() => addToCart(p)}>ADD TO CART</button>
+                                <button className="add" onClick={(e) => handleAdd(e, p)}>ADD TO CART</button>
                             </article>
                         ))}
                 </section>
             </main>
 
-            <button className="fab" onClick={() => setCartOpen(true)} aria-label={`Open cart, ${cartCount} items`}>
+            {/* data-cart-target = the red dot flies to this element */}
+            <button
+                className="fab"
+                data-cart-target
+                onClick={() => setCartOpen(true)}
+                aria-label={`Open cart, ${cartCount} items`}
+            >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M6 8h12l-1 12H7L6 8z" />
                     <path d="M9 8V6a3 3 0 0 1 6 0v2" />

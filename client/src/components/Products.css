@@ -90,25 +90,25 @@
     }
 }
 
+/* tablet AND phones: always 2 products side by side */
 @media (max-width: 800px) {
     .zp .grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 12px;
     }
 }
 
-@media (max-width: 420px) {
-    .zp .grid {
-        grid-template-columns: 1fr;
-    }
-}
-
+/* minmax(0, 1fr) lets columns shrink so long text can't stretch the grid */
 .zp .card {
     display: flex;
     flex-direction: column;
     text-align: center;
+    min-width: 0;
+    transition: transform 0.35s ease;
 }
 
 .zp .thumb {
+    position: relative;
     display: block;
     width: 100%;
     aspect-ratio: 1 / 1;
@@ -117,6 +117,8 @@
     padding: 0;
     cursor: pointer;
     overflow: hidden;
+    border-radius: 4px;
+    transition: box-shadow 0.35s ease;
 }
 
 .zp .thumb img {
@@ -124,6 +126,45 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.4s ease;
+    will-change: transform;
+}
+
+/* light shine that sweeps across the image on hover */
+.zp .thumb::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(100deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.35) 50%,
+            rgba(255, 255, 255, 0) 100%);
+    transform: skewX(-20deg);
+    pointer-events: none;
+}
+
+/* hover effects only on devices that really hover (not touch phones) */
+@media (hover: hover) {
+    .zp .card:hover {
+        transform: translateY(-6px);
+    }
+
+    .zp .card:hover .thumb {
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
+    }
+
+    .zp .card:hover .thumb img {
+        transform: scale(1.1);
+        filter: brightness(1.04) saturate(1.08);
+    }
+
+    .zp .card:hover .thumb::after {
+        left: 130%;
+        transition: left 0.8s ease;
+    }
 }
 
 .zp .name {
@@ -140,9 +181,23 @@
 }
 
 /* product name and image are links to the product page */
-.zp a.thumb,
-.zp a.name {
+.zp a.thumb {
     display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+/* long names: max 2 lines, then "..." (no overflow out of the card) */
+.zp a.name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
+    min-height: calc(1.35em * 2);
+    /* keeps all cards the same height */
     color: inherit;
     text-decoration: none;
 }
@@ -155,6 +210,7 @@
     font-size: clamp(1.05rem, 1.5vw, 1.5rem);
     font-weight: 400;
     margin: 0 0 24px;
+    overflow-wrap: anywhere;
 }
 
 .zp .price s {
@@ -182,10 +238,18 @@
     background: var(--zp-green);
     color: #fff;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background 0.2s ease, transform 0.15s ease;
 }
 
 .zp .add:hover {
     background: var(--zp-green-d);
+}
+
+.zp .add:active {
+    transform: scale(0.97);
 }
 
 .zp button:focus-visible,
@@ -193,6 +257,46 @@
 .zp .search:focus-visible {
     outline: 3px solid #111;
     outline-offset: 2px;
+}
+
+/* phones: smaller text so 2 columns fit nicely */
+@media (max-width: 600px) {
+    .zp .wrap {
+        padding: 32px 12px 100px;
+    }
+
+    .zp .title {
+        margin-bottom: 28px;
+    }
+
+    .zp a.name {
+        font-size: 0.95rem;
+        margin: 12px 0 4px;
+        padding: 0;
+        min-height: calc(1.35em * 2);
+    }
+
+    .zp .price {
+        font-size: 0.95rem;
+        margin-bottom: 12px;
+    }
+
+    .zp .add {
+        height: 44px;
+        font-size: 0.95rem;
+    }
+
+    .zp .fab {
+        width: 60px;
+        height: 60px;
+        right: 14px;
+        bottom: 16px;
+    }
+
+    .zp .fab svg {
+        width: 28px;
+        height: 28px;
+    }
 }
 
 /* loading + messages */
@@ -220,6 +324,12 @@
 @media (prefers-reduced-motion: reduce) {
     .zp .skel .thumb {
         animation: none;
+    }
+
+    .zp .card,
+    .zp .thumb img,
+    .zp .thumb::after {
+        transition: none !important;
     }
 }
 
