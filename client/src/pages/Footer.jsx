@@ -26,7 +26,7 @@ import payment12 from '../assets/Footer/svgexport-41.svg';
 const Footer = () => {
     // Arrays to easily map your links and images
     const storeInfo = {
-        name: "Anna LLC",
+        name: "Zubair LLC",
         address: "30 N Gould St Ste N\nSheridan, LA 82801",
         email: "info@zootsyshop.com"
     };
