@@ -130,6 +130,16 @@ export default function Products() {
                             <article className="card" key={p.id}>
                                 <Link className="thumb" to={`/product/${p.id}`} aria-label={`View ${p.name}`}>
                                     <img src={p.images[0] || PLACEHOLDER} alt={p.name} loading="lazy" onError={onImgError} />
+                                    {p.images[1] && (
+                                        <img
+                                            className="thumb-hover"
+                                            src={p.images[1]}
+                                            alt=""
+                                            aria-hidden="true"
+                                            loading="lazy"
+                                            onError={onImgError}
+                                        />
+                                    )}
                                 </Link>
                                 <Link className="name" to={`/product/${p.id}`} title={p.name}>{p.name}</Link>
                                 <Price p={p} />

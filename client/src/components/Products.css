@@ -130,6 +130,25 @@
     will-change: transform;
 }
 
+/* second image: sits on top of the first, hidden off to the corner until hovered,
+   then slides in along a 45-degree path (equal X and Y movement) */
+.zp .thumb .thumb-hover {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: translate(40%, 40%);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@media (hover: hover) {
+    .zp .card:hover .thumb-hover {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+}
+
 /* light shine that sweeps across the image on hover */
 .zp .thumb::after {
     content: "";
