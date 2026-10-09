@@ -21,7 +21,8 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "zootsy-food",
-    allowed_formats: ["jpg", "png", "jpeg"],
+    allowed_formats: ["jpg", "png", "jpeg", "webp"],
+    transformation: [{ width: 2000, crop: "limit", quality: "auto" }],
   },
 });
 

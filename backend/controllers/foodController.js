@@ -48,14 +48,14 @@ const addFood = async (req, res) => {
 
 const listFood = async (req, res) => {
   try {
-    const foods = await foodModel.find({});
+    const foods = await foodModel.find({}).lean(); // plain objects, faster than full Mongoose docs
+    res.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
     res.json({ success: true, data: foods });
   } catch (error) {
     console.log(error);
     res.json({ success: false, data: "Error" });
   }
 };
-
 const removeFood = async (req, res) => {
   try {
     const food = await foodModel.findById(req.body.id);
