@@ -5,7 +5,7 @@ import CartDrawer from "./Cartdrawer";
 import flyToCart from "./FlyToCart";
 import "./Products.css";
 import "./FlyToCart.css";
-
+import { optimize } from "../utils/cloudinary";
 const PLACEHOLDER =
     "data:image/svg+xml;utf8," +
     encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect width="100%" height="100%" fill="#f1f1f1"/></svg>');
@@ -126,17 +126,29 @@ export default function Products() {
                     )}
 
                     {status === "ready" &&
-                        visible.map((p) => (
+                        visible.map((p, idx) => (
                             <article className="card" key={p.id}>
                                 <Link className="thumb" to={`/product/${p.id}`} aria-label={`View ${p.name}`}>
-                                    <img src={p.images[0] || PLACEHOLDER} alt={p.name} loading="lazy" onError={onImgError} />
+                                    <img
+                                        src={optimize(p.images[0] || PLACEHOLDER, 400)}
+                                        alt={p.name}
+                                        width="400"
+                                        height="400"
+                                        loading={idx < 4 ? "eager" : "lazy"}
+                                        fetchPriority={idx < 4 ? "high" : "auto"}
+                                        decoding="async"
+                                        onError={onImgError}
+                                    />
                                     {p.images[1] && (
                                         <img
                                             className="thumb-hover"
-                                            src={p.images[1]}
+                                            src={optimize(p.images[1], 400)}
                                             alt=""
                                             aria-hidden="true"
+                                            width="400"
+                                            height="400"
                                             loading="lazy"
+                                            decoding="async"
                                             onError={onImgError}
                                         />
                                     )}

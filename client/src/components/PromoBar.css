@@ -12,6 +12,7 @@
     background-color: var(--c-green);
     color: #fff;
     overflow: hidden;
+    height: 40px;
 }
 
 /* Mobile first: small side padding (equal on both sides so the text stays

@@ -167,14 +167,25 @@ function Gallery({ media, name }) {
                     {media.map((m, i) => (
                         <SwiperSlide key={`${m.type}-${i}`} className="sp-slide">
                             {m.type === "image" ? (
-                                <img className="sp-media" src={m.src} alt={`${name} ${i + 1}`} onError={onImgError} />
+                                <img
+                                    className="sp-media"
+                                    src={optimize(m.src, 1000)}
+                                    alt={`${name} ${i + 1}`}
+                                    width="1000"
+                                    height="1000"
+                                    loading={i === 0 ? "eager" : "lazy"}
+                                    fetchPriority={i === 0 ? "high" : "auto"}
+                                    decoding="async"
+                                    onError={onImgError}
+                                />
                             ) : (
                                 <video
                                     className="sp-media sp-video swiper-no-swiping"
-                                    src={m.src}
+                                    src={optimizeVideo(m.src)}
+                                    poster={videoPoster(m.src, 1000)}
                                     controls
                                     playsInline
-                                    preload="metadata"
+                                    preload="none"
                                 />
                             )}
                         </SwiperSlide>
