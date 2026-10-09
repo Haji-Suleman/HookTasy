@@ -32,10 +32,10 @@ const Footer = () => {
     };
 
     const socialLinks = [
-        { id: 1, icon: facebookIcon, alt: "Facebook", link: "#" },
-        { id: 2, icon: pinterestIcon, alt: "Pinterest", link: "#" },
-        { id: 3, icon: instagramIcon, alt: "Instagram", link: "#" },
-        { id: 4, icon: youtubeIcon, alt: "YouTube", link: "#" }
+        { id: 1, icon: facebookIcon, alt: "Zootsy Shop on Instagram", link: "#" },
+        { id: 2, icon: pinterestIcon, alt: "Zootsy Shop on Pinterest", link: "#" },
+        { id: 3, icon: instagramIcon, alt: "Zootsy Shop on Instagram", link: "https://www.instagram.com/hajisulemanjamali/" },
+        { id: 4, icon: youtubeIcon, alt: "Zootsy Shop on YouTube", link: "#" }
     ];
 
     const informationLinks = ["Contact us", "FAQs", "About us", "Affiliates"];

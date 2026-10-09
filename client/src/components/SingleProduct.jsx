@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import DOMPurify from "dompurify";
+import { Helmet } from "react-helmet-async";
 import "react-quill-new/dist/quill.snow.css";
 import { money, useStore } from "../StoreContext";
 import CartDrawer from "./Cartdrawer";
@@ -15,13 +16,8 @@ import Footer from "../pages/Footer";
 import ExtraProductDetails from "./ExtraProductDetails";
 import Faqs from "./Faqs";
 import DealTimer from "./Dealtime";
-import SECURE_IMG from "../assets/image.png"
-/* ---------------------------------------------------------------
-   YOUR "GUARANTEED SAFE CHECKOUT" IMAGE:
-   1) uncomment the import and fix the path/file name
-   2) set SECURE_IMG = secureCheckout
-   --------------------------------------------------------------- */
-// import secureCheckout from "../assets/secure-checkout.png";
+import SECURE_IMG from "../assets/image.png";
+import { optimize, optimizeVideo, videoPoster } from "../utils/cloudinary";
 
 /* "Frequently bought together" real discount: 0.2 = 20% off.
    Keep it 0 until your checkout/backend really applies it. */
@@ -33,12 +29,11 @@ const FAKE_DISCOUNT = 74;
 const wasPrice = (price) =>
     FAKE_DISCOUNT > 0 ? Math.round(Number(price) / (1 - FAKE_DISCOUNT / 100)) : 0;
 
-/* A bundle = the title starts with a whole number ("10 Crochet Patterns ...")
-   AND the price is more than this many dollars. */
 /* A bundle = any product priced more than this many dollars */
 const BUNDLE_MIN_PRICE = 5;
 const isBundle = (p) =>
     Number(String(p?.price ?? "").replace(/[^0-9.]/g, "")) > BUNDLE_MIN_PRICE;
+
 const WISH_KEY = "zootsy-wishlist";
 const readWish = () => {
     try {
@@ -225,10 +220,26 @@ function Gallery({ media, name }) {
                                 onClick={() => swiper?.slideTo(i)}
                             >
                                 {m.type === "image" ? (
-                                    <img src={m.src} alt="" onError={onImgError} />
+                                    <img
+                                        src={optimize(m.src, 150)}
+                                        alt=""
+                                        width="150"
+                                        height="150"
+                                        loading="lazy"
+                                        decoding="async"
+                                        onError={onImgError}
+                                    />
                                 ) : (
                                     <>
-                                        <video src={`${m.src}#t=0.1`} muted preload="metadata" />
+                                        <img
+                                            src={videoPoster(m.src, 150) || PLACEHOLDER}
+                                            alt=""
+                                            width="150"
+                                            height="150"
+                                            loading="lazy"
+                                            decoding="async"
+                                            onError={onImgError}
+                                        />
                                         <span className="sp-play" aria-hidden="true">▶</span>
                                     </>
                                 )}
@@ -297,7 +308,6 @@ function FrequentlyBought({ product, products, addToCart }) {
 
     const row = (p, locked) => {
         const was = wasPrice(p.price);
-        console.log(p.price)
         return (
             <label className={`sp-fbt__item${locked ? " is-locked" : ""}`} key={p.id}>
                 <input
@@ -306,7 +316,15 @@ function FrequentlyBought({ product, products, addToCart }) {
                     disabled={locked}
                     onChange={() => setOff((o) => ({ ...o, [p.id]: !o[p.id] }))}
                 />
-                <img src={(p.images && p.images[0]) || PLACEHOLDER} alt="" onError={onImgError} />
+                <img
+                    src={optimize((p.images && p.images[0]) || PLACEHOLDER, 120)}
+                    alt=""
+                    width="120"
+                    height="120"
+                    loading="lazy"
+                    decoding="async"
+                    onError={onImgError}
+                />
                 <span className="sp-fbt__text">
                     {isBundle(p) && <span className="sp-fbt__tag">Bundle</span>}
                     <span className="sp-fbt__name">{p.name}</span>
@@ -377,7 +395,7 @@ export default function SingleProduct() {
                 price: p.price,
                 originalPrice: wasPrice(p.price),
                 qty,
-                image: (p.images && p.images[0]) || PLACEHOLDER,
+                image: optimize((p.images && p.images[0]) || PLACEHOLDER, 120),
             })),
         [cartItems]
     );
@@ -544,7 +562,12 @@ export default function SingleProduct() {
 
                     {SECURE_IMG && (
                         <div className="sp-secure">
-                            <img src={SECURE_IMG} alt="Guaranteed safe and secure checkout" />
+                            <img
+                                src={SECURE_IMG}
+                                alt="Guaranteed safe and secure checkout"
+                                loading="lazy"
+                                decoding="async"
+                            />
                         </div>
                     )}
 
@@ -587,6 +610,17 @@ export default function SingleProduct() {
 
     return (
         <>
+            {product && (
+                <Helmet>
+                    <title>{product.name} | Crochet Pattern PDF – Zootsy Shop</title>
+                    <meta
+                        name="description"
+                        content={`Download the ${product.name} crochet pattern (PDF). Instant digital download from Zootsy Shop.`}
+                    />
+                    <link rel="canonical" href={`https://zootsyshop.com/product/${product.id}`} />
+                </Helmet>
+            )}
+
             <Navbar />
             <div className="zp sp">
                 <main className="sp-wrap">
