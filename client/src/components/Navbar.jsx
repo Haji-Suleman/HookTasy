@@ -1,24 +1,24 @@
 import { useState, useRef, useEffect, useCallback, useId, useMemo } from 'react';
 import { useStore } from '../StoreContext';
-import logo from '../assets/zootsy-logo-nobg.png';
+import logo from '../assets/zootsy-logo-nobg.webp';
+import bestseller from '../assets/bestseller.webp';
+import Bundle from '../assets/Bundle-main-image.webp';
+import children from '../assets/children.webp';
+import chrismis from '../assets/chrismis.webp';
+import Easter_Day from '../assets/Easter_Day.webp';
+import halloween from '../assets/halloween.webp';
+import nurse from '../assets/nurse.webp';
+import Valentine from '../assets/Valentine.webp';
+import dogs from "../assets/Navbar/dogs.webp";
+import cats from "../assets/Navbar/cats.webp";
+import goose from "../assets/Navbar/Goose.webp";
+import bird from "../assets/Navbar/bird.webp";
+import baphomet from "../assets/Navbar/baphomet.webp";
+import animals from "../assets/Navbar/wild_animal.webp";
+import sea_animals from "../assets/Navbar/sea_animal.webp";
+import dragon from "../assets/Navbar/dragons.webp";
 import './Navbar.css';
 import CartDrawer from './Cartdrawer';
-import bestseller from '../assets/bestseller.jpeg';
-import Bundle from '../assets/Bundle-main-image.jpg';
-import children from '../assets/children.jpg';
-import chrismis from '../assets/chrismis.jpeg';
-import Easter_Day from '../assets/Easter_Day.jpg';
-import halloween from '../assets/halloween.jpeg';
-import nurse from '../assets/nurse.png';
-import Valentine from '../assets/Valentine.jpeg';
-import dogs from "../assets/Navbar/dogs.jpg"
-import cats from "../assets/Navbar/cats.jpg"
-import goose from "../assets/Navbar/Goose.png"
-import bird from "../assets/Navbar/bird.jpg"
-import baphomet from "../assets/Navbar/baphomet.png"
-import animals from "../assets/Navbar/wild_animal.jpeg"
-import sea_animals from "../assets/Navbar/sea_animal.jpeg"
-import dragon from "../assets/Navbar/dragons.jpg"
 /* =====================================================================
    NAV DATA
    ===================================================================== */

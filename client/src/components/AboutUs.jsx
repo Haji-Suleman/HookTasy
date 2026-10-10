@@ -1,6 +1,6 @@
-import React from 'react';
-import './AboutUs.css';
-import aboutP from "../assets/p.png";
+import { Link } from "react-router-dom";
+import "./AboutUs.css";
+import aboutP from "../assets/p.webp";
 import Downloadable from "../assets/AboutUS/001_bx-arrow-to-bottom.svg";
 import Quality_Guarantee from "../assets/AboutUS/002_bx-check-shield.svg";
 import OS from "../assets/AboutUS/003_bx-headphone.svg";
@@ -11,41 +11,29 @@ import silver from "../assets/AboutUS/007_silver.svg";
 import top5 from "../assets/AboutUS/009_5-percent.svg";
 import top10 from "../assets/AboutUS/010_10-percent.svg";
 
-const AboutUs = () => {
-    const featuresData = [
-        {
-            id: 1,
-            icon: Downloadable,
-            title: "Instant Delivery",
-            description: "Downloadable instantly after purchase"
-        },
-        {
-            id: 2,
-            icon: Quality_Guarantee,
-            title: "Quality Guarantee",
-            description: "Crochet patterns are quality-tested"
-        },
-        {
-            id: 3,
-            icon: OS,
-            title: "Online Support",
-            description: "24 hours a day, 7 days a week"
-        },
-        {
-            id: 4,
-            icon: SP,
-            title: "Secure Payment",
-            description: "100% secure payment guaranteed"
-        }
-    ];
+/* defined once, outside the component, so it is not rebuilt on every render */
+const FEATURES = [
+    { id: 1, icon: Downloadable, title: "Instant Delivery", description: "Downloadable instantly after purchase" },
+    { id: 2, icon: Quality_Guarantee, title: "Quality Guarantee", description: "Crochet patterns are quality-tested" },
+    { id: 3, icon: OS, title: "Online Support", description: "24 hours a day, 7 days a week" },
+    { id: 4, icon: SP, title: "Secure Payment", description: "100% secure payment guaranteed" },
+];
 
+const BADGES = [
+    { src: diamond, alt: "Verified Reviews" },
+    { src: silver, alt: "Silver Transparency" },
+    { src: top5, alt: "Top 5 Stores" },
+    { src: top10, alt: "Top 10% Trending" },
+];
+
+export default function AboutUs() {
     return (
         <div className="about-us-page">
             {/* Top Link */}
             <div className="reviews-top-link-wrapper">
-                <a href="/shop" className="reviews-top-link">
+                <Link to="/shop" className="reviews-top-link">
                     Shop All Patterns
-                </a>
+                </Link>
             </div>
 
             {/* TOP SECTION: Image & Text */}
@@ -54,57 +42,65 @@ const AboutUs = () => {
                     <img
                         src={aboutP}
                         alt="Hands crocheting with yellow yarn"
+                        width="800"
+                        height="800"
+                        loading="lazy"
+                        decoding="async"
                     />
                 </div>
 
                 <div className="about-us-text-wrapper">
                     <h2>Designed by crochet lover, for crochet lovers</h2>
                     <p>
-                        At Hooktasy, every pattern is thoughtfully crafted by passionate crochet enthusiasts,
+                        At Zootsy, every pattern is thoughtfully crafted by passionate crochet enthusiasts,
                         just like you. We create designs that inspire joy in every stitch, made with love for
                         those who love to crochet.
                     </p>
-                    <a href="/about" className="about-us-link reviews-top-link">Read more</a>
+                    <Link to="/about" className="about-us-link reviews-top-link">Read more</Link>
                 </div>
             </section>
 
             {/* MIDDLE SECTION: Features */}
             <section className="about-us-features">
-                {featuresData.map((feature) => (
-                    <div key={feature.id} className="feature-item">
+                {FEATURES.map((f) => (
+                    <div key={f.id} className="feature-item">
                         <div className="feature-icon">
-                            <img src={feature.icon} alt={feature.title} />
+                            <img src={f.icon} alt="" width="40" height="40" loading="lazy" decoding="async" />
                         </div>
                         <div className="feature-text">
-                            <h3>{feature.title}</h3>
-                            <p>{feature.description}</p>
+                            <h3>{f.title}</h3>
+                            <p>{f.description}</p>
                         </div>
                     </div>
                 ))}
             </section>
 
             {/* BOTTOM SECTION: Reviews & Badges */}
-            <section className="about-us-reviews" >
+            <section className="about-us-reviews">
                 <div className="reviews-left">
-                    <div className="stars">
-                        ★★★★★
-                    </div>
+                    <div className="stars" aria-label="5 out of 5 stars">★★★★★</div>
                     <span className="review-count">1111 reviews</span>
                     <div className="judge-me-logo">
                         <span>Verified by</span>
-                        <img src={judge_logo} alt="Judge.me" />
+                        <img src={judge_logo} alt="Judge.me" width="100" height="24" loading="lazy" decoding="async" />
                     </div>
                 </div>
 
                 <div className="reviews-right">
-                    <img src={diamond} alt="Verified Reviews" className="trust-badge" />
-                    <img src={silver} alt="Silver Transparency" className="trust-badge" />
-                    <img src={top5} alt="Top 5 Stores" className="trust-badge" />
-                    <img src={top10} alt="Top 10% Trending" className="trust-badge" />
+                    {BADGES.map((b) => (
+                        <img
+                            key={b.alt}
+                            src={b.src}
+                            alt={b.alt}
+                            className="trust-badge"
+                            width="80"
+                            height="80"
+                            loading="lazy"
+                            decoding="async"
+                        />
+                    ))}
                 </div>
             </section>
         </div>
     );
-};
-
-export default AboutUs;
+}

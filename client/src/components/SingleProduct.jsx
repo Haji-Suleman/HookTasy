@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useId, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -13,11 +13,14 @@ import "./FlyToCart.css";
 import "./SingleProduct.css";
 import Navbar from "./Navbar";
 import Footer from "../pages/Footer";
-import ExtraProductDetails from "./ExtraProductDetails";
-import Faqs from "./Faqs";
 import DealTimer from "./Dealtime";
-import SECURE_IMG from "../assets/image.png";
+import SECURE_IMG from "../assets/image.webp";
 import { optimize, optimizeVideo, videoPoster, srcSet } from "../utils/cloudinary";
+
+/* below the fold: loaded only after the main product content is on screen */
+const ExtraProductDetails = lazy(() => import("./ExtraProductDetails"));
+const Faqs = lazy(() => import("./Faqs"));
+
 /* "Frequently bought together" real discount: 0.2 = 20% off.
    Keep it 0 until your checkout/backend really applies it. */
 const BUNDLE_DISCOUNT = 0;
@@ -54,7 +57,9 @@ const PLACEHOLDER =
     "data:image/svg+xml;utf8," +
     encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect width="100%" height="100%" fill="#f1f1f1"/></svg>');
 
-const onImgError = (e) => { e.currentTarget.src = PLACEHOLDER; };
+const onImgError = (e) => {
+    if (e.currentTarget.src !== PLACEHOLDER) e.currentTarget.src = PLACEHOLDER;
+};
 
 /* ---------- description: renders the rich-text HTML safely ---------- */
 function ProductDescription({ html }) {
@@ -190,12 +195,12 @@ function Gallery({ media, name }) {
 
                 {media.length > 1 && (
                     <>
-                        <button className="sp-nav sp-nav--prev" onClick={() => swiper?.slidePrev()} aria-label="Previous">
+                        <button type="button" className="sp-nav sp-nav--prev" onClick={() => swiper?.slidePrev()} aria-label="Previous">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M15 5 7 12l8 7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </button>
-                        <button className="sp-nav sp-nav--next" onClick={() => swiper?.slideNext()} aria-label="Next">
+                        <button type="button" className="sp-nav sp-nav--next" onClick={() => swiper?.slideNext()} aria-label="Next">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M9 5l8 7-8 7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
@@ -214,6 +219,7 @@ function Gallery({ media, name }) {
                     >
                         {media.map((m, i) => (
                             <button
+                                type="button"
                                 key={`thumb-${m.type}-${i}`}
                                 className="sp-thumb"
                                 aria-label={`${m.type === "video" ? "Video" : "Image"} ${i + 1}`}
@@ -222,9 +228,7 @@ function Gallery({ media, name }) {
                             >
                                 {m.type === "image" ? (
                                     <img
-                                        src={optimize(m.src, 150)}
-                                        srcSet={srcSet(p.images[0], [400, 800])}
-
+                                        src={optimize(m.src, 300)}
                                         alt=""
                                         width="150"
                                         height="150"
@@ -235,8 +239,7 @@ function Gallery({ media, name }) {
                                 ) : (
                                     <>
                                         <img
-                                            src={videoPoster(m.src, 150) || PLACEHOLDER}
-
+                                            src={videoPoster(m.src, 300) || PLACEHOLDER}
                                             alt=""
                                             width="150"
                                             height="150"
@@ -321,8 +324,7 @@ function FrequentlyBought({ product, products, addToCart }) {
                     onChange={() => setOff((o) => ({ ...o, [p.id]: !o[p.id] }))}
                 />
                 <img
-                    src={optimize((p.images && p.images[0]) || PLACEHOLDER, 120)}
-
+                    src={optimize((p.images && p.images[0]) || PLACEHOLDER, 240)}
                     alt=""
                     width="120"
                     height="120"
@@ -367,7 +369,10 @@ export default function SingleProduct() {
     const [liked, setLiked] = useState(false);
     const [shared, setShared] = useState(false);
 
-    const product = products.find((p) => String(p.id) === String(id));
+    const product = useMemo(
+        () => products.find((p) => String(p.id) === String(id)),
+        [products, id]
+    );
 
     const media = useMemo(() => {
         if (!product) return [];
@@ -490,7 +495,7 @@ export default function SingleProduct() {
             <div className="sp-msg">
                 <p>This pattern could not be loaded.</p>
                 <p>{error}</p>
-                <button className="retry" onClick={refresh}>Try again</button>
+                <button type="button" className="retry" onClick={refresh}>Try again</button>
             </div>
         );
     } else if (!product) {
@@ -549,7 +554,7 @@ export default function SingleProduct() {
 
                     <DealTimer />
 
-                    <button className="add" onClick={handleAdd}>
+                    <button type="button" className="add" onClick={handleAdd}>
                         {added ? "ADDED" : "ADD TO CART"}
                     </button>
 
@@ -570,6 +575,8 @@ export default function SingleProduct() {
                             <img
                                 src={SECURE_IMG}
                                 alt="Guaranteed safe and secure checkout"
+                                width="600"
+                                height="100"
                                 loading="lazy"
                                 decoding="async"
                             />
@@ -590,7 +597,7 @@ export default function SingleProduct() {
                                 <li>This digital pattern is for PERSONAL USE only. Please do not distribute or sell any components of this pattern.</li>
                                 <li>
                                     You are allowed to sell the completed products, but you must provide proper credit to us (
-                                    <a href="/">zootsyshop.com</a>) as the pattern design
+                                    <Link to="/">zootsyshop.com</Link>) as the pattern design
                                 </li>
                             </ul>
                         </Accordion>
@@ -640,6 +647,7 @@ export default function SingleProduct() {
                 </main>
 
                 <button
+                    type="button"
                     className="fab"
                     data-cart-target
                     onClick={() => setCartOpen(true)}
@@ -665,8 +673,13 @@ export default function SingleProduct() {
                 />
             </div>
 
-            <ExtraProductDetails />
-            <Faqs />
+            {/* below the fold: loads after the product itself is visible */}
+            {product && (
+                <Suspense fallback={null}>
+                    <ExtraProductDetails />
+                    <Faqs />
+                </Suspense>
+            )}
             <Footer />
         </>
     );
