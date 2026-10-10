@@ -310,7 +310,15 @@ export default function Navbar({
             </button>
 
             <L to="/" aria-label="Home" className="navbar-logo-link">
-              <img src={logo} alt="Hooktasy logo" className="navbar-logo-img" />
+              <img
+                src={logo}
+                alt="Zootsy Shop logo"
+                className="navbar-logo-img"
+                width="160"
+                height="48"
+                fetchPriority="high"
+                decoding="async"
+              />
             </L>
           </div>
 
@@ -450,7 +458,7 @@ export default function Navbar({
           data-open={drawerOpen ? 'true' : 'false'}
         >
           <div className="drawer-panel__header">
-            <img src={logo} alt="" className="drawer-panel__logo" />
+            <img src={logo} alt="" className="drawer-panel__logo" width="160" height="48" loading="lazy" decoding="async" />
             <button
               type="button"
               onClick={closeDrawer}

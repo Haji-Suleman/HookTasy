@@ -122,8 +122,12 @@ const Footer = () => {
                             <img
                                 key={index}
                                 src={icon}
-                                alt={`Payment method ${index + 1}`}
+                                alt=""
                                 className="payment-icon"
+                                width="38"
+                                height="24"
+                                loading="lazy"
+                                decoding="async"
                             />
                         ))}
                     </div>
