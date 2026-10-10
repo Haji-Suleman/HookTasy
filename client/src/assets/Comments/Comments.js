@@ -1,23 +1,23 @@
-import review_Barb from "./barb-img.png"
-import review_ES from "./review-5.jpg"
-import georgene from "./georgene.png"
-import dead from "./deadmeet.png"
-import frog from "./frog.png"
-import idot from "./idot-howleen.png"
-import donna from "./Donna.png"
-import donna2 from "./donna2.png"
-import review1 from "./reviews-1.jpg"
-import balls from "./balls.png"
-import turtle from "./review-19-1.png"
-import purse from "./purse.png"
-import mousecookie from "./mousecookie.png"
-import review2 from "./review-2.jpeg"
-import vettee from "./vettee.png"
-import review3 from "./review-3.jpg"
-import review23 from "./review-23.jpg"
-import review18 from "./review-18.jpg"
-import review25 from "./review-25.jpg"
-import review12 from "./review-12.jpg"
+import review_Barb from "./barb-img.webp"
+import review_ES from "./review-5.webp"
+import georgene from "./georgene.webp"
+import dead from "./deadmeet.webp"
+import frog from "./frog.webp"
+import idot from "./idot-howleen.webp"
+import donna from "./Donna.webp"
+import donna2 from "./donna2.webp"
+import review1 from "./reviews-1.webp"
+import balls from "./balls.webp"
+import turtle from "./review-19-1.webp"
+import purse from "./purse.webp"
+import mousecookie from "./mousecookie.webp"
+import review2 from "./review-2.webp"
+import vettee from "./vettee.webp"
+import review3 from "./review-3.webp"
+import review23 from "./review-23.webp"
+import review18 from "./review-18.webp"
+import review25 from "./review-25.webp"
+import review12 from "./review-12.webp"
 export const Comments = [
     {
         id: 1,
@@ -253,7 +253,7 @@ export const Comments = [
 
 // {
 //     id: 22,
-//         images: ["/reviews/review-22.jpg"],
+//         images: ["/reviews/review-22.webp"],
 //             rating: 5,
 //                 name: "Alycia T.",
 //                     verified: true,
@@ -264,7 +264,7 @@ export const Comments = [
 
 // {
 //     id: 23,
-//         images: ["/reviews/review-23.jpg"],
+//         images: ["/reviews/review-23.webp"],
 //             rating: 5,
 //                 name: "L.d.A.C.",
 //                     verified: true,
@@ -275,7 +275,7 @@ export const Comments = [
 
 // {
 //     id: 24,
-//         images: ["/reviews/review-24.jpg"],
+//         images: ["/reviews/review-24.webp"],
 //             rating: 5,
 //                 name: "Linda W.",
 //                     verified: true,
@@ -286,7 +286,7 @@ export const Comments = [
 
 // {
 //     id: 25,
-//         images: ["/reviews/review-25.jpg"],
+//         images: ["/reviews/review-25.webp"],
 //             rating: 4,
 //                 name: "Mimsie B.",
 //                     verified: true,
