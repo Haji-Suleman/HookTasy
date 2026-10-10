@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useStore } from "../StoreContext";
-import { Price } from "./Products";
+import Price from "./Price";
 import "./Products.css";     // cards, grid, price, buttons (scoped under .zp)
 import "./HotPatterns.css";  // the two headings + tabs
 import "./FlyToCart.css";
 import flyToCart from "./FlyToCart";
+import { optimize, srcSet } from "../utils/cloudinary";
 
 const PLACEHOLDER =
     "data:image/svg+xml;utf8," +
@@ -33,27 +34,27 @@ export default function HotPatterns({
     title = "Pattern Picks",
     subtitle = "New & Trending",
     tabs = DEFAULT_TABS,  // "New Arrivals" shows random products, every other tab matches the product category
-    newCount = 20,        // how many random products "New Arrivals" shows
+    newCount = 8,         // how many random products "New Arrivals" shows
+    maxPerTab = 8,        // max products shown in a category tab
 }) {
     const { products, categories, status, error, refresh, addToCart } = useStore();
     const [tab, setTab] = useState(tabs[0]);
+
     /* picked once per product load, so switching tabs does not reshuffle it */
     const randomPicks = useMemo(() => shuffle(products).slice(0, newCount), [products, newCount]);
 
     const list = useMemo(
-        () => (tab === NEW_TAB ? randomPicks : products.filter((p) => key(p.category) === key(tab))),
-        [tab, products, randomPicks]
+        () =>
+            tab === NEW_TAB
+                ? randomPicks
+                : products.filter((p) => key(p.category) === key(tab)).slice(0, maxPerTab),
+        [tab, products, randomPicks, maxPerTab]
     );
+
     const handleAdd = (e, p) => {
         addToCart(p);
         flyToCart(e.currentTarget);
     };
-    const handleQtyChange = (id, nextQty) => {
-        const cur = cartItems.find((i) => String(i.product.id) === String(id))?.qty ?? 0;
-        if (nextQty > cur) addToCart(cartItems.find((i) => String(i.product.id) === String(id)).product);
-        else if (nextQty < cur) decreaseItem(id);
-    };
-
 
     const onTabKey = (e, i) => {
         if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
@@ -119,16 +120,26 @@ export default function HotPatterns({
                         list.map((p) => (
                             <article className="card" key={p.id}>
                                 <Link className="thumb" to={`/product/${p.id}`} aria-label={`View ${p.name}`}>
-                                    <img src={p.images[0] || PLACEHOLDER} alt={p.name} loading="lazy" onError={onImgError} />
+                                    <img
+                                        src={optimize(p.images?.[0] || PLACEHOLDER, 400)}
+                                        srcSet={srcSet(p.images?.[0], [400, 800])}
+                                        sizes="(max-width: 800px) 50vw, (max-width: 1100px) 33vw, 25vw"
+                                        alt={p.name}
+                                        width="400"
+                                        height="400"
+                                        loading="lazy"
+                                        decoding="async"
+                                        onError={onImgError}
+                                    />
                                 </Link>
-                                <Link className="name" to={`/product/${p.id}`}>{p.name}</Link>
+                                <Link className="name" to={`/product/${p.id}`} title={p.name}>{p.name}</Link>
                                 <Price p={p} />
                                 {/* addToCart needs the whole product, not just the id */}
-                                <button className="add" onClick={(e) => handleAdd(e, p)}> ADD TO CART</button>
+                                <button className="add" onClick={(e) => handleAdd(e, p)}>ADD TO CART</button>
                             </article>
                         ))}
                 </div>
-            </section >
-        </div >
+            </section>
+        </div>
     );
 }

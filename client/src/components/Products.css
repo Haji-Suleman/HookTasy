@@ -547,6 +547,7 @@
     text-decoration: underline;
     cursor: pointer;
 }
+
 .thumb {
     display: block;
     aspect-ratio: 1 / 1;
@@ -561,4 +562,44 @@
 
 .skel .thumb {
     aspect-ratio: 1 / 1;
+}
+
+.zp .load-more-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 48px;
+}
+
+.zp .load-more {
+    font: inherit;
+    font-weight: 500;
+    font-size: 1.1rem;
+    letter-spacing: 0.01em;
+    padding: 14px 48px;
+    border: 0;
+    border-radius: 4px;
+    background: var(--zp-green);
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.zp .load-more:hover {
+    background: var(--zp-green-d);
+}
+
+.zp .load-more:active {
+    transform: scale(0.97);
+}
+
+@media (max-width: 600px) {
+    .zp .load-more-wrap {
+        margin-top: 32px;
+    }
+
+    .zp .load-more {
+        width: 100%;
+        padding: 12px;
+        font-size: 0.95rem;
+    }
 }

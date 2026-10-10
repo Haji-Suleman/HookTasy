@@ -15,3 +15,7 @@ export const videoPoster = (url, width = 800) =>
             .replace("/upload/", `/upload/so_0,f_jpg,q_auto,w_${width}/`)
             .replace(/\.[^/.]+$/, ".jpg")
         : undefined;
+export const srcSet = (url, widths = [400, 800]) =>
+    isCloudinary(url)
+        ? widths.map((w) => `${optimize(url, w)} ${w}w`).join(", ")
+        : undefined;

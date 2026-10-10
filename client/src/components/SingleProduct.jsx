@@ -17,8 +17,7 @@ import ExtraProductDetails from "./ExtraProductDetails";
 import Faqs from "./Faqs";
 import DealTimer from "./Dealtime";
 import SECURE_IMG from "../assets/image.png";
-import { optimize, optimizeVideo, videoPoster } from "../utils/cloudinary";
-
+import { optimize, optimizeVideo, videoPoster, srcSet } from "../utils/cloudinary";
 /* "Frequently bought together" real discount: 0.2 = 20% off.
    Keep it 0 until your checkout/backend really applies it. */
 const BUNDLE_DISCOUNT = 0;
@@ -165,6 +164,8 @@ function Gallery({ media, name }) {
                                 <img
                                     className="sp-media"
                                     src={optimize(m.src, 1000)}
+                                    srcSet={srcSet(m.src, [600, 1000, 1400])}
+                                    sizes="(max-width: 900px) 100vw, 50vw"
                                     alt={`${name} ${i + 1}`}
                                     width="1000"
                                     height="1000"
@@ -222,6 +223,8 @@ function Gallery({ media, name }) {
                                 {m.type === "image" ? (
                                     <img
                                         src={optimize(m.src, 150)}
+                                        srcSet={srcSet(p.images[0], [400, 800])}
+
                                         alt=""
                                         width="150"
                                         height="150"
@@ -233,6 +236,7 @@ function Gallery({ media, name }) {
                                     <>
                                         <img
                                             src={videoPoster(m.src, 150) || PLACEHOLDER}
+
                                             alt=""
                                             width="150"
                                             height="150"
@@ -318,6 +322,7 @@ function FrequentlyBought({ product, products, addToCart }) {
                 />
                 <img
                     src={optimize((p.images && p.images[0]) || PLACEHOLDER, 120)}
+
                     alt=""
                     width="120"
                     height="120"

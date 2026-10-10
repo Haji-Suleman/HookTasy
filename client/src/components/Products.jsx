@@ -5,13 +5,14 @@ import CartDrawer from "./Cartdrawer";
 import flyToCart from "./FlyToCart";
 import "./Products.css";
 import "./FlyToCart.css";
-import { optimize } from "../utils/cloudinary";
+import { optimize, srcSet } from "../utils/cloudinary";
 const PLACEHOLDER =
     "data:image/svg+xml;utf8," +
     encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect width="100%" height="100%" fill="#f1f1f1"/></svg>');
 
 const onImgError = (e) => { e.currentTarget.src = PLACEHOLDER; };
 
+const PAGE_SIZE = 8
 export function Price({ p }) {
     return (
         <p className="price">
@@ -27,6 +28,7 @@ export default function Products() {
         products, categories, status, error, refresh,
         cartCount, cartItems, addToCart, decreaseItem, removeFromCart,
     } = useStore();
+    const [shown, setShown] = useState(PAGE_SIZE);
     const [filter, setFilter] = useState("All");
     const [query, setQuery] = useState("");
     const [cartOpen, setCartOpen] = useState(false);
@@ -38,7 +40,8 @@ export default function Products() {
             )
             .sort((a, b) => Number(b.price) - Number(a.price)); // max → min
     }, [products, filter, query]);
-
+    const pageItems = useMemo(() => visible.slice(0, shown), [visible, shown]);
+    const hasMore = shown < visible.length;
     /* Map context cart shape → CartDrawer's expected shape */
     const drawerItems = useMemo(
         () =>
@@ -116,21 +119,23 @@ export default function Products() {
                         <div className="msg">
                             <p>Products could not be loaded.</p>
                             <p>{error}</p>
-                            <p>If this keeps happening, check that the backend allows requests from this site (CORS).</p>
+                            <p>There must be some network issue</p>
                             <button className="retry" onClick={refresh}>Try again</button>
                         </div>
                     )}
 
-                    {status === "ready" && visible.length === 0 && (
+                    {status === "ready" && pageItems.length === 0 && (
                         <p className="msg">{products.length === 0 ? "No products to show yet." : "No patterns match your search."}</p>
                     )}
 
                     {status === "ready" &&
-                        visible.map((p, idx) => (
+                        pageItems.map((p, idx) => (
                             <article className="card" key={p.id}>
                                 <Link className="thumb" to={`/product/${p.id}`} aria-label={`View ${p.name}`}>
                                     <img
                                         src={optimize(p.images[0] || PLACEHOLDER, 400)}
+                                        srcSet={srcSet(p.images[0], [400, 800])}
+
                                         alt={p.name}
                                         width="400"
                                         height="400"
@@ -160,6 +165,13 @@ export default function Products() {
                             </article>
                         ))}
                 </section>
+                {status === "ready" && hasMore && (
+                    <div className="load-more-wrap">
+                        <button className="load-more" onClick={() => setShown((n) => n + PAGE_SIZE)}>
+                            LOAD MORE
+                        </button>
+                    </div>
+                )}
             </main>
 
             {/* data-cart-target = the red dot flies to this element */}
