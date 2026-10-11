@@ -98,7 +98,14 @@ export default function Products() {
                         {categories.length > 1 && (
                             <div className="filters">
                                 {["All", ...categories].map((c) => (
-                                    <button key={c} aria-pressed={c === filter} onClick={() => setFilter(c)}>{c}</button>
+                                    <button
+                                        key={c}
+                                        className={c === "Valentine" ? "premium-tag" : undefined}
+                                        aria-pressed={c === filter}
+                                        onClick={() => setFilter(c)}
+                                    >
+                                        {c === "Valentine" ? "Premium" : c}
+                                    </button>
                                 ))}
                             </div>
                         )}
