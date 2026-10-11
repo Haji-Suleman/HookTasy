@@ -1,192 +1,466 @@
+@import url("https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap");
+
 /* =====================================================================
    AFFILIATE PAGE
+   Change the two accent colours below to re-theme the whole page.
    ===================================================================== */
 .affiliate-page {
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
-    color: #333;
+    --af-a: #9d5fb8;
+    /* gradient start (lilac)  */
+    --af-b: #e0709f;
+    /* gradient end (rose)     */
+    --af-ink: #1f1633;
+    --af-text: #5a536b;
+    --af-line: #ece6f3;
+    --af-grad: linear-gradient(135deg, var(--af-a), var(--af-b));
+
+    font-family: "Jost", system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    color: var(--af-text);
     background-color: #ffffff;
     min-height: 100vh;
 }
 
+/* ---------- entrance animation ---------- */
+@keyframes af-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(26px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Top Background (Header + Hero) */
 .affiliate-top-bg {
-    background-color: #f5f6f8;
-    /* Very light grey matching the screenshot */
-    padding-bottom: 80px;
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 96px;
+    background:
+        radial-gradient(900px 420px at 85% 10%, rgba(224, 112, 159, 0.16), transparent 60%),
+        radial-gradient(800px 460px at 8% 90%, rgba(157, 95, 184, 0.16), transparent 60%),
+        linear-gradient(180deg, #fbf8fe 0%, #f5f0fb 100%);
+}
+
+/* floating blurred blobs */
+.aff-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.aff-blob-1 {
+    width: 340px;
+    height: 340px;
+    top: -120px;
+    left: -80px;
+    background: var(--af-a);
+    animation: af-drift 14s ease-in-out infinite alternate;
+}
+
+.aff-blob-2 {
+    width: 300px;
+    height: 300px;
+    top: 40px;
+    right: -90px;
+    background: var(--af-b);
+    animation: af-drift 17s ease-in-out infinite alternate-reverse;
+}
+
+.aff-blob-3 {
+    width: 220px;
+    height: 220px;
+    bottom: -90px;
+    left: 42%;
+    background: #f3b4d4;
+    animation: af-drift 19s ease-in-out infinite alternate;
+}
+
+@keyframes af-drift {
+    from {
+        transform: translate(0, 0) scale(1);
+    }
+
+    to {
+        transform: translate(40px, 30px) scale(1.15);
+    }
 }
 
 /* Header */
 .aff-header {
+    position: relative;
+    z-index: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 1300px;
+    margin: 0 auto;
     padding: 30px 60px;
 }
 
 .aff-logo {
-    font-size: 24px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: #111;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    background: var(--af-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .aff-login-btn {
-    background-color: #2e7d32;
-    color: #fff;
-    border: none;
-    padding: 8px 24px;
-    font-size: 15px;
+    font: inherit;
     font-weight: 500;
-    border-radius: 4px;
+    font-size: 15px;
+    padding: 9px 28px;
+    color: var(--af-ink);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid var(--af-line);
+    border-radius: 999px;
     cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.aff-login-btn:hover {
+    color: #fff;
+    background: var(--af-grad);
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(157, 95, 184, 0.35);
 }
 
 /* Hero Section */
 .aff-hero {
+    position: relative;
+    z-index: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 40px;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 24px 20px 0;
 }
 
 .aff-hero-content {
-    max-width: 550px;
+    max-width: 580px;
+}
+
+.aff-hero-content>* {
+    animation: af-fade-up 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
 .aff-subtitle {
-    font-size: 15px;
-    color: #555;
-    margin-bottom: 12px;
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--af-a);
+    background: rgba(157, 95, 184, 0.1);
+    border: 1px solid rgba(157, 95, 184, 0.22);
+    padding: 7px 16px;
+    border-radius: 999px;
+    margin: 0 0 22px;
 }
 
 .aff-title {
-    font-size: 42px;
+    font-size: clamp(2.2rem, 4.6vw, 3.6rem);
     font-weight: 500;
-    line-height: 1.2;
-    color: #222;
-    margin-bottom: 30px;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--af-ink);
+    margin: 0 0 34px;
+    animation-delay: 0.1s;
 }
 
+/* "30% commission" shimmering gradient text */
+.aff-highlight {
+    background: linear-gradient(100deg, var(--af-a), var(--af-b), #f3a6c8, var(--af-a));
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 600;
+    animation: af-shimmer 6s ease-in-out infinite;
+}
+
+@keyframes af-shimmer {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.aff-hero-content .aff-join-btn {
+    animation-delay: 0.2s;
+}
+
+/* Join button: gradient pill, glow, shine sweep, arrow */
 .aff-join-btn {
-    background-color: #2e7d32;
-    color: #fff;
-    border: none;
-    padding: 12px 32px;
-    font-size: 16px;
+    position: relative;
+    overflow: hidden;
+    font: inherit;
     font-weight: 500;
-    border-radius: 4px;
+    font-size: 17px;
+    letter-spacing: 0.02em;
+    color: #fff;
+    background: var(--af-grad);
+    border: none;
+    padding: 15px 40px;
+    border-radius: 999px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    box-shadow: 0 12px 28px rgba(157, 95, 184, 0.4);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.aff-join-btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -70%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0));
+    transform: skewX(-20deg);
+    animation: af-btn-shine 3.6s ease-in-out infinite;
+}
+
+@keyframes af-btn-shine {
+    0% {
+        left: -70%;
+    }
+
+    55%,
+    100% {
+        left: 140%;
+    }
 }
 
 .aff-join-btn:hover {
-    background-color: #1b5e20;
+    transform: translateY(-3px);
+    box-shadow: 0 18px 36px rgba(157, 95, 184, 0.5);
 }
 
-/* Placeholder for hero image */
+.aff-join-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Hero image: soft glow behind it and a gentle float */
 .aff-hero-image-placeholder {
-    width: 450px;
-    height: 350px;
-    /* Remove background when you add your actual image */
-    background-color: transparent;
+    position: relative;
+    flex: 0 1 520px;
+    width: 520px;
+    max-width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: transparent;
+    animation: af-fade-up 0.9s 0.15s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
-/* Uncomment this if you want to see where the image will go initially */
-/*
-.aff-hero-image-placeholder {
-  background-color: #e0e0e0;
-  border-radius: 8px;
+.aff-hero-image-placeholder::before {
+    content: "";
+    position: absolute;
+    inset: 8% 6%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(224, 112, 159, 0.35), rgba(157, 95, 184, 0.18) 55%, transparent 72%);
+    filter: blur(24px);
+    z-index: 0;
 }
-*/
+
+.aff-hero-image-placeholder img {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 22px 32px rgba(70, 40, 100, 0.22));
+    animation: af-float 6s ease-in-out infinite;
+}
+
+@keyframes af-float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-14px);
+    }
+}
 
 /* Divider */
 .aff-divider {
+    height: 3px;
     border: none;
-    border-top: 1px solid #e0e0e0;
     margin: 0;
+    background: var(--af-grad);
+    opacity: 0.55;
 }
 
 /* How It Works Section */
 .aff-how-it-works {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 60px 20px 100px;
+    padding: 80px 20px 110px;
     text-align: center;
 }
 
 .aff-section-title {
-    font-size: 32px;
-    font-weight: 400;
-    color: #333;
-    margin-bottom: 50px;
+    position: relative;
+    display: inline-block;
+    font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+    font-weight: 500;
+    color: var(--af-ink);
+    margin: 0 0 64px;
+    padding-bottom: 18px;
+}
+
+.aff-section-title::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 64px;
+    height: 4px;
+    border-radius: 4px;
+    background: var(--af-grad);
+    transform: translateX(-50%);
 }
 
 /* Cards Grid */
 .aff-cards-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    border: 1px solid #e0e0e0;
-    background-color: #fff;
+    gap: 28px;
 }
 
 .aff-card {
-    padding: 40px 30px;
-    border-right: 1px solid #e0e0e0;
+    position: relative;
+    overflow: hidden;
+    padding: 46px 32px 36px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    background: #fff;
+    border: 1px solid var(--af-line);
+    border-radius: 22px;
+    box-shadow: 0 10px 30px rgba(60, 30, 90, 0.06);
+    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
 
-.aff-card:last-child {
-    border-right: none;
+/* gradient bar that grows across the top on hover */
+.aff-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--af-grad);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s ease;
 }
 
-/* Placeholder for icons */
+.aff-card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(157, 95, 184, 0.3);
+    box-shadow: 0 24px 48px rgba(95, 50, 140, 0.16);
+}
+
+.aff-card:hover::before {
+    transform: scaleX(1);
+}
+
+/* big faded step number */
+.aff-card-num {
+    position: absolute;
+    top: 14px;
+    right: 22px;
+    font-size: 3.4rem;
+    font-weight: 700;
+    line-height: 1;
+    color: rgba(157, 95, 184, 0.1);
+    pointer-events: none;
+    transition: color 0.35s ease;
+}
+
+.aff-card:hover .aff-card-num {
+    color: rgba(224, 112, 159, 0.22);
+}
+
+/* Icons sit in a soft tinted circle */
 .aff-icon-placeholder {
-    width: 60px;
-    height: 60px;
-    margin-bottom: 20px;
-    /* Remove background when you add your actual SVG */
-    background-color: #f0f0f0;
-    border-radius: 4px;
+    width: 92px;
+    height: 92px;
+    padding: 20px;
+    margin-bottom: 26px;
+    object-fit: contain;
+    background: linear-gradient(135deg, rgba(157, 95, 184, 0.12), rgba(224, 112, 159, 0.12));
+    border-radius: 50%;
+    transition: transform 0.4s ease;
+}
+
+.aff-card:hover .aff-icon-placeholder {
+    transform: scale(1.08) rotate(-4deg);
 }
 
 .aff-card h3 {
-    font-size: 24px;
-    font-weight: 400;
-    color: #333;
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: var(--af-ink);
     margin: 0 0 16px 0;
 }
 
 .aff-card p {
-    font-size: 15px;
-    line-height: 1.6;
-    color: #555;
-    margin: 0 0 16px 0;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--af-text);
+    margin: 0 0 14px 0;
 }
 
 .aff-card-link {
+    position: relative;
     margin-top: auto;
-    /* Pushes the link to the bottom of the card */
-    color: #3b5998;
-    /* Standard link blue, adjust if you prefer another shade */
+    padding-top: 22px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--af-a);
     text-decoration: none;
-    font-size: 15px;
-    padding-top: 20px;
+}
+
+.aff-card-link::after {
+    content: "→";
+    display: inline-block;
+    margin-left: 8px;
+    transition: transform 0.25s ease;
 }
 
 .aff-card-link:hover {
-    text-decoration: underline;
+    color: var(--af-b);
+}
+
+.aff-card-link:hover::after {
+    transform: translateX(6px);
 }
 
 /* Bottom CTA */
 .aff-bottom-cta {
-    margin-top: 50px;
+    margin-top: 64px;
 }
 
 /* =====================================================================
@@ -200,25 +474,18 @@
 
     .aff-hero-content {
         max-width: 100%;
-        margin-bottom: 40px;
     }
 
     .aff-hero-image-placeholder {
         width: 100%;
         max-width: 500px;
+        flex: none;
     }
 
     .aff-cards-grid {
         grid-template-columns: 1fr;
-    }
-
-    .aff-card {
-        border-right: none;
-        border-bottom: 1px solid #e0e0e0;
-    }
-
-    .aff-card:last-child {
-        border-bottom: none;
+        max-width: 560px;
+        margin: 0 auto;
     }
 }
 
@@ -227,20 +494,55 @@
         padding: 20px 24px;
     }
 
-    .aff-title {
-        font-size: 32px;
+    .aff-logo {
+        font-size: 22px;
+    }
+
+    .affiliate-top-bg {
+        padding-bottom: 64px;
+    }
+
+    .aff-how-it-works {
+        padding: 56px 16px 80px;
+    }
+
+    .aff-section-title {
+        margin-bottom: 44px;
+    }
+
+    .aff-card {
+        padding: 40px 24px 30px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .aff-blob,
+    .aff-highlight,
+    .aff-join-btn::after,
+    .aff-hero-image-placeholder img,
+    .aff-hero-content>*,
+    .aff-hero-image-placeholder {
+        animation: none !important;
+    }
+
+    .aff-card,
+    .aff-card::before,
+    .aff-icon-placeholder {
+        transition: none !important;
     }
 }
 
 /* =====================================================================
-   AFFILIATE FOOTER
+   AFFILIATE FOOTER — deep purple to match the page's accent
    ===================================================================== */
 .aff-footer {
     width: 100%;
-    background-color: #ffffff;
-    border-top: 1px solid #e0e0e0;
-    padding: 60px 20px 40px;
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: linear-gradient(180deg, #241a3b 0%, #1a1229 100%);
+    border-top: 3px solid transparent;
+    border-image: linear-gradient(90deg, #9d5fb8, #e0709f) 1;
+    padding: 70px 20px 40px;
+    font-family: "Jost", system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
 .aff-footer-container {
@@ -272,8 +574,10 @@
 .aff-footer-col h4 {
     font-size: 14px;
     font-weight: 600;
-    color: #333;
-    margin: 0 0 20px 0;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #fff;
+    margin: 0 0 22px 0;
 }
 
 /* Links */
@@ -284,26 +588,30 @@
 }
 
 .aff-footer-col ul li {
-    margin-bottom: 12px;
+    margin-bottom: 13px;
 }
 
 .aff-footer-col ul li a,
 .aff-footer-lang {
-    color: #3b5998;
-    /* Standard link blue */
+    color: #c9b6e4;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 15px;
+    transition: color 0.2s ease, padding-left 0.2s ease;
 }
 
 .aff-footer-col ul li a:hover,
 .aff-footer-lang:hover {
-    text-decoration: underline;
+    color: #fff;
+}
+
+.aff-footer-col ul li a:hover {
+    padding-left: 6px;
 }
 
 /* Copyright Text */
 .aff-footer-copyright {
     font-size: 14px;
-    color: #333;
+    color: #a99bc2;
     margin: 0 0 12px 0;
 }
 
@@ -325,11 +633,18 @@
     justify-content: center;
     align-items: center;
     gap: 16px;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
+    padding-top: 36px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .aff-footer-badges a {
     display: block;
+    transition: transform 0.25s ease;
+}
+
+.aff-footer-badges a:hover {
+    transform: translateY(-3px);
 }
 
 .aff-footer-badges img {
@@ -345,7 +660,7 @@
     align-items: center;
     gap: 6px;
     font-size: 13px;
-    color: #555;
+    color: #a99bc2;
 }
 
 .bolt-icon {
@@ -360,7 +675,7 @@
    ===================================================================== */
 @media (max-width: 768px) {
     .aff-footer {
-        padding: 40px 16px 30px;
+        padding: 48px 16px 30px;
     }
 
     .aff-footer-columns {

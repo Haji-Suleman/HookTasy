@@ -361,8 +361,17 @@ export default function Navbar({
                           {item.children.map((child) => (
                             <li key={child.label} className="dropdown-panel__item">
                               <L to={child.href} onClick={() => setOpenMenu(null)} className="dropdown-panel__link">
-                                <img src={child.img} alt="" className="dropdown-panel__img" />
-                                {child.label}
+                                <span className="dropdown-panel__thumb">
+                                  <img
+                                    src={child.img}
+                                    alt=""
+                                    className="dropdown-panel__img"
+                                    width="260"
+                                    height="260"
+                                    decoding="async"
+                                  />
+                                </span>
+                                <span className="dropdown-panel__label">{child.label}</span>
                               </L>
                             </li>
                           ))}

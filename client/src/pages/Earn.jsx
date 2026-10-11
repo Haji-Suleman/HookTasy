@@ -13,8 +13,13 @@ const Earn = () => {
             <Navbar />
             <div className="affiliate-page">
 
-                {/* Top Section (Header + Hero) with light grey background */}
+                {/* Top Section (Header + Hero) with soft gradient background */}
                 <div className="affiliate-top-bg">
+
+                    {/* floating colour blobs (decoration only) */}
+                    <span className="aff-blob aff-blob-1" aria-hidden="true" />
+                    <span className="aff-blob aff-blob-2" aria-hidden="true" />
+                    <span className="aff-blob aff-blob-3" aria-hidden="true" />
 
                     {/* Header */}
                     <header className="aff-header">
@@ -26,7 +31,9 @@ const Earn = () => {
                     <section className="aff-hero">
                         <div className="aff-hero-content">
                             <p className="aff-subtitle">Profit from our experience</p>
-                            <h1 className="aff-title">Earn up to 30% commission for every successful referral</h1>
+                            <h1 className="aff-title">
+                                Earn up to <span className="aff-highlight">30% commission</span> for every successful referral
+                            </h1>
                             <button className="aff-join-btn">Join Now</button>
                         </div>
 
@@ -47,6 +54,7 @@ const Earn = () => {
 
                         {/* Card 1: Join */}
                         <div className="aff-card">
+                            <span className="aff-card-num" aria-hidden="true">01</span>
                             <img className="aff-icon-placeholder" src={open} alt="" />
                             <h3>Join</h3>
                             <p>It's free and easy to join.</p>
@@ -56,7 +64,8 @@ const Earn = () => {
 
                         {/* Card 2: Advertise */}
                         <div className="aff-card">
-                            <img src={money} className="aff-icon-placeholder" />
+                            <span className="aff-card-num" aria-hidden="true">02</span>
+                            <img src={money} className="aff-icon-placeholder" alt="" />
                             <h3>Advertise</h3>
                             <p>Choose from our products to advertise to your customers.</p>
                             <p>Whether you are a large network, content site, social media influencer or blogger, we have simple linking tools to meet your advertising needs and help you monetize</p>
@@ -65,7 +74,8 @@ const Earn = () => {
 
                         {/* Card 3: Earn */}
                         <div className="aff-card">
-                            <img src={earnmoney} className="aff-icon-placeholder" />
+                            <span className="aff-card-num" aria-hidden="true">03</span>
+                            <img src={earnmoney} className="aff-icon-placeholder" alt="" />
                             <h3>Earn</h3>
                             <p>Get up to 30% in commissions on successful referrals.</p>
                             <p>Earn commissions from all qualifying purchases, not just the products you advertised. Plus, our competitive conversion rates help you maximize your earnings.</p>

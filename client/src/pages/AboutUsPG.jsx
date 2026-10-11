@@ -68,7 +68,8 @@ export default function AboutUs() {
 
                 {/* Intro Section */}
                 <section className="about-intro">
-                    <h1 className="about-intro-title">Your title here</h1>
+                    <h1 className="about-intro-title">Zootsy Shop</h1>
+                    <span className="about-divider" aria-hidden="true" />
                     <div className="about-intro-text">
                         <p>
                             We <strong>design and create a variety of crochet patterns</strong>, including adorable
