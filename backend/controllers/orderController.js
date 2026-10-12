@@ -249,10 +249,24 @@ const userOrders = async (req, res) => {
 };
 
 // listing all orders for the admin panel
+// Each item also gets `img` (first product image), looked up by product name
 const listOrders = async (req, res) => {
   try {
-    const orders = await orderModel.find({}).sort({ date: -1 });
-    return res.json({ success: true, data: orders });
+    const orders = await orderModel.find({}).sort({ date: -1 }).lean();
+
+    // one query for every product image instead of one per item
+    const names = [...new Set(orders.flatMap((o) => o.items.map((i) => i.name)))];
+    const products = await foodModel
+      .find({ name: { $in: names } })
+      .select("name images image");
+    const imgByName = new Map(products.map((p) => [p.name, firstImage(p)]));
+
+    const data = orders.map((o) => ({
+      ...o,
+      items: o.items.map((i) => ({ ...i, img: imgByName.get(i.name) || "" })),
+    }));
+
+    return res.json({ success: true, data });
   } catch (error) {
     console.log(error);
     return res.json({ success: false, message: "Error" });
