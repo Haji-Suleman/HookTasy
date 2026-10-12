@@ -41,6 +41,32 @@ const withPdfLinks = async (order, productIds = []) => {
   return { ...plain, items };
 };
 
+// Sends the confirmation email at most once for an order that is already paid.
+// Same atomic claim as in verifyOrder, so the webhook and the /verify page
+// can both call it and the customer still gets exactly one email.
+// Returns true = sent, false = failed (claim released so it can be retried), null = nothing to do.
+const sendConfirmationOnce = async (orderId, productIds = []) => {
+  const claimed = await orderModel.findOneAndUpdate(
+    { _id: orderId, payment: true, emailSent: false },
+    { emailSent: true },
+    { new: true }
+  );
+  if (!claimed) {
+    console.log("[webhook] email skipped (already sent, being sent, or legacy order):", orderId);
+    return null;
+  }
+
+  try {
+    const orderForEmail = await withPdfLinks(claimed, productIds);
+    await sendOrderEmail(orderForEmail);
+    return true;
+  } catch (mailError) {
+    console.log("[webhook] confirmation email failed:", mailError);
+    await orderModel.updateOne({ _id: orderId }, { emailSent: false });
+    return false;
+  }
+};
+
 // placing user order
 const placeOrder = async (req, res) => {
   const frontend_url = "https://zootsyshop.com";
@@ -254,16 +280,24 @@ const listOrders = async (req, res) => {
   try {
     const orders = await orderModel.find({}).sort({ date: -1 }).lean();
 
-    // one query for every product image instead of one per item
-    const names = [...new Set(orders.flatMap((o) => o.items.map((i) => i.name)))];
-    const products = await foodModel
-      .find({ name: { $in: names } })
-      .select("name images image");
-    const imgByName = new Map(products.map((p) => [p.name, firstImage(p)]));
+    // One query for all products, then match in memory. placeOrder saves the
+    // name/pdfLink trimmed, so compare trimmed and lowercased to avoid misses.
+    const products = await foodModel.find({}).select("name pdfLink images image");
+    const key = (s) => String(s || "").trim().toLowerCase();
+    const imgByName = new Map();
+    const imgByPdf = new Map();
+    for (const p of products) {
+      const img = firstImage(p);
+      imgByName.set(key(p.name), img);
+      if (p.pdfLink) imgByPdf.set(key(p.pdfLink), img);
+    }
 
     const data = orders.map((o) => ({
       ...o,
-      items: o.items.map((i) => ({ ...i, img: imgByName.get(i.name) || "" })),
+      items: o.items.map((i) => ({
+        ...i,
+        img: imgByName.get(key(i.name)) || imgByPdf.get(key(i.pdfLink)) || "",
+      })),
     }));
 
     return res.json({ success: true, data });
@@ -286,4 +320,64 @@ const updateStatus = async (req, res) => {
   }
 };
 
-export { placeOrder, verifyOrder, userOrders, listOrders, updateStatus };
+// Stripe webhook: Stripe calls this directly when a payment succeeds, so the
+// order is completed and emailed even if the customer never returns to /verify.
+// IMPORTANT: this route must receive the RAW body (see server.js snippet).
+const stripeWebhook = async (req, res) => {
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      req.headers["stripe-signature"],
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    console.log("[webhook] signature check failed:", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  console.log("[webhook] received:", event.type);
+
+  const handled =
+    event.type === "checkout.session.completed" ||
+    event.type === "checkout.session.async_payment_succeeded";
+  if (!handled) return res.json({ received: true });
+
+  try {
+    const session = event.data.object;
+
+    // card payments are "paid" immediately; ignore anything not paid yet
+    if (session.payment_status !== "paid") {
+      return res.json({ received: true });
+    }
+
+    const orderId = session.metadata?.orderId;
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      console.log("[webhook] no valid orderId in metadata, ignoring");
+      return res.json({ received: true });
+    }
+
+    // atomic: only the first caller (webhook or /verify) flips payment to true
+    await orderModel.findOneAndUpdate(
+      { _id: orderId, payment: false },
+      { payment: true, status: "Paid" }
+    );
+
+    const productIds = (session.metadata?.productIds || "")
+      .split(",")
+      .filter(Boolean);
+
+    const result = await sendConfirmationOnce(orderId, productIds);
+
+    // 500 on a failed email makes Stripe retry the webhook later
+    if (result === false) {
+      return res.status(500).json({ received: false, message: "Email failed, will retry" });
+    }
+    return res.json({ received: true });
+  } catch (error) {
+    console.log("[webhook] error:", error);
+    return res.status(500).json({ received: false });
+  }
+};
+
+export { placeOrder, verifyOrder, userOrders, listOrders, updateStatus, stripeWebhook };

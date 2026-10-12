@@ -7,12 +7,30 @@ import userRouter from "./routes/userRoute.js";
 import "dotenv/config";
 import cartRouter from "./routes/cartRoute.js";
 import orderRouter from "./routes/orderRoute.js";
+import { stripeWebhook } from "./controllers/orderController.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+app.use(cors());
 
-app.use(cors())
+// ✅ Stripe webhook: must come BEFORE express.json(), because Stripe's
+// signature check needs the raw, unparsed body. It also connects to the DB
+// itself, since the shared DB middleware below runs later.
+app.post(
+  "/api/order/webhook",
+  express.raw({ type: "application/json" }),
+  async (req, res, next) => {
+    try {
+      await connectDB();
+      next();
+    } catch (err) {
+      next(err);
+    }
+  },
+  stripeWebhook
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
