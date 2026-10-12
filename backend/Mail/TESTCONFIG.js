@@ -1,10 +1,16 @@
 import "dotenv/config";
-import { sendOrderEmail } from "./Nodemail.js";
+import nodemailer from "nodemailer";
 
-await sendOrderEmail({
-    _id: "1234567890abcdef",
-    address: { email: "zootsyshops@gmail.com" },
-    items: [
-        { name: "Test pattern", quantity: 1, pdfLink: "https://example.com/test.pdf", img: "" },
-    ],
+const t = nodemailer.createTransport({
+    host: "smtp.hostinger.com",
+    port: 465,
+    secure: true,
+    auth: { user: process.env.PROF_GMAIL, pass: process.env.PROF_PASSWORD },
 });
+
+try {
+    await t.verify();
+    console.log("SMTP login OK");
+} catch (e) {
+    console.log("FAILED:", e.code, e.responseCode, e.message);
+}
