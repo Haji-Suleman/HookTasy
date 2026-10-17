@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import "./List.css";
 import axios from 'axios';
 import Popup from "../Popup/Popup"
+import { motion } from 'framer-motion'
 
 const List = ({ url }) => {
   const [list, setList] = useState([]);
@@ -69,7 +70,13 @@ const List = ({ url }) => {
   }, []);
 
   return (
-    <div className='list add flex-col'>
+    <motion.div
+      className='list add flex-col'
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+    >
       <p>All Foods List</p>
 
       {loading ? (
@@ -167,7 +174,7 @@ const List = ({ url }) => {
           onClose={() => setSelectedItem(null)}
         />
       )}
-    </div>
+    </motion.div>
   );
 };
 

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import "./Order.css";
 import { toast } from "react-toastify";
+import { motion } from 'framer-motion'
 
 const FILTERS = ["All", "Paid", "Pending"];
 
@@ -83,7 +84,13 @@ const Order = ({ url }) => {
   };
 
   return (
-    <div className="order add">
+    <motion.div
+      className="order add"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="order-header">
         <h3>Orders</h3>
         <button className="order-refresh" onClick={fetchAllOrders} disabled={loading}>
@@ -227,7 +234,7 @@ const Order = ({ url }) => {
           })}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

@@ -4,6 +4,7 @@ import 'react-quill-new/dist/quill.snow.css'
 import "./Add.css"
 import { assets } from '../../assets/assets'
 import { toast } from 'react-toastify'
+import { motion } from 'framer-motion'
 
 const DEFAULT_CATEGORY = "Halloween";
 
@@ -204,7 +205,13 @@ const Add = ({ url }) => {
   };
 
   return (
-    <div className='add'>
+    <motion.div
+      className='add'
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+    >
       <form className='flex-col' onSubmit={onSubmitHandler}>
         <div className="add-img-upload flex-col">
           <p>Upload Images</p>
@@ -321,7 +328,7 @@ const Add = ({ url }) => {
           )}
         </button>
       </form>
-    </div>
+    </motion.div>
   );
 };
 

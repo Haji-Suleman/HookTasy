@@ -10,6 +10,7 @@ const AboutUs = lazy(() => import('./pages/AboutUsPG'));
 const Earn = lazy(() => import('./pages/Earn'));
 const PlaceOrder = lazy(() => import('./pages/PlaceOrder'));
 const Verify = lazy(() => import('./pages/Verify'));
+const CollectionPage = lazy(() => import('./pages/CollectionPage'));
 const SingleProduct = lazy(() => import('./components/SingleProduct'));
 const Authen = lazy(() => import('./Auth').then((m) => ({ default: m.Authen })));
 
@@ -21,6 +22,8 @@ function App() {
           <Suspense fallback={<div style={{ minHeight: '100vh' }} />}>
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/collections/:categoryId" element={<CollectionPage />} />
+              <Route path="/collections/:parentCategory/:categoryId" element={<CollectionPage />} />
               <Route path="/reviews" element={<ReviewsWholePage />} />
               <Route path="/about" element={<AboutUs />} />
               <Route path="/earn" element={<Earn />} />
